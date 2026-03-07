@@ -1,0 +1,44 @@
+# Autor: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
+# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
+# Opis: Plik konfiguracji projektu Python (PEP 517/518).
+#        Zależności dobrane pod CUDA 11.8 + SMACv2 + VMAS + FAISS.
+#        Oparty na BenchMARL (Meta Platforms), rozszerzony o moduły
+#        DEMIR, RND, NGU oraz narzędzia plot_results i record_video.
+#
+# Kluczowe zależności:
+#   torch/torchrl/tensordict — framework MARL (TorchRL)
+#   vmas                    — środowiska MPE/continuous (VMAS)
+#   smacv2                  — StarCraft Multi-Agent Challenge v2
+#   faiss-cpu               — bufor epizodyczny k-NN (DEMIR / NGU)
+#   wandb                   — logowanie eksperymentów
+#   hydra-core              — zarządzanie konfiguracją
+
+[project]
+name = "benchmarl-demir"
+version = "0.1.0"
+description = "Research project with DEMIR and CUDA 11.8 support"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "torch==2.5.1+cu118",
+    "torchvision==0.20.1+cu118",
+    "torchrl==0.6.0",
+    "tensordict==0.6.0",
+    "vmas>=1.5.2",
+    "numpy<2.0.0",
+    "faiss-cpu",
+    "hydra-core",
+    "tqdm",
+    "wandb",
+    "av<14",
+    "moviepy",
+    "smacv2 @ git+https://github.com/oxwhirl/smacv2.git",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[[tool.uv.index]]
+name = "pytorch-cu118"
+url = "https://download.pytorch.org/whl/cu118"
+# Nie używamy 'explicit = true', aby pozwolić na fallback do PyPI
