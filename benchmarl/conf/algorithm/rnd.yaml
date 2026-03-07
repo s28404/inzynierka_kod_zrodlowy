@@ -1,0 +1,32 @@
+# Autor: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
+# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
+# Opis: Konfiguracja algorytmu RND (QMIX + Random Network Distillation).
+#        Metoda bazowa (baseline) do porównania z DEMIR.
+#        Plik napisany od podstaw — nie istniał w oryginalnym BenchMARL.
+#        Ref: Burda et al. (2018) https://arxiv.org/abs/1810.12894
+#
+# Kluczowe parametry:
+#   rnd_scale      — waga nagrody wewnętrznej RND (0.0 = wyłączona)
+#   rnd_embed_dim  — rozmiar przestrzeni embeddingów sieci RND
+#   rnd_hidden_dim — rozmiar warstw ukrytych sieci RND
+#   rnd_lr         — learning rate optymalizatora sieci predykcyjnej
+
+defaults:
+  - rnd_config
+  - _self_
+
+# QMIX + RND (Random Network Distillation)
+# Burda et al. (2018) https://arxiv.org/abs/1810.12894
+mixing_embed_dim: 32
+delay_value: True
+loss_function: "l2"
+
+# Intrinsic reward routing - only rnd active
+demir_scale: 0.0
+ngu_scale: 0.0
+rnd_scale: 0.1
+
+# RND architecture
+rnd_embed_dim: 64
+rnd_hidden_dim: 256
+rnd_lr: 0.0001
