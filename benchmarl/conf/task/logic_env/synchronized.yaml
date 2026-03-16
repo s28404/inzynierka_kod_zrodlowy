@@ -1,0 +1,23 @@
+# Copyright (c) 2026 Kajetan Frąckowiak, s28404
+# Projekt: Algorytm DEMIR dla SMACv2 i Custom Logic Environment
+# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
+# Praca Inżynierska (2026)
+#
+# Opis: Konfiguracja task'u dla Logic Environment (SynchronizedFactory).
+# Parametry środowiska logicznego z collaborative robotics.
+
+# Parametry środowiska Logic Environment (SynchronizedFactory)
+name: "synchronized"
+max_steps: 200
+grid_size: 10
+n_agents: 3
+
+# Wymiary dla sieci neuronowych
+observation_dimension: 8  # [self_x, self_y, crate_x, crate_y, goal_x, goal_y, rm_state, step]
+action_dimension: 5       # [stay, left, right, down, up]
+state_dimension: 24       # 3 agents * 8 obs
+
+# Metadane
+supports_vmas: False
+supports_smac: False
+supports_logic_env: True
