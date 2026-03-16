@@ -3,14 +3,22 @@
 #  This source code is licensed under the license found in the
 #  LICENSE file in the root directory of this source tree.
 #
+# --- MODYFIKACJE / MODIFICATIONS ---
+# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
+# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
+# Opis: Rejestracja custom "LogicEnvTask" dla SynchronizedFactory environment
+#        w globalnym task registry BenchMARL.
+# Originał: BenchMARL (Meta Platforms), https://github.com/facebookresearch/BenchMARL
+# ---
 
 from .common import _get_task_config_class, Task, TaskClass
 
 from .smacv2.common import Smacv2Class, Smacv2Task
 from .vmas.common import VmasClass, VmasTask
+from .logic_env.common import LogicEnvClass, LogicEnvTask
 
 # The enum classes for the environments available.
-tasks = [VmasTask, Smacv2Task]
+tasks = [VmasTask, Smacv2Task, LogicEnvTask]
 
 # This is a registry mapping "envname/task_name" to the EnvNameTask.TASK_NAME enum
 # It is used by automatically load task enums from yaml files.

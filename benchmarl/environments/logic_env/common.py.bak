@@ -1,0 +1,226 @@
+#  Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+#  This source code is licensed under the license found in the
+#  LICENSE file in the root directory of this source tree.
+#
+# --- MODYFIKACJE / MODIFICATIONS ---
+# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
+# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
+# Opis: Integracja custom environment "SynchronizedFactory" do systemu BenchMARL.
+# ---
+
+import copy
+from typing import Callable, Dict, List, Optional
+from enum import Enum
+from dataclasses import dataclass
+
+import torch
+import numpy as np
+from torchrl.data import Composite, Unbounded, Categorical
+from torchrl.envs import EnvBase
+from tensordict import TensorDict
+
+from benchmarl.environments.common import Task, TaskClass
+from benchmarl.utils import DEVICE_TYPING
+
+# Import custom environment
+from benchmarl.environments.logic_env.factory import SynchronizedFactory
+
+# --- 1. DODANO: Konfiguracja dla Hydry (usuwa UserWarning) ---
+@dataclass
+class LogicEnvConfig:
+    grid_size: int = 10
+    n_agents: int = 3
+
+
+class SynchronizedFactoryTorchRL(EnvBase):
+    """
+    TorchRL wrapper dla PettingZoo SynchronizedFactory environment.
+    Zbiera dane z poszczególnych agentów i grupuje je w tensory wsadowe (batched tensors).
+    """
+    
+    def __init__(self, pz_env):
+        super().__init__()
+        self.pz_env = pz_env
+        self.agents = pz_env.agents
+        self.n_agents = len(self.agents)
+        self._reset_keys = ["done"]
+        self.is_closed = False
+        
+        # Set the specs for the environment
+        self.observation_spec = Composite(
+            agents=Composite(
+                observation=Unbounded(shape=(self.n_agents, 8), dtype=torch.float32),
+                shape=[self.n_agents]
+            )
+        )
+        
+        self.action_spec = Composite(
+            agents=Composite(
+                action=Categorical(n=5, shape=(self.n_agents,)),
+                shape=[self.n_agents]
+            )
+        )
+
+        self.reward_spec = Composite(
+            agents=Composite(
+                reward=Unbounded(shape=(self.n_agents, 1), dtype=torch.float32),
+                shape=[self.n_agents]
+            ),
+            reward=Unbounded(shape=(1,), dtype=torch.float32)
+        )
+    
+    @property
+    def reset_keys(self):
+        return [
+            "done",
+            "terminated",
+            "truncated",
+            ("agents", "done"),
+            ("agents", "terminated"),
+            ("agents", "truncated"),
+        ]
+    
+    def _reset(self, tensordict=None):
+        obs, info = self.pz_env.reset()
+        
+        # POPRAWKA: Zbijamy obserwacje agentów w jeden tensor o kształcie [3, 8]
+        obs_tensor = torch.stack([torch.from_numpy(obs[a]).float() for a in self.agents])
+        
+        # POPRAWKA: Grupowanie pod kluczem "agents" (wymagane przez MARL w TorchRL)
+        return TensorDict({
+            "agents": TensorDict({
+                "observation": obs_tensor,
+                "done": torch.zeros((self.n_agents, 1), dtype=torch.bool),
+                "terminated": torch.zeros((self.n_agents, 1), dtype=torch.bool),
+                "truncated": torch.zeros((self.n_agents, 1), dtype=torch.bool),
+            }, batch_size=[self.n_agents]),
+            "done": torch.tensor([False], dtype=torch.bool),
+            "terminated": torch.tensor([False], dtype=torch.bool),
+            "truncated": torch.tensor([False], dtype=torch.bool),
+        }, batch_size=[])
+    
+    def _step(self, tensordict):
+        # Pobieramy akcje z grupowego tensora o kształcie [3]
+        agent_actions = tensordict["agents", "action"]
+        actions = {a: agent_actions[i].item() for i, a in enumerate(self.agents)}
+        
+        obs, rewards, terminations, truncations, info = self.pz_env.step(actions)
+
+        # Szybki debug:
+        if any(r != 0.0 for r in rewards.values()):
+            print(f"HURA! ZDOBYTO NAGRODĘ: {rewards}")
+        
+        # Zbijamy wyniki w tensory
+        obs_tensor = torch.stack([torch.from_numpy(obs[a]).float() for a in self.agents])
+        # Nagrody w TorchRL MARL wymagają wymiaru [N, 1] aby działały jako poprawne wektory batchowe
+        reward_tensor = torch.stack([torch.tensor(rewards[a], dtype=torch.float32) for a in self.agents]).unsqueeze(-1)
+        term_tensor = torch.stack([torch.tensor(terminations[a], dtype=torch.bool) for a in self.agents]).unsqueeze(-1)
+        trunc_tensor = torch.stack([torch.tensor(truncations[a], dtype=torch.bool) for a in self.agents]).unsqueeze(-1)
+        done_tensor = term_tensor | trunc_tensor
+        
+        env_done = torch.tensor([any(terminations.values()) or any(truncations.values())], dtype=torch.bool)
+        env_term = torch.tensor([any(terminations.values())], dtype=torch.bool)
+        env_trunc = torch.tensor([any(truncations.values())], dtype=torch.bool)
+        
+        # Słownik wynikowy - zwracany ZANIM TorchRL opakuje go w "next". Czysto pod model TorchRL.
+        return TensorDict({
+            "agents": TensorDict({
+                "observation": obs_tensor,
+                "reward": reward_tensor, 
+                "done": done_tensor,
+                "terminated": term_tensor,
+                "truncated": trunc_tensor
+            }, batch_size=[self.n_agents]),
+            "reward": torch.sum(reward_tensor, dim=0), # Globalna nagroda zespołu na głównym drzewie (MPE tak robi)
+            "done": env_done,
+            "terminated": env_term,
+            "truncated": env_trunc
+        }, batch_size=[])
+    
+    def _set_seed(self, seed: int):
+        if hasattr(self.pz_env, "seed"):
+            self.pz_env.seed(seed)
+    
+    def close(self):
+        if hasattr(self.pz_env, "close"):
+            self.pz_env.close()
+        self.is_closed = True
+
+
+class LogicEnvClass(TaskClass):
+    """TaskClass wrapper dla custom logic-based environment."""
+    
+    def get_env_fun(
+        self,
+        num_envs: int,
+        continuous_actions: bool,
+        seed: Optional[int],
+        device: DEVICE_TYPING,
+    ) -> Callable[[], EnvBase]:
+        config = copy.deepcopy(self.config)
+        
+        def _make_env():
+            pz_env = SynchronizedFactory(render_mode=None)
+            env = SynchronizedFactoryTorchRL(pz_env)
+            return env
+        
+        return _make_env
+
+    def supports_continuous_actions(self) -> bool:
+        return False
+
+    def supports_discrete_actions(self) -> bool:
+        return True
+
+    def has_render(self, env: EnvBase) -> bool:
+        return True
+
+    def max_steps(self, env: EnvBase) -> int:
+        return 200
+
+    def group_map(self, env: EnvBase) -> Dict[str, List[str]]:
+        return {"agents": ["robot_0", "robot_1", "robot_2"]}
+
+    def state_spec(self, env: EnvBase) -> Optional[Composite]:
+        return None
+
+    def action_mask_spec(self, env: EnvBase) -> Optional[Composite]:
+        return None
+
+    def observation_spec(self, env: EnvBase) -> Composite:
+        if isinstance(env, SynchronizedFactoryTorchRL):
+            return env._observation_spec
+        return Composite(
+            agents=Composite(
+                observation=Unbounded(shape=(3, 8), dtype=torch.float32),
+                shape=[3]
+            )
+        )
+
+    def info_spec(self, env: EnvBase) -> Optional[Composite]:
+        return None
+
+    def action_spec(self, env: EnvBase) -> Composite:
+        if isinstance(env, SynchronizedFactoryTorchRL):
+            return env._action_spec
+        return Composite(
+            agents=Composite(
+                action=Categorical(n=5, shape=(3,)),
+                shape=[3]
+            )
+        )
+    
+    @staticmethod
+    def env_name() -> str:
+        return "logic_env"
+
+
+# POPRAWKA: Klasa Task musi dziedziczyć po Enum dla poprawnego mapowania w rejestrze
+class LogicEnvTask(Task, Enum):
+    # Nazwa musi odpowiadać plikowi YAML: logic_env/synchronized.yaml
+    SYNCHRONIZED = "synchronized" 
+    
+    @staticmethod
+    def associated_class():
+        return LogicEnvClass
