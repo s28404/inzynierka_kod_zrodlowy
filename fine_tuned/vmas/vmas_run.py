@@ -4,6 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+# --- MODYFIKACJE / MODIFICATIONS ---
+# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
+# Dodano wpięcie ThesisJSONLoggerCallback dla lepszego zbierania statystyk
+# ---
+
 import hydra
 from benchmarl.experiment import Experiment
 
@@ -23,6 +28,16 @@ def hydra_experiment(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
 
     experiment: Experiment = load_experiment_from_hydra(cfg, task_name=task_name)
+
+    # --- DODANE PRZEZ KAJETANA ---
+    # Podpięcie strukturalnego loggera na potrzeby wizualizacji do pracy inżynierskiej
+    from benchmarl.experiment.thesis_logger import ThesisJSONLoggerCallback
+
+    if experiment.callbacks is None:
+        experiment.callbacks = []
+    experiment.callbacks.append(ThesisJSONLoggerCallback(log_dir="./logs_thesis"))
+    # -----------------------------
+
     experiment.run()
 
 

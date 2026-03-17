@@ -36,6 +36,10 @@
 #       Lokalizacja: ELSEVIER_METRIC_KEYS (atrybut klasy Logger)
 #       Lista 5 kluczy W&B gotowych do eksportu wykresu do publikacji.
 #
+#   [7] # ── Zmiana nazewnictwa plików .jsonl pod W&B ──────────────────────
+#       Lokalizacja: log() oraz __init__()
+#       Użycie `experiment_name` zamiast daty do nazywania plików. Wyłapywanie logów środowiskowych.
+#
 # ---
 
 import json
@@ -82,6 +86,12 @@ class Logger:
         self.model_name = model_name
         self.group_map = group_map
         self.seed = seed
+        self.experiment_name = experiment_name
+
+        # --- KAJETAN MOD: Unikalna data dla osobnych plików dla każdego uruchomienia ---
+        from datetime import datetime
+
+        self.run_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
         if experiment_config.create_json:
             self.json_writer = JsonWriter(
@@ -266,9 +276,7 @@ class Logger:
                 done = self._get_global_done(td).squeeze(-1)
                 bw = td.get(("next", "info", "battle_won"), None)
                 if bw is not None and done.any():
-                    battle_won_per_ep.append(
-                        bw[done].to(torch.float).mean().item()
-                    )
+                    battle_won_per_ep.append(bw[done].to(torch.float).mean().item())
             if battle_won_per_ep:
                 win_rate = float(np.mean(battle_won_per_ep))
                 to_log["eval/info/win_rate"] = win_rate
@@ -278,6 +286,59 @@ class Logger:
                 )
         except Exception:
             pass  # Non-SMACv2 task – brak battle_won, pomijamy
+        # ────────────────────────────────────────────────────────────────────
+
+        # ── Autorskie metryki RM (logic_env_factory) ─────────────────────────
+        try:
+            if "logic_env" in self.task_name or "synchronized" in self.task_name:
+                success_rates = []
+                bottleneck_rates = []
+                rm_0_ratios = []
+                rm_1_ratios = []
+                rm_2_ratios = []
+
+                for td in rollouts:
+                    # Wyciągamy rm_state z obserwacji dowolnego agenta (index 6).
+                    # Kształt ob: [time, n_agents, obs_dim]
+                    obs = td.get(("next", "agents", "observation"))
+                    # Bierzemy z pierwszego agenta, bo RM state jest globalne/współdzielone
+                    rm_state_seq = obs[:, 0, 6]
+
+                    max_rm = rm_state_seq.max().item()
+                    success_rates.append(1.0 if max_rm >= 2 else 0.0)
+                    bottleneck_rates.append(1.0 if max_rm >= 1 else 0.0)
+
+                    total_steps = rm_state_seq.numel()
+                    rm_0_ratios.append((rm_state_seq == 0).sum().item() / total_steps)
+                    rm_1_ratios.append((rm_state_seq == 1).sum().item() / total_steps)
+                    rm_2_ratios.append((rm_state_seq == 2).sum().item() / total_steps)
+
+                if success_rates:
+                    to_log["eval/info/eval_success_rate"] = float(
+                        np.mean(success_rates)
+                    )
+                    to_log["eval/info/eval_bottleneck_reached_rate"] = float(
+                        np.mean(bottleneck_rates)
+                    )
+                    to_log["eval/info/eval_rm_state_0_ratio"] = float(
+                        np.mean(rm_0_ratios)
+                    )
+                    to_log["eval/info/eval_rm_state_1_ratio"] = float(
+                        np.mean(rm_1_ratios)
+                    )
+                    to_log["eval/info/eval_rm_state_2_ratio"] = float(
+                        np.mean(rm_2_ratios)
+                    )
+
+                    json_metrics["eval_success_rate"] = torch.tensor(success_rates)
+                    json_metrics["eval_bottleneck_reached_rate"] = torch.tensor(
+                        bottleneck_rates
+                    )
+                    json_metrics["eval_rm_state_0_ratio"] = torch.tensor(rm_0_ratios)
+                    json_metrics["eval_rm_state_1_ratio"] = torch.tensor(rm_1_ratios)
+                    json_metrics["eval_rm_state_2_ratio"] = torch.tensor(rm_2_ratios)
+        except Exception as e:
+            pass  # Puste gdy nie pasuje do środowiska
         # ────────────────────────────────────────────────────────────────────
 
         if self.json_writer is not None:
@@ -297,23 +358,24 @@ class Logger:
         self.log(to_log, step=step)
         if video_frames is not None and max_length_rollout_0 > 1:
             video_frames = np.stack(video_frames[: max_length_rollout_0 - 1], axis=0)
-            vid = torch.tensor(
-                np.transpose(video_frames, (0, 3, 1, 2)),
-                dtype=torch.uint8,
-            ).unsqueeze(0)
-            for logger in self.loggers:
-                if isinstance(logger, WandbLogger):
-                    logger.log_video("eval/video", vid, fps=20, commit=False)
-                else:
-                    # Other loggers cannot deal with odd video sizes so we check if the video dimensions are odd and make them even
-                    for index in (-1, -2):
-                        if vid.shape[index] % 2 != 0:
-                            vid = vid.index_select(
-                                index, torch.arange(1, vid.shape[index])
-                            )
-                    # End of check
+            if len(video_frames.shape) == 4:
+                vid = torch.tensor(
+                    np.transpose(video_frames, (0, 3, 1, 2)),
+                    dtype=torch.uint8,
+                ).unsqueeze(0)
+                for logger in self.loggers:
+                    if isinstance(logger, WandbLogger):
+                        logger.log_video("eval/video", vid, fps=20, commit=False)
+                    else:
+                        # Other loggers cannot deal with odd video sizes so we check if the video dimensions are odd and make them even
+                        for index in (-1, -2):
+                            if vid.shape[index] % 2 != 0:
+                                vid = vid.index_select(
+                                    index, torch.arange(1, vid.shape[index])
+                                )
+                        # End of check
 
-                    logger.log_video("eval_video", vid, step=step)
+                        logger.log_video("eval_video", vid, step=step)
 
     # ── DEMIR publication metrics ─────────────────────────────────────────
     def log_demir_stats(
@@ -361,6 +423,7 @@ class Logger:
             return
 
         cfg = demir_module.config
+
         def _cfg(name, default):
             if cfg is None:
                 return default
@@ -391,11 +454,11 @@ class Logger:
 
     # ── Convenience: 5 Metric Keys do eksportu PDF (Elsevier) ─────────────
     ELSEVIER_METRIC_KEYS: List[str] = [
-        "eval/info/win_rate",            # (1) Win Rate  – główna metryka SMACv2
+        "eval/info/win_rate",  # (1) Win Rate  – główna metryka SMACv2
         "eval/reward/episode_reward_mean",  # (2) Episode Return  – backup jeśli brak win_rate
-        "demir/{group}/edm_size",       # (3) EDM Coverage  – dowód eksploracji
-        "demir/{group}/novelty_mean",   # (4) Novelty (β₂)  – składnik ablacji
-        "demir/{group}/quality_mean",   # (5) Quality (β₁)  – składnik ablacji
+        "demir/{group}/edm_size",  # (3) EDM Coverage  – dowód eksploracji
+        "demir/{group}/novelty_mean",  # (4) Novelty (β₂)  – składnik ablacji
+        "demir/{group}/quality_mean",  # (5) Quality (β₁)  – składnik ablacji
         # Uwaga: zastąp {group} rzeczywistą nazwą grupy (np. 'agents').
         # Do generowania PDF użyj: wandb.Api().run(...).history(keys=KEYS)
         # i biblioteki Seaborn lub marl-eval. Zapisz jako .PDF/.EPS.
@@ -408,6 +471,29 @@ class Logger:
                 logger.experiment.log({}, commit=True)
 
     def log(self, dict_to_log: Dict, step: int = None):
+        # --- DODANE PRZEZ KAJETANA: Niestandardowy zrzut ewaluacji z każdego log() ---
+        # Zapisz my log-file do katalogu logs_thesis (bezwzględna ścieżka by ominąć Hydrę)
+        thesis_dir = Path("/home/kajetan/Documents/inzynierka_kod_zrodlowy/logs_thesis")
+        thesis_dir.mkdir(parents=True, exist_ok=True)
+        # Nazywamy w oparciu o obiekt głównej konfiguracji + timestamp dla UNIKALNOŚCI KAŻDEGO URUCHOMIENIA
+        safe_task_name = self.task_name.replace("/", "_")
+
+        # Zapis pod dokładnie taką nazwą jak w wandb
+        fname = f"{thesis_dir}/{self.experiment_name}.jsonl"
+
+        with open(fname, "a") as f:
+            clean_dict = {}
+            for k, v in dict_to_log.items():
+                if isinstance(v, torch.Tensor):
+                    clean_dict[k] = v.item() if v.numel() == 1 else v.tolist()
+                elif hasattr(v, "item"):
+                    clean_dict[k] = v.item()
+                else:
+                    clean_dict[k] = v
+            clean_dict["_step"] = step
+            f.write(json.dumps(clean_dict) + "\n")
+        # ---------------------------------------------------------------------
+
         for logger in self.loggers:
             if isinstance(logger, WandbLogger):
                 logger.experiment.log(dict_to_log, commit=False)
@@ -597,5 +683,25 @@ class JsonWriter:
                     max_metric = max(max_metric, prev_max_metric)
                 self.run_data["absolute_metrics"][metric_name] = [max_metric]
 
+        import json
+        import os
+        from datetime import datetime
+
         with open(self.path, "w+") as f:
             json.dump(self.data, f, indent=4)
+
+        base_dir = "/home/kajetan/Documents/inzynierka_kod_zrodlowy/logs_thesis"
+        os.makedirs(base_dir, exist_ok=True)
+        # Bierzemy średnie wartości z list dla danego kroku ewaluacji, chyba że lista jest pusta
+        flat_metrics = {
+            k: (sum(vals) / len(vals) if len(vals) > 0 else 0.0)
+            for k, vals in metrics.items()
+        }
+        flat_metrics["step_count"] = total_frames
+        flat_metrics["evaluation_step"] = evaluation_step
+        flat_metrics["timestamp_str"] = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+        file_name = f"thesis_metrics_raw.jsonl"
+        file_path = os.path.join(base_dir, file_name)
+        with open(file_path, "a") as fw:
+            fw.write(json.dumps(flat_metrics) + "\n")

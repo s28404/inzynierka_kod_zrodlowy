@@ -1,0 +1,2 @@
+{"collection/agents/reward/episode_reward_min": 0.0, "collection/agents/reward/episode_reward_mean": 0.8666666746139526, "collection/agents/reward/episode_reward_max": 2.0, "collection/reward/reward_min": 0.0, "collection/reward/reward_mean": 0.004333333112299442, "collection/reward/reward_max": 2.0, "collection/reward/episode_reward_min": 0.0, "collection/reward/episode_reward_mean": 0.8666666746139526, "collection/reward/episode_reward_max": 2.0, "_step": 0}
+{"train/agents/grad_norm_loss": 68203.4453125, "train/agents/loss": 1851.0955810546875, "_step": 0}

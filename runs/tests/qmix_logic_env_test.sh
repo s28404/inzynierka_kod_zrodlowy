@@ -1,0 +1,11 @@
+LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6 "$(dirname "$0")/.venv/bin/python" fine_tuned/logic_env/logic_env_run.py \
+algorithm=demir \
+task=logic_env/synchronized \
+experiment.off_policy_n_envs_per_worker=4 \
+experiment.off_policy_collected_frames_per_batch=1000 \
+experiment.parallel_collection=false \
+experiment.render=false \
+experiment.buffer_device=cpu \
+experiment.off_policy_memory_size=200000 \
+experiment.max_n_frames=10000000 \
+seed=1

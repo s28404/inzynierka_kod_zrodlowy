@@ -4,6 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+# --- MODYFIKACJE / MODIFICATIONS ---
+# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
+# Dodano wpięcie ThesisJSONLoggerCallback dla lepszego zbierania statystyk
+# ---
+
 import hydra
 from benchmarl.experiment import Experiment
 from benchmarl.hydra_config import load_experiment_from_hydra
