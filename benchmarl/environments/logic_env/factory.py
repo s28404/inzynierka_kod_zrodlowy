@@ -8,7 +8,6 @@
 #  Cechy: Collaborative robotics (Strong Coupling), Reward Machine FSM, Grid-based world.
 
 import numpy as np
-import functools
 from pettingzoo.utils.env import ParallelEnv
 from gymnasium import spaces
 
@@ -79,20 +78,14 @@ class SynchronizedFactory(ParallelEnv):
                 self.agent_positions[a] = new_pos
 
         # 2. Mechanizm Strong Coupling (agents_0 i agents_2 muszą pchać razem)
-        push_reward = 0
         if self._check_joint_push(actions):
-            old_dist = np.linalg.norm(self.crate_position - self.goal_position)
             move = self._action_to_move(actions["agents_0"])
             new_crate_pos = self.crate_position + move
 
             if self._is_valid(new_crate_pos):
                 self.crate_position = new_crate_pos
-                new_dist = np.linalg.norm(self.crate_position - self.goal_position)
-
-                if new_dist < old_dist:
-                    push_reward = 0.5  # Nagroda tylko za pchanie w dobrym kierunku
-
-        reward = push_reward
+                
+        reward = 0.0
         terminated = False
 
         # 3. Reward Machine Logic
