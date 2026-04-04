@@ -20,7 +20,7 @@
 #       qmix_{env}_{task}[_{reward}_scale{v}[_encoder_{t}]
 #       [_beta1_{v}_beta2_{v}]]_{data}
 #       Projekt W&B: "kod_zrodlowy_demir" (base_experiment.yaml).
-#
+#   [2] # --- MODYFIKACJA: aktualizacja DEMIR po obliczeniu TD error ---
 # ---
 
 from __future__ import annotations
@@ -561,13 +561,13 @@ class Experiment(CallbackNotifier):
                 )
             self.rollout_env = self.env_func().to(self.config.sampling_device)
 
-    # --- MODYFIKACJE: własne nazewnictwo eksperymentów W&B ---
+    # [1] --- MODYFIKACJE: własne nazewnictwo eksperymentów W&B ---
     # Kajetan Frąckowiak, s28404 — format: qmix_{env}_{task}[_{reward}_scale{v}[_encoder_{t}][_beta1_{v}_beta2_{v}]]_{data}
     def _build_wandb_run_name(self) -> str:
         """Buduje nazwę runu W&B według schematu pracy inżynierskiej."""
         cfg = self.algorithm_config
-        env  = self.environment_name  # "vmas" | "smacv2"
-        task = self.task_name          # "simple_spread" | "corridor" itd.
+        env = self.environment_name  # "vmas" | "smacv2"
+        task = self.task_name  # "simple_spread" | "corridor" itd.
         now = datetime.now().strftime("%y_%m_%d-%H_%M_%S")
 
         def fmt(v: float) -> str:
@@ -575,11 +575,11 @@ class Experiment(CallbackNotifier):
             return str(v).replace(".", "p")
 
         demir_scale = getattr(cfg, "demir_scale", 0.0)
-        rnd_scale   = getattr(cfg, "rnd_scale",   0.0)
-        ngu_scale   = getattr(cfg, "ngu_scale",   0.0)
+        rnd_scale = getattr(cfg, "rnd_scale", 0.0)
+        ngu_scale = getattr(cfg, "ngu_scale", 0.0)
 
         if demir_scale > 0:
-            enc   = getattr(cfg, "encoder_type", "idm")
+            enc = getattr(cfg, "encoder_type", "idm")
             beta1 = getattr(cfg, "beta1", 1.0)
             beta2 = getattr(cfg, "beta2", 0.5)
             suffix = (
@@ -600,6 +600,7 @@ class Experiment(CallbackNotifier):
             return f"qmix_{env}_{task}_{suffix}_seed{seed}_{now}"
         else:
             return f"qmix_{env}_{task}_seed{seed}_{now}"
+
     # --- KONIEC MODYFIKACJI ---
 
     def _setup_name(self):
@@ -891,6 +892,62 @@ class Experiment(CallbackNotifier):
 
                 optimizer.step()
                 optimizer.zero_grad()
+        ### [2] --- MODYFIKACJA: aktualizacja DEMIR po obliczeniu TD error --- ###
+        # If DEMIR module exists for this group, provide it with the computed td_error
+        td_error_val = None
+        keys = list(subdata.keys(True, True))
+        if (group, "td_error") in keys:
+            td_error_val = subdata.get((group, "td_error"))
+        elif "td_error" in keys:
+            td_error_val = subdata.get("td_error")
+
+        if (
+            td_error_val is not None
+            and hasattr(self.algorithm, "demir_modules")
+            and group in getattr(self.algorithm, "demir_modules", {})
+        ):
+            demir = self.algorithm.demir_modules[group]
+            obs_val = (
+                subdata.get((group, "observation"))
+                if (group, "observation") in keys
+                else subdata.get((group, "observation"))
+            )
+            action_val = (
+                subdata.get((group, "action"))
+                if (group, "action") in keys
+                else subdata.get((group, "action"))
+            )
+            from benchmarl.utils import get_td_value
+
+            # Use helper to get reward; fallback to zeros shaped like observation if missing
+            reward_val = get_td_value(
+                subdata,
+                [
+                    ("next", group, "reward"),
+                    (group, "reward"),
+                    ("next", "reward"),
+                    "reward",
+                ],
+            )
+            if reward_val is None:
+                if obs_val is not None:
+                    reward_val = torch.zeros(obs_val.shape[:-1], device=obs_val.device)
+                else:
+                    reward_val = torch.zeros((), device=self.config.train_device)
+            next_obs_val = subdata.get(("next", group, "observation"), None)
+            with torch.no_grad():
+                try:
+                    demir.update_memory(
+                        obs=obs_val,
+                        action=action_val,
+                        reward_ext=reward_val,
+                        td_error=td_error_val,
+                        next_obs=next_obs_val,
+                    )
+                except Exception:
+                    # Never fail training loop because of DEMIR update issues
+                    pass
+        ### [2] --- KONIEC MODYFIKACJI --- ###
         self.replay_buffers[group].update_tensordict_priority(subdata)
         if self.target_updaters[group] is not None:
             self.target_updaters[group].step()

@@ -1,25 +1,21 @@
-# Autor: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Konfiguracja algorytmu DEMIR (QMIX + Decentralized Episodic Memory
-#        z nagrodą wewnętrzną opartą na IDM lub MLP).
-#        Plik napisany od podstaw — nie istniał w oryginalnym BenchMARL.
-#
-# Kluczowe parametry:
-#   demir_scale  — waga nagrody wewnętrznej DEMIR (0.0 = wyłączona)
-#   encoder_type — "idm" (IDM+decorrelation) | "mlp" (ablacja, samo decor.)
-#   beta1, beta2 — wagi składników nagrody epizodycznej (jakość / nowość)
-#   n_efm, n_edm — pojemność buforów EFM i EDM (pamięć epizodyczna)
+# Plik konfiguracyjny dla mechanizmu DEMIR
+
+# Autor: Kajetan Frąckowiak (s28404)
+# Data: 2026
+# Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
+
+# Opis: Plik zawiera autorskie dobranie hiperparametrów oraz konfiguracji dla mechanizmu DEMIR
 
 defaults:
   - demir_config
   - _self_
 
-# Bazowe parametry QMIX
+# Bazowe hiperparametry QMIX
 mixing_embed_dim: 32
 delay_value: True
 loss_function: "l2"
 
-# Parametry DEMIR
+# Hiperparametry DEMIR
 emb_dim_state: 64
 emb_dim_action: 16
 emb_dim_reward: 8
@@ -27,7 +23,7 @@ alpha: 0.5
 beta1: 0.7
 beta2: 0.3
 k: 10
-sigma: 0.1
+sigma: 0.5
 n_efm: 10000
 n_edm: 5000
 demir_scale: 0.05

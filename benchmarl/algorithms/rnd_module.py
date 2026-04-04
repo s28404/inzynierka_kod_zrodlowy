@@ -1,50 +1,22 @@
-# Autor: Kajetan Frąckowiak, s28404 (2026)
-# Plik napisany od podstaw w ramach pracy inżynierskiej
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Implementacja Random Network Distillation jako metody bazowej (baseline)
-#        do porównania z DEMIR w eksperymentach na SMACv2 i VMAS/MPE.
-
 """
-Random Network Distillation (RND) - per-agent intrinsic reward for MARL.
-Based on: Burda et al. (2018) "Exploration by Random Network Distillation"
-https://arxiv.org/abs/1810.12894
+Moduł implementujący mechanizm RND (Random Network Distillation) do MARL bazująć na:
+https://arxiv.org/abs/1810.12894 oraz https://arxiv.org/abs/2503.13077.
 
-Intrinsic reward per agent:
-    r_int(o_t) = || f_pred(o_t) - f_target(o_t) ||^2
+Autor: Kajetan Frąckowiak (s28404)
+Data: 2026
+Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
 
-where f_target is a fixed random network and f_pred is trained online.
-Applied decentralized: each agent group gets its own predictor.
+Opis: Plik zawiera pełną implementację mechanizmu RND.
 """
 import numpy as np
 import torch
 from torch import nn
+from benchmarl.algorithms.common import RunningMeanStd
 
 try:
     import wandb as _wandb
 except ImportError:
     _wandb = None
-
-
-class RunningMeanStd:
-    """Welford's online normalization."""
-    def __init__(self, epsilon=1e-4):
-        self.mean = 0.0
-        self.var = 1.0
-        self.count = epsilon
-
-    def update(self, x: np.ndarray):
-        b_mean = float(np.mean(x))
-        b_var = float(np.var(x))
-        b_count = x.shape[0]
-        delta = b_mean - self.mean
-        tot = self.count + b_count
-        self.mean += delta * b_count / tot
-        self.var = (self.var * self.count + b_var * b_count +
-                    delta ** 2 * self.count * b_count / tot) / tot
-        self.count = tot
-
-    def normalize(self, x: np.ndarray) -> np.ndarray:
-        return (x - self.mean) / (np.sqrt(self.var) + 1e-8)
 
 
 class RNDModule(nn.Module):

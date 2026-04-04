@@ -1,8 +1,10 @@
+
+
 #  Copyright (c) Meta Platforms, Inc. and affiliates.
 #
 #  This source code is licensed under the license found in the
 #  LICENSE file in the root directory of this source tree.
-#
+# [1] Zmiana: Dodanie funkcji get_td_value do utils.py
 import contextlib
 import importlib
 import random
@@ -13,6 +15,7 @@ import torch
 import yaml
 from torchrl.data import Composite
 from torchrl.envs import Compose, EnvBase, InitTracker, TensorDictPrimer, TransformedEnv
+from typing import Iterable, Any
 
 if typing.TYPE_CHECKING:
     from benchmarl.models import ModelConfig
@@ -21,6 +24,37 @@ _has_numpy = importlib.util.find_spec("numpy") is not None
 
 
 DEVICE_TYPING = Union[torch.device, str, int]
+
+
+
+### [1] Zmiana: Dodanie funkcji get_td_value do utils.py
+def get_td_value(td, candidates: Iterable[Any] | None = None):
+    """Return the first value from ``td`` for which a key in ``candidates`` exists.
+
+    - ``td``: a TensorDict-like object with ``keys(True, True)`` and ``get``.
+    - ``candidates``: iterable of keys (e.g. ("next", group, "reward") or "reward").
+
+    Returns the value (td.get(key)) or ``None`` if no candidate key is present or all gets fail.
+    """
+    if candidates is None:
+        return None
+    try:
+        keys = set(td.keys(True, True))
+    except Exception:
+        # Fallback: if td doesn't implement keys(True, True)
+        try:
+            keys = set(td.keys())
+        except Exception:
+            keys = set()
+
+    for k in candidates:
+        if k in keys:
+            try:
+                return td.get(k)
+            except Exception:
+                continue
+    return None
+### [1] Koniec zmiany
 
 
 def _read_yaml_config(config_file: str) -> Dict[str, Any]:
@@ -101,7 +135,7 @@ def _add_rnn_transforms(
                 group: Composite(
                     model_config._get_model_state_spec_inner(group=group).expand(
                         len(agents),
-                        *model_config._get_model_state_spec_inner(group=group).shape
+                        *model_config._get_model_state_spec_inner(group=group).shape,
                     ),
                     shape=(len(agents),),
                 )

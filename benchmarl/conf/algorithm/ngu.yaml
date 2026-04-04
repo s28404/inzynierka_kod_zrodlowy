@@ -1,36 +1,33 @@
-# Autor: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Konfiguracja algorytmu NGU (QMIX + Never Give Up).
-#        Metoda bazowa (baseline) do porównania z DEMIR.
-#        Plik napisany od podstaw — nie istniał w oryginalnym BenchMARL.
-#        Ref: Badia et al. (2020) https://arxiv.org/abs/2002.06038
-#
-# Kluczowe parametry:
-#   ngu_scale      — waga nagrody wewnętrznej NGU (0.0 = wyłączona)
-#   ngu_embed_dim  — rozmiar embeddingów IDM (phi_s)
-#   ngu_k          — liczba sąsiadów k-NN w buforze epizodycznym
-#   ngu_L          — limit górny współczynnika alpha (lifelong curiosity)
-#   ngu_n_episodic — pojemność bufora epizodycznego FAISS
+# Plik konfiguracyjny dla mechanizmu NGU
+
+# Autor: Kajetan Frąckowiak (s28404)
+# Data: 2026
+# Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
+
+# Opis: Plik zawiera hiperparametry oraz konfiguracje dla mechanizmu NGU bazujące na artukułach https://arxiv.org/abs/2002.06038 oraz https://arxiv.org/abs/2512.01321
+# gdzie pewne hiperparametry ze względu na brak informacji w artykułach zostały dobrane autorsko
 
 defaults:
   - ngu_config
   - _self_
 
-# QMIX + NGU (Never Give Up)
-# Badia et al. (2020) https://arxiv.org/abs/2002.06038
+# Bazowe hiperparametry QMIX
 mixing_embed_dim: 32
 delay_value: True
 loss_function: "l2"
 
-# Intrinsic reward routing - only ngu active
+# Skala nagrody wewnętrznej NGU
 demir_scale: 0.0
 rnd_scale: 0.0
+# Autorsko dobrana skala nagrody NGU
 ngu_scale: 0.1
 
-# NGU architecture
+# Architektura NGU zgodna z artykułami wyzej
 ngu_embed_dim: 64
 ngu_hidden_dim: 256
 ngu_k: 10
+
+# Autuorsko dobrane hiperparametry NGU
 ngu_L: 5.0
 ngu_epsilon: 0.001
 ngu_n_episodic: 10000

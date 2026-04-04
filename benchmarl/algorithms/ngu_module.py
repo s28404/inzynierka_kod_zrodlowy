@@ -1,82 +1,24 @@
-# Autor: Kajetan Frąckowiak, s28404 (2026)
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Moduł NGU (Never Give Up) — epizodyczna i długoterminowa ciekawość.
-#        Embedding trenowany przez IDM; lifelong curiosity przez RND;
-#        bufor epizodyczny FAISS; kombinowana nagroda wewnętrzna r_int = r_e * alpha.
-#
-# Sekcje wewnętrzne (inline section markers):
-#
-#   [1] # --- Embedding network (trained via IDM) ---
-#       Lokalizacja: __init__()  —  phi_s: MLP, idm: sieć (e_s, e_s') → action.
-#
-#   [2] # --- RND for lifelong curiosity ---
-#       Lokalizacja: __init__()  —  rnd_target (fixed) + rnd_pred (trainable).
-#
-#   [3] # --- Episodic buffer (rolling, FAISS-backed) ---
-#       Lokalizacja: __init__()  —  episodyczny bufor k-NN z FAISS.
-#
-#   [4] # --- Normalization ---
-#       Lokalizacja: __init__()  —  RunningMeanStd do normalizacji nagród.
-#
-#   [5] # --- Train IDM + RND predictor ---
-#       Lokalizacja: compute_intrinsic_reward()  —  backward pass IDM + RND.
-#
-#   [6] # --- Update episodic buffer & FAISS ---
-#       Lokalizacja: compute_intrinsic_reward()  —  zapis embeddingów do bufora.
-#
-#   [7] # --- Episodic reward (k-NN distances in embedding space) ---
-#       Lokalizacja: compute_intrinsic_reward()  —  r_e = f(dist k-NN).
-#
-#   [8] # --- Lifelong curiosity (RND-based alpha) ---
-#       Lokalizacja: compute_intrinsic_reward()  —  alpha = 1 + błąd RND.
-#
-#   [9] # --- Combined intrinsic reward ---
-#       Lokalizacja: compute_intrinsic_reward()  —  r_int = r_e * alpha.
 
 """
-Never Give Up (NGU) - per-agent decentralized intrinsic reward for MARL.
-Based on: Badia et al. (2020) "Never Give Up: Learning Directed Exploration Strategies"
-https://arxiv.org/abs/2002.06038
+Moduł implementujący mechanizm NGU (Never Give Up) do MARL bazująć na:
+https://arxiv.org/abs/2002.06038 oraz https://arxiv.org/abs/2512.01321.
 
-Intrinsic reward:
-    r_int = r_episodic * min(max(alpha, 1), L)
-    alpha  = 1 + r_RND_normalized / L
-    r_episodic = 1 / (sqrt(mean k-NN distances in embedding space) + epsilon)
+Autor: Kajetan Frąckowiak (s28404)
+Data: 2026
+Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
 
-Embedding trained via Inverse Dynamics Model (IDM): (e_s, e_s') -> action.
-Applied decentralized: each agent group gets its own NGU module.
+Opis: Plik zawiera pełną implementację mechanizmu NGU.
 """
 import numpy as np
 import torch
 import faiss
 from torch import nn
+from benchmarl.algorithms.common import RunningMeanStd
 
 try:
     import wandb as _wandb
 except ImportError:
     _wandb = None
-
-
-class RunningMeanStd:
-    """Welford's online normalization."""
-    def __init__(self, epsilon=1e-4):
-        self.mean = 0.0
-        self.var = 1.0
-        self.count = epsilon
-
-    def update(self, x: np.ndarray):
-        b_mean = float(np.mean(x))
-        b_var  = float(np.var(x))
-        b_count = x.shape[0]
-        delta = b_mean - self.mean
-        tot = self.count + b_count
-        self.mean += delta * b_count / tot
-        self.var = (self.var * self.count + b_var * b_count +
-                    delta ** 2 * self.count * b_count / tot) / tot
-        self.count = tot
-
-    def normalize(self, x: np.ndarray) -> np.ndarray:
-        return (x - self.mean) / (np.sqrt(self.var) + 1e-8)
 
 
 class NGUModule(nn.Module):
@@ -149,12 +91,24 @@ class NGUModule(nn.Module):
         self.epi_buffer = np.zeros((self.n_episodic, d), dtype=np.float32)
         self.epi_ptr = 0
         self.epi_count = 0
-        self.faiss_index = faiss.IndexHNSWFlat(d, 32)
+        self.faiss_index = faiss.IndexFlatL2(d)
         self._update_counter = 0
 
         # --- Normalization ---
         self.rnd_rms = RunningMeanStd()
         self.ep_rms  = RunningMeanStd()
+
+    def reset_episodic_memory(self):
+        """
+        Resets the episodic buffer and FAISS index at the start of a new episode.
+        This is CRITICAL for NGU to function as intended.
+        """
+        d = self._p("ngu_embed_dim", 64)
+        self.epi_buffer = np.zeros((self.n_episodic, d), dtype=np.float32)
+        self.epi_ptr = 0
+        self.epi_count = 0
+        self.faiss_index = faiss.IndexFlatL2(d)
+        self._update_counter = 0
 
     def _p(self, name, default):
         if self.config is None:
@@ -233,7 +187,7 @@ class NGUModule(nn.Module):
         self._update_counter += 1
         if self._update_counter % self.rebuild_interval == 0:
             filled = min(self.epi_count, self.n_episodic)
-            self.faiss_index = faiss.IndexHNSWFlat(self.epi_buffer.shape[1], 32)
+            self.faiss_index = faiss.IndexFlatL2(self.epi_buffer.shape[1])
             self.faiss_index.add(self.epi_buffer[:filled])
 
         # --- Episodic reward (k-NN distances in embedding space) ---
@@ -256,8 +210,6 @@ class NGUModule(nn.Module):
         # Normalize episodic before combining (optional stability)
         self.ep_rms.update(r_int)
         r_int_norm = self.ep_rms.normalize(r_int)
-        # Intra-batch std normalization
-        r_int_norm = r_int_norm / (float(np.std(r_int_norm)) + 1e-8)
 
         if _wandb is not None and _wandb.run is not None:
             _wandb.log({

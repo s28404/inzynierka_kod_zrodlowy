@@ -3,8 +3,18 @@
 #  This source code is licensed under the license found in the
 #  LICENSE file in the root directory of this source tree.
 #
+# ==============================================================================
+# SEKCJA MODYFIKACJI AKADEMICKIEJ - PRACA INŻYNIERSKA (PJATK 2026)
+# ==============================================================================
+# Autor: Kajetan Frąckowiak, s28404
+# Data: 2026
+# Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
+# Modyfikacje w tym pliku :
+#   [1] # Implmenetcja klasy RunningMeanStd, która implementuje Welford's online algorithm do normalizacji jakości i nowości w czasie treningu.
+# ==============================================================================
 
 import pathlib
+import numpy as np
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -478,3 +488,36 @@ class AlgorithmConfig:
                 "Algorithm can either have a centralized critic or an indpendent one"
             )
         return self.has_centralized_critic() or self.has_independent_critic()
+
+#############################
+# [1]. Początek. Implementacja klasy RunningMeanStd, która implementuje Welford's online algorithm do normalizacji jakości i nowości w czasie treningu.
+#############################
+
+class RunningMeanStd:
+    """Welford's online algorithm - normalizacja jakości i nowości w czasie treningu."""
+
+    def __init__(self, epsilon=1e-4):
+        self.mean = 0.0
+        self.var = 1.0
+        self.count = epsilon
+
+    def update(self, x: np.ndarray):
+        b_mean = float(np.mean(x))
+        b_var = float(np.var(x))
+        b_count = x.shape[0]
+        delta = b_mean - self.mean
+        tot = self.count + b_count
+        self.mean += delta * b_count / tot
+        self.var = (
+            self.var * self.count
+            + b_var * b_count
+            + delta**2 * self.count * b_count / tot
+        ) / tot
+        self.count = tot
+
+    def normalize(self, x: np.ndarray) -> np.ndarray:
+        return (x - self.mean) / (np.sqrt(self.var) + 1e-8)
+
+#############################
+# [1] Koniec.
+#############################
