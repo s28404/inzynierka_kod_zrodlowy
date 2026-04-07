@@ -1,3 +1,6 @@
 __pycache__/
 *.swo
 *.swp
+benchmarl_demir.egg*
+.vscode/
+outputs/

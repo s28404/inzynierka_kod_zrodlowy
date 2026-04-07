@@ -22,6 +22,9 @@ Requires-Dist: moviepy
 Requires-Dist: smacv2@ git+https://github.com/oxwhirl/smacv2.git
 Requires-Dist: unified-planning
 Requires-Dist: pettingzoo
+Requires-Dist: pandas
+Requires-Dist: matplotlib
+Requires-Dist: seaborn
 Provides-Extra: vmas
 Requires-Dist: vmas>=1.3.4; extra == "vmas"
 Provides-Extra: pettingzoo

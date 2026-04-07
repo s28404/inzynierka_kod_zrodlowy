@@ -13,6 +13,9 @@ moviepy
 smacv2@ git+https://github.com/oxwhirl/smacv2.git
 unified-planning
 pettingzoo
+pandas
+matplotlib
+seaborn
 
 [gnn]
 torch_geometric

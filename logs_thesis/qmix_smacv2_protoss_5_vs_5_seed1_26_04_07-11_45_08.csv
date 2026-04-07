@@ -1,0 +1,2 @@
+frame,step,timestamp,eval_return_mean,eval_return_std,eval_return_min,eval_return_max,algorithm,environment,task,seed,eval_win_rate
+250000,499,2026-04-07T12:56:05.962468,1.6926963329315186,1.1939589977264404,0.11926605552434921,4.814219951629639,qmix,smacv2,protoss_5_vs_5,1,0.0
