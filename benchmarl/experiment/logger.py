@@ -161,6 +161,13 @@ class Logger:
         total_frames: int,
         step: int,
     ) -> float:
+        # DEBUG: Write to file na samym poczatku
+        with open("/tmp/log_collection_called.txt", "a") as f:
+            f.write(
+                f"[log_collection] CALLED with total_frames={total_frames}, step={step}\n"
+            )
+            f.flush()
+
         to_log = {}
         groups_episode_rewards = []
         gobal_done = self._get_global_done(batch)  # Does not have agent dim
@@ -206,6 +213,44 @@ class Logger:
         )
 
         self.log(to_log, step=step)
+
+        # --- CSV LOGGING HOOK ---
+        # Write metrics to CSV for thesis analysis
+        try:
+            if (
+                hasattr(self, "_experiment_ref")
+                and self._experiment_ref
+                and hasattr(self._experiment_ref, "csv_path")
+                and self._experiment_ref.csv_path
+            ):
+                import csv
+                import datetime
+                from pathlib import Path
+
+                csv_path = (
+                    Path(self._experiment_ref.csv_path)
+                    if not isinstance(self._experiment_ref.csv_path, Path)
+                    else self._experiment_ref.csv_path
+                )
+
+                row = {
+                    "frame": total_frames,
+                    "step": step,
+                    "timestamp": datetime.datetime.now().isoformat(),
+                    "eval_return_mean": global_episode_rewards.mean().item(),
+                    "algorithm": getattr(
+                        self._experiment_ref, "algorithm_name", "unknown"
+                    ),
+                    "seed": getattr(self._experiment_ref, "seed", "unknown"),
+                }
+
+                with open(csv_path, "a", newline="") as f:
+                    writer = csv.DictWriter(f, fieldnames=row.keys())
+                    writer.writerow(row)
+        except Exception:
+            pass  # Silent fail
+        # --- END CSV LOGGING ---
+
         return global_episode_rewards.mean().item()
 
     def log_training(self, group: str, training_td: TensorDictBase, step: int):
@@ -354,6 +399,75 @@ class Logger:
                     logger.experiment.save(
                         json_file, base_path=os.path.dirname(json_file)
                     )
+
+        # --- ZAPIS DO CSV (MODYFIKACJA DLA PRACY INŻYNIERSKIEJ) ---
+        try:
+            import datetime
+            import csv
+            from pathlib import Path
+
+            returns = json_metrics.get("return", None)
+            if returns is not None:
+                returns = returns.numpy()
+                eval_return_mean = float(returns.mean())
+                eval_return_std = float(returns.std())
+                eval_return_min = float(returns.min())
+                eval_return_max = float(returns.max())
+            else:
+                eval_return_mean = eval_return_std = eval_return_min = (
+                    eval_return_max
+                ) = None
+
+            csv_dir = Path("logs_thesis")
+            csv_dir.mkdir(parents=True, exist_ok=True)
+            csv_path = csv_dir / f"{self.experiment_name}.csv"
+
+            row = {
+                "frame": total_frames,
+                "step": step,
+                "timestamp": datetime.datetime.now().isoformat(),
+                "eval_return_mean": eval_return_mean,
+                "eval_return_std": eval_return_std,
+                "eval_return_min": eval_return_min,
+                "eval_return_max": eval_return_max,
+                "algorithm": getattr(self, "algorithm_name", "unknown"),
+                "environment": getattr(self, "environment_name", "unknown"),
+                "task": getattr(self, "task_name", "unknown"),
+                "seed": getattr(self, "seed", "unknown"),
+            }
+
+            if "win_rate" in json_metrics:
+                row["eval_win_rate"] = float(json_metrics["win_rate"].float().mean())
+            if "eval_success_rate" in json_metrics:
+                row["eval_success_rate"] = float(
+                    json_metrics["eval_success_rate"].float().mean()
+                )
+            if "eval_bottleneck_reached_rate" in json_metrics:
+                row["eval_bottleneck_reached_rate"] = float(
+                    json_metrics["eval_bottleneck_reached_rate"].float().mean()
+                )
+            if "eval_rm_state_0_ratio" in json_metrics:
+                row["eval_rm_state_0_ratio"] = float(
+                    json_metrics["eval_rm_state_0_ratio"].float().mean()
+                )
+            if "eval_rm_state_1_ratio" in json_metrics:
+                row["eval_rm_state_1_ratio"] = float(
+                    json_metrics["eval_rm_state_1_ratio"].float().mean()
+                )
+            if "eval_rm_state_2_ratio" in json_metrics:
+                row["eval_rm_state_2_ratio"] = float(
+                    json_metrics["eval_rm_state_2_ratio"].float().mean()
+                )
+
+            file_exists = csv_path.exists()
+            with open(csv_path, "a", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=list(row.keys()))
+                if not file_exists or f.tell() == 0:
+                    writer.writeheader()
+                writer.writerow(row)
+        except Exception as e:
+            print(f"[CSV LOGGER ERROR] Failed to write CSV: {e}")
+        # -------------------------------------------------------------
 
         self.log(to_log, step=step)
         if video_frames is not None and max_length_rollout_0 > 1:

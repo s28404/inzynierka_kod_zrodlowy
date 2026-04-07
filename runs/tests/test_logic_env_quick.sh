@@ -23,7 +23,7 @@ for algo in "${ALGOS[@]}"; do
     echo "==========================================================="
     
     # Dopasowanie evaluation_interval do wielokrotności collected_frames_per_batch (domyślnie 6000 dla bazowych configów TorchRL)
-    python fine_tuned/logic_env/logic_env_run.py \
+    /home/kajetan/Documents/inzynierka_kod_zrodlowy/.venv/bin/python3 fine_tuned/logic_env/logic_env_run.py \
         task=logic_env/synchronized \
         algorithm=$algo \
         experiment.max_n_frames=12000 \

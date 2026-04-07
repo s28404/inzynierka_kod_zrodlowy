@@ -66,25 +66,31 @@ class RNDModule(nn.Module):
     def compute_intrinsic_reward(self, obs: torch.Tensor, group: str,
                                   train: bool = True) -> torch.Tensor:
         """
-        Compute r_int = ||predictor(obs) - target(obs)||^2.
-        Optionally trains the predictor.
+        Oblicz nagrodę wewnętrzną r_int = ||predictor(obs) - target(obs)||^2.
+        Opcjonalnie trenuj sieć predyktora.
 
         Args:
-            obs : (B, n_agents, obs_dim) or (B*n, obs_dim)
-            group: agent group name (for wandb logging)
-            train: whether to update predictor weights
+            obs : [batch_size, n_agents, obs_dim] lub [batch_size*n_agents, obs_dim]
+            group: nazwa grupy agentów (do logowania w wandb)
+            train: czy aktualizować wagi predyktora
 
         Returns:
-            r_int : same leading shape as obs, last dim squeezed to 1
+            r_int : [batch_size, n_agents, 1] lub [batch_size, 1]
         """
+        # Zapamiętaj oryginalny shape: [batch_size, n_agents, obs_dim]
         original_shape = obs.shape
+        # Spłaszcz do: [batch_size*n_agents, obs_dim]
         obs_flat = obs.reshape(-1, obs.shape[-1])
 
+        # Ekstrakcja cech z sieci target (bez aktualizacji)
+        # obs_flat: [batch_size*n_agents, obs_dim] -> target_feat: [batch_size*n_agents, embed_dim]
         with torch.no_grad():
             target_feat = self.target(obs_flat)
 
         if train:
             self.optimizer.zero_grad()
+            # Ekstrakcja cech z predyktora (sieci szkolonej)
+            # obs_flat: [batch_size*n_agents, obs_dim] -> pred_feat: [batch_size*n_agents, embed_dim]
             pred_feat = self.predictor(obs_flat)
             loss = nn.functional.mse_loss(pred_feat, target_feat)
             loss.backward()
@@ -93,22 +99,26 @@ class RNDModule(nn.Module):
             with torch.no_grad():
                 pred_feat = self.predictor(obs_flat)
 
-        # r_int per sample  (B*n,)
+        # Oblicz nagrodę RND (różnica kwadratów cech)
+        # pred_feat, target_feat: [batch_size*n_agents, embed_dim]
+        # r_int_flat: [batch_size*n_agents] (średnia po wymiarze embed_dim)
         with torch.no_grad():
             r_int_flat = ((pred_feat.detach() - target_feat) ** 2).mean(dim=-1)
 
-        # Normalize with running stats
-        r_np = r_int_flat.cpu().numpy()
+        # Normalizacja z bieżącymi statystykami
+        r_np = r_int_flat.cpu().numpy()  # [batch_size*n_agents]
         self.rms.update(r_np)
-        r_norm = self.rms.normalize(r_np)
+        r_norm = self.rms.normalize(r_np)  # [batch_size*n_agents]
+        # Konwertuj z powrotem do tensora: [batch_size*n_agents]
         r_norm_t = torch.from_numpy(r_norm.astype(np.float32)).to(obs.device)
 
-        # Wandb logging
+        # Logowanie do wandb
         if _wandb is not None and _wandb.run is not None:
             _wandb.log({
                 f"rnd/{group}/intrinsic_reward": float(r_np.mean()),
             }, commit=False)
 
-        # Reshape back to (B, n_agents, 1) or (B, 1)
+        # Przekształć z powrotem do oryginalnego shape'u
+        # r_norm_t: [batch_size*n_agents] -> result: [batch_size, n_agents, 1]
         result = r_norm_t.reshape(*original_shape[:-1], 1)
         return result

@@ -132,23 +132,24 @@ class NGUModule(nn.Module):
     def compute_intrinsic_reward(self, obs: torch.Tensor, next_obs: torch.Tensor,
                                   action: torch.Tensor, group: str) -> torch.Tensor:
         """
-        Compute NGU intrinsic reward.
+        Oblicz nagrodę wewnętrzną NGU (Never Give Up).
 
         Args:
-            obs      : (B, n_agents, obs_dim)
-            next_obs : (B, n_agents, obs_dim)
-            action   : (B, n_agents, ...) - discrete or continuous
-            group    : agent group name
+            obs      : [batch_size, n_agents, obs_dim]
+            next_obs : [batch_size, n_agents, obs_dim]
+            action   : [batch_size, n_agents] (akcje dyskretne) lub [batch_size, n_agents, action_dim] (ciągłe)
+            group    : nazwa grupy agentów
 
         Returns:
-            r_int : (B, n_agents, 1)
+            r_int : [batch_size, n_agents, 1] (nagroda wewnętrzna)
         """
-        original_shape = obs.shape
+        original_shape = obs.shape  # zapamiętaj oryginalny kształt
+        # obs, next_obs: [batch_size, n_agents, obs_dim] -> [batch_size*n_agents, obs_dim]
         obs_flat      = obs.reshape(-1, obs.shape[-1])
         next_obs_flat = next_obs.reshape(-1, next_obs.shape[-1])
-        n = obs_flat.shape[0]
+        n = obs_flat.shape[0]  # batch_size * n_agents
 
-        # Action flat
+        # Action flat: [batch_size, n_agents] -> [batch_size*n_agents, action_dim]
         if action.dtype in [torch.long, torch.int]:
             a_flat = nn.functional.one_hot(
                 action.reshape(-1), num_classes=self.action_dim
@@ -159,24 +160,29 @@ class NGUModule(nn.Module):
         # --- Train IDM + RND predictor ---
         self.optimizer.zero_grad()
 
+        # Ekstrakcja embeddingów
+        # obs_flat, next_obs_flat: [batch_size*n_agents, obs_dim] -> e_s, e_s_next: [batch_size*n_agents, embed_dim]
         e_s      = self.phi(obs_flat)
         e_s_next = self.phi(next_obs_flat)
 
-        # IDM loss
+        # IDM loss: przewiduj akcję na podstawie embeddingów stanów
+        # torch.cat: [batch_size*n_agents, embed_dim*2] -> pred_action: [batch_size*n_agents, action_dim]
         pred_action = self.idm(torch.cat([e_s, e_s_next], dim=-1))
         idm_loss = nn.functional.mse_loss(pred_action, a_flat)
 
-        # RND loss
+        # RND loss: trenuj predictor aby lepiej przewidywał cechy stanu
         with torch.no_grad():
-            rnd_target_feat = self.rnd_target(obs_flat)
-        rnd_pred_feat = self.rnd_predictor(obs_flat)
+            rnd_target_feat = self.rnd_target(obs_flat)  # [batch_size*n_agents, embed_dim]
+        rnd_pred_feat = self.rnd_predictor(obs_flat)  # [batch_size*n_agents, embed_dim]
         rnd_loss = nn.functional.mse_loss(rnd_pred_feat, rnd_target_feat)
 
         (idm_loss + rnd_loss).backward()
         self.optimizer.step()
 
         with torch.no_grad():
+            # e_s: [batch_size*n_agents, embed_dim] -> e_s_np: [batch_size*n_agents, embed_dim]
             e_s_np = e_s.detach().cpu().numpy().astype(np.float32)
+            # RND niepewność: [batch_size*n_agents, embed_dim] -> rnd_r_np: [batch_size*n_agents]
             rnd_r_np = ((rnd_pred_feat.detach() - rnd_target_feat) ** 2).mean(dim=-1).cpu().numpy()
 
         # --- Update episodic buffer & FAISS ---
@@ -191,20 +197,26 @@ class NGUModule(nn.Module):
             self.faiss_index.add(self.epi_buffer[:filled])
 
         # --- Episodic reward (k-NN distances in embedding space) ---
+        # Oblicz odległości k najbliższych sąsiadów w przestrzeni embeddingów
+        # r_ep: [batch_size*n_agents] (nagroda episodyczna dla każdego Sample'a)
         if self.faiss_index.ntotal >= self.k:
-            q = e_s_np
-            distances, _ = self.faiss_index.search(q, self.k)
-            # r_ep = 1 / (sqrt(mean_dist) + epsilon)   [NGU eq. 1]
-            r_ep = 1.0 / (np.sqrt(np.mean(distances, axis=1)) + self.eps)
+            q = e_s_np  # [batch_size*n_agents, embed_dim]
+            distances, _ = self.faiss_index.search(q, self.k)  # [batch_size*n_agents, k]
+            # r_ep = 1 / (sqrt(mean_dist) + epsilon) - NGU eq. 1
+            r_ep = 1.0 / (np.sqrt(np.mean(distances, axis=1)) + self.eps)  # [batch_size*n_agents]
         else:
             r_ep = np.ones(n, dtype=np.float32)
 
         # --- Lifelong curiosity (RND-based alpha) ---
+        # Znormalizuj RND nagrodę i użyj jako mnożnika (alpha) dla nagrody episodycznej
+        # rnd_r_np: [batch_size*n_agents] -> rnd_norm: [batch_size*n_agents] -> alpha: [batch_size*n_agents]
         self.rnd_rms.update(rnd_r_np)
         rnd_norm = self.rnd_rms.normalize(rnd_r_np)
         alpha = np.clip(1.0 + rnd_norm / self.L, 1.0, self.L)
 
         # --- Combined intrinsic reward ---
+        # r_int = r_episodic * alpha (kombinacja episodycznego i długoterminowego odkrywania)
+        # r_int: [batch_size*n_agents]
         r_int = r_ep * alpha
 
         # Normalize episodic before combining (optional stability)
@@ -218,5 +230,7 @@ class NGUModule(nn.Module):
                 f"ngu/{group}/r_int":      float(r_int.mean()),
             }, commit=False)
 
+        # Przekształć z powrotem do oryginalnego shape'u
+        # r_int_norm: [batch_size*n_agents] -> r_t: [batch_size*n_agents, 1] -> result: [batch_size, n_agents, 1]
         r_t = torch.from_numpy(r_int_norm.astype(np.float32)).to(obs.device)
         return r_t.reshape(*original_shape[:-1], 1)

@@ -150,8 +150,17 @@ class DecentralizedEpisodicReward(nn.Module):
         return quality, novelty
 
     def get_shaping_reward(self, batch, group, gamma=0.99):
-        obs = batch.get((group, "observation"))
-        next_obs = batch.get(("next", group, "observation"))
+        """
+        Oblicz nagrodę kształtującą na podstawie potencjału DEMIR.
+        
+        Transformacje shape'ów:
+        - obs: [batch_size, n_agents, obs_dim]
+        - action: [batch_size, n_agents] (dla akcji dyskretnych)
+        - reward_ext: [batch_size] (średnia nagroda dla wszystkich agentów)
+        - Wyjście r_int: [batch_size] (nagroda wewnętrzna dla każdego Sample'a)
+        """
+        obs = batch.get((group, "observation"))  # [batch_size, n_agents, obs_dim]
+        next_obs = batch.get(("next", group, "observation"))  # [batch_size, n_agents, obs_dim]
         from benchmarl.utils import get_td_value
 
         action = (
@@ -180,20 +189,26 @@ class DecentralizedEpisodicReward(nn.Module):
             return torch.zeros_like(reward_ext)
 
         # 2. Przygotowanie danych (spłaszczanie i akcje)
+        # obs: [batch_size, n_agents, obs_dim] -> obs_flat: [batch_size*n_agents, obs_dim]
         obs_flat = obs.reshape(-1, obs.shape[-1])
         next_obs_flat = next_obs.reshape(-1, next_obs.shape[-1])
 
-        n_target = obs_flat.shape[0]
+        n_target = obs_flat.shape[0]  # batch_size * n_agents
 
+        # reward_ext: [batch_size] -> reward_flat: [batch_size*n_agents, 1]
         reward_flat = reward_ext.reshape(-1, 1)
         if reward_flat.shape[0] != n_target:
-            # Rozmnażamy nagrodę globalną na wszystkich agentów
+            # Gdy nagroda jest globalna (wymiar mniejszy), rozmnażamy ją na wszystkich agentów
+            # reward_flat: [batch_size, 1] -> [batch_size*n_agents, 1]
             repeats = n_target // reward_flat.shape[0]
             reward_flat = reward_flat.repeat_interleave(repeats, dim=0)
 
 
+        # action: [batch_size, n_agents] -> action_flat: [batch_size*n_agents, action_dim]
         if action.dtype in [torch.long, torch.int]:
             a_dim = self.encoders.phi_a[0].in_features
+            # One-hot kodowanie akcji dyskretnych
+            # action: [batch_size, n_agents] -> [batch_size, n_agents, action_dim] -> [batch_size*n_agents, action_dim]
             action_flat = (
                 torch.nn.functional.one_hot(action, num_classes=a_dim)
                 .float()
@@ -204,39 +219,46 @@ class DecentralizedEpisodicReward(nn.Module):
 
         if action_flat.shape[0] != n_target:
             # Rozmnażamy akcje, jeśli ich brakuje (rzadkie w BenchMARL, ale bezpieczne)
+            # action_flat: [batch_size, action_dim] -> [batch_size*n_agents, action_dim]
             repeats = n_target // action_flat.shape[0]
             action_flat = action_flat.repeat_interleave(repeats, dim=0)
 
         # 3. Obliczanie embeddingów dla OBU stanów
-        # Dla stanu obecnego (t)
+        # obs_flat: [batch_size*n_agents, obs_dim], action_flat: [batch_size*n_agents, action_dim], reward_flat: [batch_size*n_agents, 1]
+        # e_s_t, e_F_t: [batch_size*n_agents, embedding_dim] (embedding stanu i pełnego doświadczenia w chwili t)
         e_s_t, e_F_t = self.encoders.encode_full_experience(
             obs_flat, action_flat, reward_flat
         )
-        # Dla stanu następnego (t+1) - uwaga: tutaj akcja/reward są estymowane lub uproszczone
+        # e_s_tp1, e_F_tp1: [batch_size*n_agents, embedding_dim] (embedding stanu i pełnego doświadczenia w chwili t+1)
         e_s_tp1, e_F_tp1 = self.encoders.encode_full_experience(
             next_obs_flat, action_flat, reward_flat
         )
 
         # 4. Obliczanie surowych składowych potencjału
+        # e_s_t, e_F_t -> q_t, n_t: [batch_size*n_agents] (skalar dla każdego Sample'a)
         q_t, n_t = self._compute_potential(e_s_t, e_F_t)
         q_tp1, n_tp1 = self._compute_potential(e_s_tp1, e_F_tp1)
 
         # 5. Normalizacja Welforda (tylko na podstawie stanów t+1, by nie dublować statystyk)
+        # q_tp1, n_tp1: [batch_size*n_agents]
         self.quality_rms.update(q_tp1)
         self.novelty_rms.update(n_tp1)
 
         def _norm_full(q, n):
+            # q, n: [batch_size*n_agents] -> znormalizowane: [batch_size*n_agents]
             qn = self.quality_rms.normalize(q)
             nn = self.novelty_rms.normalize(n)
-            # Intra-batch std correction
-            qn = np.clip(qn, -1.0, 1.0)  # Zapobiega ekstremalnym wartościom
-            nn = np.clip(nn, -1.0, 1.0)  # Zapobiega ekstremalnym wartościom
+            # Intra-batch std correction - obcięcie do zakresu [-1, 1]
+            qn = np.clip(qn, -1.0, 1.0)
+            nn = np.clip(nn, -1.0, 1.0)
             return qn, nn
 
+        # q_t_n, n_t_n, q_tp1_n, n_tp1_n: każdy [batch_size*n_agents]
         q_t_n, n_t_n = _norm_full(q_t, n_t)
         q_tp1_n, n_tp1_n = _norm_full(q_tp1, n_tp1)
 
-        # 6. Finalny Potencjał Phi (Ng 1999)
+        # 6. Finalny Potencjał Phi (Ng 1999) jako kombinacja jakości i nowości
+        # phi_t, phi_tp1: [batch_size*n_agents] (liniowa kombinacja znormalizowanych potencjałów)
         beta1 = getattr(self.config, "beta1", 1.0)
         beta2 = getattr(self.config, "beta2", 0.5)
 
@@ -244,14 +266,17 @@ class DecentralizedEpisodicReward(nn.Module):
         phi_tp1 = beta1 * q_tp1_n + beta2 * n_tp1_n
 
         # Konwersja na tensory
+        # phi_t, phi_tp1: [batch_size*n_agents] (numpy) -> [batch_size*n_agents] (torch)
         phi_t = torch.from_numpy(phi_t.astype(np.float32)).to(obs.device)
         phi_tp1 = torch.from_numpy(phi_tp1.astype(np.float32)).to(obs.device)
 
         # 7. SHAPING REWARD: r_int = gamma * Phi(s_t+1) - Phi(s_t)
+        # phi_t, phi_tp1: [batch_size*n_agents] -> r_int: [batch_size*n_agents]
         r_int = (gamma * phi_tp1) - phi_t
 
         if r_int.numel() > reward_ext.numel():
-            # r_int ma kształt [N_total] -> zmieniamy na [B*T, N_agents] i uśredniamy po agentach
+            # r_int: [batch_size*n_agents] -> podziel na agentów i uśrednij
+            # r_int: [batch_size*n_agents, 1] -> [batch_size, n_agents] -> [batch_size] (średnia po agentach)
             n_agents = r_int.numel() // reward_ext.numel()
             r_int = r_int.view(-1, n_agents).mean(dim=-1)
 

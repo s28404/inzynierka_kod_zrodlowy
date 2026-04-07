@@ -23,7 +23,7 @@ for scale in "${SCALES[@]}"; do
     echo "Running with scale: $scale"
     echo "==========================================================="
 
-    python fine_tuned/logic_env/logic_env_run.py \
+    /home/kajetan/Documents/inzynierka_kod_zrodlowy/.venv/bin/python3 -u fine_tuned/logic_env/logic_env_run.py \
         algorithm="demir" \
         task=logic_env/synchronized \
         experiment.off_policy_n_envs_per_worker=4 \

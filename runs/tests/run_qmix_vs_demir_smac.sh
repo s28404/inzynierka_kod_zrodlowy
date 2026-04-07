@@ -13,25 +13,31 @@ ALGOS=("qmix" "demir")
 
 for algo in "${ALGOS[@]}"; do
 	echo "==========================================================="
-	echo "Uruchamiam algorytm: $algo na smacv2/terran_10_vs_11"
+	echo "Uruchamiam algorytm: $algo na smacv2/protoss_5_vs_5"
 	echo "==========================================================="
 
 
 	# Parametry treningu dobrane dla Terran 10 vs 11 (mapa mniejsza - zwiększone parametry)
-	python3 -u fine_tuned/smacv2/smacv2_run.py \
-		task=smacv2/terran_10_vs_11 \
-		algorithm=$algo \
-		experiment.off_policy_n_envs_per_worker=1 \
-		experiment.off_policy_collected_frames_per_batch=100 \
-		experiment.parallel_collection=false \
-		experiment.render=false \
-		experiment.buffer_device=cpu \
-		experiment.off_policy_memory_size=25000 \
-		experiment.max_n_frames=500000 \
-		seed=1
+        /home/kajetan/Documents/inzynierka_kod_zrodlowy/.venv/bin/python3 -u fine_tuned/smacv2/smacv2_run.py \
+                task=smacv2/protoss_5_vs_5 \
+                algorithm=$algo \
+                experiment.off_policy_n_envs_per_worker=1 \
+                experiment.off_policy_collected_frames_per_batch=1000 \
+				experiment.off_policy_train_batch_size=128 \
+                experiment.parallel_collection=false \
+                experiment.render=false \
+                experiment.buffer_device=cpu \
+			    experiment.evaluation_interval=100000 \
+                experiment.off_policy_memory_size=500000 \
+                experiment.max_n_frames=2000000 \
+                experiment.evaluation_interval=100000 \
+                experiment.evaluation_episodes=20 \
+                seed=1
 
 	# Krótkie opóźnienie między uruchomieniami
 	sleep 1
 done
 
-echo "Wszystkie uruchomienia zakończone."
+echo "==========================================================="
+echo "Wszystkie eksperymenty zakończone. Sprawdź folder './logs_thesis/' dla wyników."
+echo "==========================================================="

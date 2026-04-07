@@ -16,6 +16,8 @@ from benchmarl.experiment import Experiment
 from benchmarl.hydra_config import load_experiment_from_hydra
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, OmegaConf
+import csv
+from pathlib import Path
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
@@ -29,6 +31,9 @@ def hydra_experiment(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
 
     experiment: Experiment = load_experiment_from_hydra(cfg, task_name=task_name)
+
+    # Przeniesiono zapis CSV bezpośrednio do benchmarl/experiment/logger.py
+
     experiment.run()
 
 

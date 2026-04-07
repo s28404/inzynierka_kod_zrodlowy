@@ -40,13 +40,19 @@ class ThesisJSONLoggerCallback(Callback):
 
         self.data_registry = {"metadata": {}, "metrics": []}
 
-        # Bufor na metryki treningowe między ewaluacjami (do wyliczenia średniej z przedziału)
-        self.train_buffer = []
+    def on_train_step(self, batch, group: str):
+        """Standardowy callback z BenchMARL - nie używany w tej implementacji."""
+        pass
+
+    def on_setup(self):
+        """Wywoławane na starcie - gwarancja że callback jest załadowany."""
+        print("[THESIS_LOGGER] ✅ Callback załadowany!")
 
     def on_train_start(self, experiment) -> None:
         """
         Uruchamiane raz na starcie eksperymentu. Zbieramy tu metadane.
         """
+        print("[THESIS_LOGGER] on_train_start wywoławana!")
         date_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
         # Ekstrakcja kluczowych danych z konfiguracji eksperymentu BenchMARL
@@ -99,39 +105,30 @@ class ThesisJSONLoggerCallback(Callback):
         filename = f"{experiment.name}.json"
         self.file_path = self.log_dir / filename
 
+        print(f"[THESIS_LOGGER] Inicjalizacja: zapisywanie do {self.file_path}")
         self.save_to_disk()
 
-    def on_train_step_end(
-        self, step: int, log_dict: Dict[str, Any], experiment
-    ) -> None:
-        """
-        Zapisuje bieżącą paczkę strat (losses) i metryk eksploracyjnych do bufora.
-        """
-        # Konwersja tensorów na wartości skalarne
-        clean_dict = {
-            k: v.item() if isinstance(v, torch.Tensor) else v
-            for k, v in log_dict.items()
-        }
-        self.train_buffer.append(clean_dict)
-
-    def on_evaluation_end(
-        self, step: int, eval_stats: Dict[str, Any], experiment
-    ) -> None:
+    def on_evaluation_end(self, rollouts) -> None:
         """
         Uruchamiane raz po zakończeniu danej pętli ewaluacyjnej.
-        Łączy straty treningowe z wynikami ewaluacji.
+        Zbiera dane treningowe i ewaluacyjne do JSON.
+
+        Args:
+            rollouts: List[TensorDictBase] zawierające dane z ewaluacji
         """
-        # 1. Agregacja danych treningowych od ostatniej ewaluacji
-        train_aggr = {}
-        if self.train_buffer:
-            keys = set(k for d in self.train_buffer for k in d.keys())
-            for k in keys:
-                values = [
-                    d[k] for d in self.train_buffer if k in d and d[k] is not None
-                ]
-                if values:
-                    train_aggr[k] = sum(values) / len(values)
-            self.train_buffer = []  # Czyszczenie bufora na kolejną epokę
+        print(
+            f"[THESIS_LOGGER] on_evaluation_end wywoławana! Liczba rollout'ów: {len(rollouts)}"
+        )
+
+        experiment = self.experiment
+        step = experiment.n_iters_performed
+
+        # Oblicz eval_stats z rollout'ów
+        eval_stats = self._compute_eval_stats(rollouts)
+
+        # Zbierz ostatnie zalogowane metryki treningowe z experiment.logger
+        # (jeśli dostępne w jego systemie logowania)
+        train_metrics = self._extract_recent_train_metrics()
 
         # Oczyszczenie statystyk ewaluacyjnych
         eval_clean = {
@@ -143,27 +140,27 @@ class ThesisJSONLoggerCallback(Callback):
         current_metrics = {
             "frame": experiment.total_frames,
             "step": step,
-            # Trening (Złapane metryki z log_dict TorchRL / BenchMARL)
-            "train_return_mean": train_aggr.get("collection/episode_reward", None),
-            "train_intrinsic_reward_mean": train_aggr.get(
-                "collection/intrinsic_reward", None
+            # Trening (Ostatnie zalogowane metryki)
+            "train_return_mean": train_metrics.get("train_return_mean", None),
+            "train_intrinsic_reward_mean": train_metrics.get(
+                "train_intrinsic_reward_mean", None
             ),
-            "q_loss": train_aggr.get("loss/q_loss", None),
-            "intrinsic_module_loss": train_aggr.get("loss/intrinsic_loss", None),
+            "q_loss": train_metrics.get("q_loss", None),
+            "intrinsic_module_loss": train_metrics.get("intrinsic_module_loss", None),
             # Ewaluacja (Bazowe)
             "eval_return_mean": eval_clean.get("eval/episode_reward", None),
             "eval_return_std": eval_clean.get("eval/episode_reward_std", None),
             # DEMIR - specyficzne metryki
-            "loss_idm": train_aggr.get("loss/loss_idm", None),
-            "loss_barlow_twins": train_aggr.get("loss/loss_barlow_twins", None),
-            "intrinsic_reward_Q_mean": train_aggr.get(
-                "collection/intrinsic_reward_Q", None
+            "loss_idm": train_metrics.get("loss_idm", None),
+            "loss_barlow_twins": train_metrics.get("loss_barlow_twins", None),
+            "intrinsic_reward_Q_mean": train_metrics.get(
+                "intrinsic_reward_Q_mean", None
             ),
-            "intrinsic_reward_N_mean": train_aggr.get(
-                "collection/intrinsic_reward_N", None
+            "intrinsic_reward_N_mean": train_metrics.get(
+                "intrinsic_reward_N_mean", None
             ),
-            "current_beta1": train_aggr.get("collection/current_beta1", None),
-            "current_beta2": train_aggr.get("collection/current_beta2", None),
+            "current_beta1": train_metrics.get("current_beta1", None),
+            "current_beta2": train_metrics.get("current_beta2", None),
         }
 
         # 3. Specyficzne dla środowisk
@@ -200,6 +197,107 @@ class ThesisJSONLoggerCallback(Callback):
 
         self.data_registry["metrics"].append(current_metrics)
         self.save_to_disk()
+
+    def _extract_recent_train_metrics(self) -> Dict[str, Any]:
+        """
+        Wyciąga ostatnie zalogowane metryki treningowe.
+        Szuka ich w dostępnych źródłach z experiment.logger.
+        """
+        metrics = {}
+
+        try:
+            # Jeśli logger ma jakiś sposób dostępu do ostatnich logów
+            # to tutaj byśmy je wyciągnęli. Na razie zwrócimy puste dict.
+            # W przyszłości można to rozszerzyć.
+            pass
+        except Exception:
+            pass
+
+        return metrics
+
+    def _compute_eval_stats(self, rollouts) -> Dict[str, Any]:
+        """
+        Oblicza metryki ewaluacji z rollout'ów.
+
+        Args:
+            rollouts: List[TensorDictBase] zawierające dane z ewaluacji
+
+        Returns:
+            Dict zawierający eval_stats, głównie episode_reward
+        """
+        import torch
+        import numpy as np
+
+        eval_stats = {}
+
+        try:
+            # Obliczenie average episode reward
+            rewards = []
+            for td in rollouts:
+                # Spróbuj wyciągnąć reward dla wszystkich agentów
+                if ("next", "agents", "reward") in td.keys(True, True):
+                    reward = td.get(("next", "agents", "reward"))
+                elif ("next", "reward") in td.keys(True, True):
+                    reward = td.get(("next", "reward"))
+                else:
+                    # Szukaj najczęściej w BenchMARL (group-based)
+                    # Przeszukaj klucze aby znaleźć reward
+                    found = False
+                    for key in td.keys(True, True):
+                        if isinstance(key, tuple) and "reward" in key[-1]:
+                            reward = td.get(key)
+                            rewards.append(
+                                reward.sum(0).mean().item()
+                                if reward.numel() > 0
+                                else 0.0
+                            )
+                            found = True
+                            break
+                    if found:
+                        continue
+
+                if reward is not None:
+                    rewards.append(
+                        reward.sum(0).mean().item() if reward.numel() > 0 else 0.0
+                    )
+
+            if rewards:
+                eval_stats["eval/episode_reward"] = float(np.mean(rewards))
+                eval_stats["eval/episode_reward_std"] = float(np.std(rewards))
+        except Exception as e:
+            print(f"[THESIS_LOGGER] Błąd obliczania reward: {e}")
+
+        # Próba wyciągnięcia battle_won dla SMACv2
+        try:
+            battle_won = []
+            for td in rollouts:
+                if ("next", "info", "battle_won") in td.keys(True, True):
+                    bw = td.get(("next", "info", "battle_won"))
+                    if bw.numel() > 0:
+                        battle_won.append(bw.mean().item())
+            if battle_won:
+                eval_stats["eval/win_rate"] = float(np.mean(battle_won))
+        except Exception:
+            pass
+
+        # Próba wyciągnięcia success_rate dla logic_env
+        try:
+            if (
+                "logic_env"
+                in self.data_registry["metadata"].get("environment", "").lower()
+            ):
+                success = []
+                for td in rollouts:
+                    if ("next", "info", "success_rate") in td.keys(True, True):
+                        sr = td.get(("next", "info", "success_rate"))
+                        if sr.numel() > 0:
+                            success.append(sr.mean().item())
+                if success:
+                    eval_stats["eval/success_rate"] = float(np.mean(success))
+        except Exception:
+            pass
+
+        return eval_stats
 
     def save_to_disk(self):
         """Bezpieczny zrzut do pliku (z plikiem tymczasowym zabezpieczającym przed przerwaniem SIGINT)."""

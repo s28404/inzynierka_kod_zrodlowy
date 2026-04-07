@@ -27,6 +27,10 @@ def hydra_experiment(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
 
     experiment: Experiment = load_experiment_from_hydra(cfg, task_name=task_name)
+
+    # Przeniesiono zapis CSV i statystyk bezpośrednio do wbudowanego benchmarl/experiment/logger.py 
+    # Usunięto przestarzały ThesisJSONLoggerCallback by ujednolicić logowanie
+
     experiment.run()
 
 
