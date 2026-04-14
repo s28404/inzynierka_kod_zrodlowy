@@ -1,0 +1,16 @@
+name: gru
+
+# GRU (Gated Recurrent Unit) - warstwa rekurencyjna
+hidden_size: 128
+n_layers: 1
+bias: True
+dropout: 0
+compile: False
+
+# MLP head na wyjściu GRU
+mlp_num_cells: [256, 256]
+mlp_layer_class: torch.nn.Linear
+mlp_activation_class: torch.nn.Tanh
+mlp_activation_kwargs: null
+mlp_norm_class: null
+mlp_norm_kwargs: null
