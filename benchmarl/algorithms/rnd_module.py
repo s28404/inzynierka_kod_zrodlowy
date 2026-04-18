@@ -8,6 +8,7 @@ Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
 
 Opis: Plik zawiera pełną implementację mechanizmu RND.
 """
+
 import numpy as np
 import torch
 from torch import nn
@@ -63,8 +64,9 @@ class RNDModule(nn.Module):
             return default
         return getattr(self.config, name, default)
 
-    def compute_intrinsic_reward(self, obs: torch.Tensor, group: str,
-                                  train: bool = True) -> torch.Tensor:
+    def compute_intrinsic_reward(
+        self, obs: torch.Tensor, group: str, train: bool = True
+    ) -> torch.Tensor:
         """
         Oblicz nagrodę wewnętrzną r_int = ||predictor(obs) - target(obs)||^2.
         Opcjonalnie trenuj sieć predyktora.
@@ -80,7 +82,7 @@ class RNDModule(nn.Module):
         # Zapamiętaj oryginalny shape: [batch_size, n_agents, obs_dim]
         original_shape = obs.shape
         # Spłaszcz do: [batch_size*n_agents, obs_dim]
-        obs_flat = obs.reshape(-1, obs.shape[-1])
+        obs_flat = obs.reshape(-1, obs.shape[-1]).float()
 
         # Ekstrakcja cech z sieci target (bez aktualizacji)
         # obs_flat: [batch_size*n_agents, obs_dim] -> target_feat: [batch_size*n_agents, embed_dim]
@@ -105,18 +107,23 @@ class RNDModule(nn.Module):
         with torch.no_grad():
             r_int_flat = ((pred_feat.detach() - target_feat) ** 2).mean(dim=-1)
 
-        # Normalizacja z bieżącymi statystykami
+        # Normalize using running std only to keep intrinsic reward non-negative.
         r_np = r_int_flat.cpu().numpy()  # [batch_size*n_agents]
         self.rms.update(r_np)
-        r_norm = self.rms.normalize(r_np)  # [batch_size*n_agents]
+        r_std = np.sqrt(self.rms.var) + 1e-8
+        r_norm = np.clip(r_np / r_std, 0.0, self._param("rnd_reward_clip", 10.0))
         # Konwertuj z powrotem do tensora: [batch_size*n_agents]
         r_norm_t = torch.from_numpy(r_norm.astype(np.float32)).to(obs.device)
 
         # Logowanie do wandb
         if _wandb is not None and _wandb.run is not None:
-            _wandb.log({
-                f"rnd/{group}/intrinsic_reward": float(r_np.mean()),
-            }, commit=False)
+            _wandb.log(
+                {
+                    f"rnd/{group}/intrinsic_reward_raw": float(r_np.mean()),
+                    f"rnd/{group}/intrinsic_reward_norm": float(r_norm.mean()),
+                },
+                commit=False,
+            )
 
         # Przekształć z powrotem do oryginalnego shape'u
         # r_norm_t: [batch_size*n_agents] -> result: [batch_size, n_agents, 1]

@@ -4,11 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 # ==============================================================================
-# SEKCJA MODYFIKACJI AKADEMICKIEJ - PRACA INŻYNIERSKA (PJATK 2026)
-# ==============================================================================
 # Autor: Kajetan Frąckowiak, s28404
 # Data: 2026
-# Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
 # Modyfikacje w tym pliku :
 #   [1] # Implmenetcja klasy RunningMeanStd, która implementuje Welford's online algorithm do normalizacji jakości i nowości w czasie treningu.
 # ==============================================================================

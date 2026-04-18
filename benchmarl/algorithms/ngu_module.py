@@ -1,4 +1,3 @@
-
 """
 Moduł implementujący mechanizm NGU (Never Give Up) do MARL bazująć na:
 https://arxiv.org/abs/2002.06038 oraz https://arxiv.org/abs/2512.01321.
@@ -9,11 +8,16 @@ Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
 
 Opis: Plik zawiera pełną implementację mechanizmu NGU.
 """
+
 import numpy as np
 import torch
-import faiss
 from torch import nn
 from benchmarl.algorithms.common import RunningMeanStd
+
+try:
+    import faiss
+except ImportError:
+    faiss = None
 
 try:
     import wandb as _wandb
@@ -81,9 +85,9 @@ class NGUModule(nn.Module):
         )
 
         self.optimizer = torch.optim.Adam(
-            list(self.phi.parameters()) +
-            list(self.idm.parameters()) +
-            list(self.rnd_predictor.parameters()),
+            list(self.phi.parameters())
+            + list(self.idm.parameters())
+            + list(self.rnd_predictor.parameters()),
             lr=lr,
         )
 
@@ -91,12 +95,12 @@ class NGUModule(nn.Module):
         self.epi_buffer = np.zeros((self.n_episodic, d), dtype=np.float32)
         self.epi_ptr = 0
         self.epi_count = 0
-        self.faiss_index = faiss.IndexFlatL2(d)
+        self.faiss_index = faiss.IndexFlatL2(d) if faiss is not None else None
         self._update_counter = 0
 
         # --- Normalization ---
         self.rnd_rms = RunningMeanStd()
-        self.ep_rms  = RunningMeanStd()
+        self.ep_rms = RunningMeanStd()
 
     def reset_episodic_memory(self):
         """
@@ -107,7 +111,7 @@ class NGUModule(nn.Module):
         self.epi_buffer = np.zeros((self.n_episodic, d), dtype=np.float32)
         self.epi_ptr = 0
         self.epi_count = 0
-        self.faiss_index = faiss.IndexFlatL2(d)
+        self.faiss_index = faiss.IndexFlatL2(d) if faiss is not None else None
         self._update_counter = 0
 
     def _p(self, name, default):
@@ -126,11 +130,46 @@ class NGUModule(nn.Module):
         else:
             split = capacity - ptr
             buf[ptr:] = data[:split]
-            buf[:n - split] = data[split:]
+            buf[: n - split] = data[split:]
         return end % capacity, min(count + n, capacity)
 
-    def compute_intrinsic_reward(self, obs: torch.Tensor, next_obs: torch.Tensor,
-                                  action: torch.Tensor, group: str) -> torch.Tensor:
+    def _rebuild_faiss_index(self):
+        if faiss is None:
+            return
+        dim = self.epi_buffer.shape[1]
+        self.faiss_index = faiss.IndexFlatL2(dim)
+        filled = min(self.epi_count, self.n_episodic)
+        if filled > 0:
+            self.faiss_index.add(self.epi_buffer[:filled])
+
+    def _episodic_reward_from_knn(self, query_embeddings: np.ndarray) -> np.ndarray:
+        filled = min(self.epi_count, self.n_episodic)
+        if filled < self.k:
+            return np.ones(query_embeddings.shape[0], dtype=np.float32)
+
+        if (
+            faiss is not None
+            and self.faiss_index is not None
+            and self.faiss_index.ntotal >= self.k
+        ):
+            distances, _ = self.faiss_index.search(query_embeddings, self.k)
+        else:
+            ref = self.epi_buffer[:filled]
+            sq_dist = np.sum(
+                (query_embeddings[:, None, :] - ref[None, :, :]) ** 2,
+                axis=-1,
+            )
+            distances = np.partition(sq_dist, kth=self.k - 1, axis=1)[:, : self.k]
+
+        return 1.0 / (np.sqrt(np.mean(distances, axis=1) + 1e-8) + self.eps)
+
+    def compute_intrinsic_reward(
+        self,
+        obs: torch.Tensor,
+        next_obs: torch.Tensor,
+        action: torch.Tensor,
+        group: str,
+    ) -> torch.Tensor:
         """
         Oblicz nagrodę wewnętrzną NGU (Never Give Up).
 
@@ -145,90 +184,97 @@ class NGUModule(nn.Module):
         """
         original_shape = obs.shape  # zapamiętaj oryginalny kształt
         # obs, next_obs: [batch_size, n_agents, obs_dim] -> [batch_size*n_agents, obs_dim]
-        obs_flat      = obs.reshape(-1, obs.shape[-1])
-        next_obs_flat = next_obs.reshape(-1, next_obs.shape[-1])
+        obs_flat = obs.reshape(-1, obs.shape[-1]).float()
+        next_obs_flat = next_obs.reshape(-1, next_obs.shape[-1]).float()
         n = obs_flat.shape[0]  # batch_size * n_agents
 
-        # Action flat: [batch_size, n_agents] -> [batch_size*n_agents, action_dim]
-        if action.dtype in [torch.long, torch.int]:
-            a_flat = nn.functional.one_hot(
-                action.reshape(-1), num_classes=self.action_dim
-            ).float()
+        # Action flat: [batch_size, n_agents] -> [batch_size*n_agents]
+        if not action.is_floating_point():
+            action_idx = action.reshape(-1).long()
         else:
-            a_flat = action.reshape(-1, action.shape[-1])
+            action_idx = action.reshape(-1, action.shape[-1]).argmax(dim=-1)
 
         # --- Train IDM + RND predictor ---
         self.optimizer.zero_grad()
 
         # Ekstrakcja embeddingów
         # obs_flat, next_obs_flat: [batch_size*n_agents, obs_dim] -> e_s, e_s_next: [batch_size*n_agents, embed_dim]
-        e_s      = self.phi(obs_flat)
+        e_s = self.phi(obs_flat)
         e_s_next = self.phi(next_obs_flat)
 
-        # IDM loss: przewiduj akcję na podstawie embeddingów stanów
-        # torch.cat: [batch_size*n_agents, embed_dim*2] -> pred_action: [batch_size*n_agents, action_dim]
-        pred_action = self.idm(torch.cat([e_s, e_s_next], dim=-1))
-        idm_loss = nn.functional.mse_loss(pred_action, a_flat)
+        # IDM loss: predict discrete action with cross-entropy.
+        pred_action_logits = self.idm(torch.cat([e_s, e_s_next], dim=-1))
+        idm_loss = nn.functional.cross_entropy(pred_action_logits, action_idx)
 
-        # RND loss: trenuj predictor aby lepiej przewidywał cechy stanu
+        # RND loss: train predictor on post-transition states.
         with torch.no_grad():
-            rnd_target_feat = self.rnd_target(obs_flat)  # [batch_size*n_agents, embed_dim]
-        rnd_pred_feat = self.rnd_predictor(obs_flat)  # [batch_size*n_agents, embed_dim]
+            rnd_target_feat = self.rnd_target(next_obs_flat)
+        rnd_pred_feat = self.rnd_predictor(next_obs_flat)
         rnd_loss = nn.functional.mse_loss(rnd_pred_feat, rnd_target_feat)
 
         (idm_loss + rnd_loss).backward()
         self.optimizer.step()
 
         with torch.no_grad():
-            # e_s: [batch_size*n_agents, embed_dim] -> e_s_np: [batch_size*n_agents, embed_dim]
-            e_s_np = e_s.detach().cpu().numpy().astype(np.float32)
-            # RND niepewność: [batch_size*n_agents, embed_dim] -> rnd_r_np: [batch_size*n_agents]
-            rnd_r_np = ((rnd_pred_feat.detach() - rnd_target_feat) ** 2).mean(dim=-1).cpu().numpy()
+            # Use next-state embeddings for episodic novelty, as in transition-based curiosity.
+            e_query_np = e_s_next.detach().cpu().numpy().astype(np.float32)
+            rnd_r_np = (
+                ((rnd_pred_feat.detach() - rnd_target_feat) ** 2)
+                .mean(dim=-1)
+                .cpu()
+                .numpy()
+            )
 
-        # --- Update episodic buffer & FAISS ---
-        old_ptr = self.epi_ptr
-        self.epi_ptr, self.epi_count = self._vec_write(
-            self.epi_buffer, self.epi_ptr, self.epi_count, e_s_np, self.n_episodic)
-
-        self._update_counter += 1
-        if self._update_counter % self.rebuild_interval == 0:
-            filled = min(self.epi_count, self.n_episodic)
-            self.faiss_index = faiss.IndexFlatL2(self.epi_buffer.shape[1])
-            self.faiss_index.add(self.epi_buffer[:filled])
-
-        # --- Episodic reward (k-NN distances in embedding space) ---
-        # Oblicz odległości k najbliższych sąsiadów w przestrzeni embeddingów
-        # r_ep: [batch_size*n_agents] (nagroda episodyczna dla każdego Sample'a)
-        if self.faiss_index.ntotal >= self.k:
-            q = e_s_np  # [batch_size*n_agents, embed_dim]
-            distances, _ = self.faiss_index.search(q, self.k)  # [batch_size*n_agents, k]
-            # r_ep = 1 / (sqrt(mean_dist) + epsilon) - NGU eq. 1
-            r_ep = 1.0 / (np.sqrt(np.mean(distances, axis=1)) + self.eps)  # [batch_size*n_agents]
-        else:
-            r_ep = np.ones(n, dtype=np.float32)
+        # --- Episodic reward (k-NN in embedding space) ---
+        r_ep = self._episodic_reward_from_knn(e_query_np)
 
         # --- Lifelong curiosity (RND-based alpha) ---
-        # Znormalizuj RND nagrodę i użyj jako mnożnika (alpha) dla nagrody episodycznej
-        # rnd_r_np: [batch_size*n_agents] -> rnd_norm: [batch_size*n_agents] -> alpha: [batch_size*n_agents]
         self.rnd_rms.update(rnd_r_np)
-        rnd_norm = self.rnd_rms.normalize(rnd_r_np)
-        alpha = np.clip(1.0 + rnd_norm / self.L, 1.0, self.L)
+        rnd_std = np.sqrt(self.rnd_rms.var) + 1e-8
+        rnd_scaled = np.clip(rnd_r_np / rnd_std, 0.0, self.L - 1.0)
+        alpha = np.clip(1.0 + rnd_scaled, 1.0, self.L)
 
         # --- Combined intrinsic reward ---
-        # r_int = r_episodic * alpha (kombinacja episodycznego i długoterminowego odkrywania)
-        # r_int: [batch_size*n_agents]
         r_int = r_ep * alpha
 
-        # Normalize episodic before combining (optional stability)
+        # Keep reward positive and bounded by std-normalization and clipping.
         self.ep_rms.update(r_int)
-        r_int_norm = self.ep_rms.normalize(r_int)
+        ep_std = np.sqrt(self.ep_rms.var) + 1e-8
+        r_int_norm = np.clip(r_int / ep_std, 0.0, self._p("ngu_reward_clip", 10.0))
+
+        # --- Update episodic memory after reward computation ---
+        old_ptr = self.epi_ptr
+        old_count = self.epi_count
+        self.epi_ptr, self.epi_count = self._vec_write(
+            self.epi_buffer,
+            self.epi_ptr,
+            self.epi_count,
+            e_query_np,
+            self.n_episodic,
+        )
+
+        if faiss is not None:
+            can_append_incrementally = (
+                self.faiss_index is not None
+                and old_count < self.n_episodic
+                and self.faiss_index.ntotal == old_count
+                and old_ptr + e_query_np.shape[0] <= self.n_episodic
+            )
+            if can_append_incrementally:
+                self.faiss_index.add(e_query_np)
+            else:
+                self._rebuild_faiss_index()
 
         if _wandb is not None and _wandb.run is not None:
-            _wandb.log({
-                f"ngu/{group}/r_episodic": float(r_ep.mean()),
-                f"ngu/{group}/alpha":      float(alpha.mean()),
-                f"ngu/{group}/r_int":      float(r_int.mean()),
-            }, commit=False)
+            _wandb.log(
+                {
+                    f"ngu/{group}/r_episodic": float(r_ep.mean()),
+                    f"ngu/{group}/alpha": float(alpha.mean()),
+                    f"ngu/{group}/r_int_raw": float(r_int.mean()),
+                    f"ngu/{group}/r_int_norm": float(r_int_norm.mean()),
+                },
+                commit=False,
+            )
 
         # Przekształć z powrotem do oryginalnego shape'u
         # r_int_norm: [batch_size*n_agents] -> r_t: [batch_size*n_agents, 1] -> result: [batch_size, n_agents, 1]

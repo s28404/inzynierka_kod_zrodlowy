@@ -259,6 +259,14 @@ class Qmix(Algorithm):
                 reward_key,
                 batch.get(("next", group, "reward")).mean(-2),
             )
+
+        def _reduce_intrinsic_to_reward_shape(r_int: torch.Tensor) -> torch.Tensor:
+            # Intrinsic modules return per-agent rewards; QMIX expects one scalar reward per env/time step.
+            if r_int.shape[-1] == 1 and r_int.ndim > batch.get(reward_key).ndim:
+                r_int = r_int.squeeze(-1)
+            while r_int.ndim > batch.get(reward_key).ndim:
+                r_int = r_int.mean(dim=-1)
+            return r_int
         #############################
         # [3] Początek. Zastowanie nagród wewnętrznych (DEMIR, RND, NGU) i dodanie ich do nagrody zewnętrznej w batchu.
         #############################
@@ -272,33 +280,20 @@ class Qmix(Algorithm):
             demir = self.demir_modules[group]
             # r_int z DEMIR: [batch_size, time_steps] (nagroda już zagregowana po agentach)
             r_int = demir.get_shaping_reward(batch, group=group, gamma=self.experiment_config.gamma)
-            
-            # Update memory for novelty decay over time
-            with torch.no_grad():
-                td_error = batch.get("td_error", torch.zeros_like(r_int))
-                demir.update_memory(
-                    obs=batch.get((group, "observation")),
-                    action=batch.get((group, "action")),
-                    reward_ext=batch.get(reward_key),
-                    td_error=td_error,
-                    next_obs=batch.get(("next", group, "observation"))
-                )
             # r_int_to_add: [batch_size, time_steps] + r_int: [batch_size, time_steps] -> [batch_size, time_steps]
             r_int_to_add = r_int_to_add + scale * r_int
 
         # --- LOGIKA RND ---
         rnd_scale = self.int_rew_config.get("rnd_scale", 0.0)
         if rnd_scale > 0 and hasattr(self, "rnd_modules") and group in self.rnd_modules:
-            rnd = self.rnd_modules[group] 
+            rnd = self.rnd_modules[group]
+            # RND novelty is measured on post-transition observations.
+            obs_key = ("next", group, "observation")
+            obs_for_rnd = batch.get(obs_key) if obs_key in keys else batch.get((group, "observation"))
             # obs z batchu: [batch_size, time_steps, n_agents, obs_dim]
             # r_int z RND: [batch_size, time_steps, n_agents, 1]
-            r_int = rnd.compute_intrinsic_reward(obs=batch[group, "observation"], group=group, train=True)
-            # Agregacja po wymiarze agentów (dim 2) aby dopasować shape nagrody
-            # r_int: [batch_size, time_steps, n_agents, 1] -> [batch_size, time_steps, 1] -> [batch_size, time_steps]
-            target_ndim = r_int_to_add.ndim
-            while r_int.ndim > target_ndim:
-                # Uśredniamy wymiar 2 (n_agents) aby otrzymać agregowaną nagrodę dla wszystkich agentów
-                r_int = r_int.mean(dim=2)  # [batch_size, time_steps, n_agents, 1] -> [batch_size, time_steps, 1]
+            r_int = rnd.compute_intrinsic_reward(obs=obs_for_rnd, group=group, train=True)
+            r_int = _reduce_intrinsic_to_reward_shape(r_int)
             # r_int_to_add: [batch_size, time_steps] + r_int: [batch_size, time_steps] -> [batch_size, time_steps]
             r_int_to_add = r_int_to_add + rnd_scale * r_int
 
@@ -307,7 +302,7 @@ class Qmix(Algorithm):
         if ngu_scale > 0 and hasattr(self, "ngu_modules") and group in self.ngu_modules:
             ngu = self.ngu_modules[group]
             
-            if batch.get(("next", "done")).any():
+            if batch.get(done_key).any():
                 ngu.reset_episodic_memory()
             
             next_obs = batch.get(("next", group, "observation"))
@@ -321,12 +316,7 @@ class Qmix(Algorithm):
                     action=batch[group, "action"],
                     group=group
                 )
-                # Agregacja po wymiarze agentów (dim 2) aby dopasować shape nagrody
-                # r_int: [batch_size, time_steps, n_agents, 1] -> [batch_size, time_steps, 1] -> [batch_size, time_steps]
-                target_ndim = r_int_to_add.ndim
-                while r_int.ndim > target_ndim:
-                    # Uśredniamy wymiar 2 (n_agents) aby otrzymać agregowaną nagrodę dla wszystkich agentów
-                    r_int = r_int.mean(dim=2)  # [batch_size, time_steps, n_agents, 1] -> [batch_size, time_steps, 1]
+                r_int = _reduce_intrinsic_to_reward_shape(r_int)
                 # r_int_to_add: [batch_size, time_steps] + r_int: [batch_size, time_steps] -> [batch_size, time_steps]
                 r_int_to_add = r_int_to_add + ngu_scale * r_int
 

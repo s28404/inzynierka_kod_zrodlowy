@@ -54,6 +54,8 @@ setup(
         "av<14",
         "numpy",
         "faiss-cpu",
+        "gymnasium",
+        "minigrid",
     ],
     extras_require={
         "vmas": ["vmas>=1.3.4"],

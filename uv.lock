@@ -62,8 +62,10 @@ source = { editable = "." }
 dependencies = [
     { name = "av" },
     { name = "faiss-cpu" },
+    { name = "gymnasium" },
     { name = "hydra-core" },
     { name = "matplotlib" },
+    { name = "minigrid" },
     { name = "moviepy" },
     { name = "numpy" },
     { name = "pandas" },
@@ -84,8 +86,10 @@ dependencies = [
 requires-dist = [
     { name = "av", specifier = "<14" },
     { name = "faiss-cpu" },
+    { name = "gymnasium" },
     { name = "hydra-core" },
     { name = "matplotlib" },
+    { name = "minigrid", specifier = ">=0.2.17" },
     { name = "moviepy" },
     { name = "numpy", specifier = "<2.0.0" },
     { name = "pandas" },
@@ -502,6 +506,20 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/57/61/78cd5920d35b29fd2a0fe894de8adf672ff52939d2e9b43cb83cd5ce1bc7/matplotlib-3.10.8-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:99eefd13c0dc3b3c1b4d561c1169e65fe47aab7b8158754d7c084088e2329466", size = 9613040, upload-time = "2025-12-10T22:55:38.715Z" },
     { url = "https://files.pythonhosted.org/packages/30/4e/c10f171b6e2f44d9e3a2b96efa38b1677439d79c99357600a62cc1e9594e/matplotlib-3.10.8-cp312-cp312-win_amd64.whl", hash = "sha256:dd80ecb295460a5d9d260df63c43f4afbdd832d725a531f008dad1664f458adf", size = 8142717, upload-time = "2025-12-10T22:55:41.103Z" },
     { url = "https://files.pythonhosted.org/packages/f1/76/934db220026b5fef85f45d51a738b91dea7d70207581063cd9bd8fafcf74/matplotlib-3.10.8-cp312-cp312-win_arm64.whl", hash = "sha256:3c624e43ed56313651bc18a47f838b60d7b8032ed348911c54906b130b20071b", size = 8012751, upload-time = "2025-12-10T22:55:42.684Z" },
+]
+
+[[package]]
+name = "minigrid"
+version = "3.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "gymnasium" },
+    { name = "numpy" },
+    { name = "pygame" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/da/af/fb1c394b4ab4405efe01c84f4f187c0e1b675ee1bbf263775a4b33ce947c/minigrid-3.0.0.tar.gz", hash = "sha256:272d08242baea8e96f49495ec8d62db1be32e0f7b1e399e1c85c22368c7b0cc5", size = 103654, upload-time = "2024-11-17T14:49:20.633Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/12/44/67f786660ee703c6380353103beddc1a8fd50263efd22cbbf590497bd8b1/minigrid-3.0.0-py3-none-any.whl", hash = "sha256:5b505fcdab7e4306a78e7735f1114285d404a10503e9bfdd60169b49dfa34ccd", size = 136681, upload-time = "2024-11-17T14:49:18.845Z" },
 ]
 
 [[package]]

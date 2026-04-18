@@ -5,7 +5,7 @@ cd "$(dirname "$0")/../../"
 # Mapy wybrane do Direct Science (Prosta, Asymetryczna, Inna Frakcja)
 TASKS=("smacv2/protoss_5_vs_5" "smacv2/protoss_10_vs_11" "smacv2/terran_10_vs_10")
 # Algorytmy do porównania
-ALGOS=("qmix" "demir")
+ALGOS=("qmix" "rnd" "ngu" "demir")
 # Domyślnie wszystkie eksperymentują z GRU (zamiast MLP-u)
 # Dla wiekszego sprzetu mozna zwikeszyc off_policy_memory_size
 for task in "${TASKS[@]}"; do
@@ -22,6 +22,8 @@ for task in "${TASKS[@]}"; do
                 task=$task \
                 algorithm=$algo \
                 seed=1 \
+            experiment.sampling_device=cpu \
+            experiment.train_device=cpu \
                 experiment.lr=0.00005 \
                 experiment.max_n_frames=10000000 \
                 experiment.off_policy_memory_size=150000 \

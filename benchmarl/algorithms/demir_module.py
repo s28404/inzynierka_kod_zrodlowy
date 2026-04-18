@@ -7,6 +7,7 @@ Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
 
 Opis: Plik zawiera pełną implementację mechanizmu DEMIR.
 """
+
 import torch
 import numpy as np
 import faiss
@@ -152,7 +153,7 @@ class DecentralizedEpisodicReward(nn.Module):
     def get_shaping_reward(self, batch, group, gamma=0.99):
         """
         Oblicz nagrodę kształtującą na podstawie potencjału DEMIR.
-        
+
         Transformacje shape'ów:
         - obs: [batch_size, n_agents, obs_dim]
         - action: [batch_size, n_agents] (dla akcji dyskretnych)
@@ -160,7 +161,9 @@ class DecentralizedEpisodicReward(nn.Module):
         - Wyjście r_int: [batch_size] (nagroda wewnętrzna dla każdego Sample'a)
         """
         obs = batch.get((group, "observation"))  # [batch_size, n_agents, obs_dim]
-        next_obs = batch.get(("next", group, "observation"))  # [batch_size, n_agents, obs_dim]
+        next_obs = batch.get(
+            ("next", group, "observation")
+        )  # [batch_size, n_agents, obs_dim]
         from benchmarl.utils import get_td_value
 
         action = (
@@ -202,7 +205,6 @@ class DecentralizedEpisodicReward(nn.Module):
             # reward_flat: [batch_size, 1] -> [batch_size*n_agents, 1]
             repeats = n_target // reward_flat.shape[0]
             reward_flat = reward_flat.repeat_interleave(repeats, dim=0)
-
 
         # action: [batch_size, n_agents] -> action_flat: [batch_size*n_agents, action_dim]
         if action.dtype in [torch.long, torch.int]:
@@ -294,19 +296,21 @@ class DecentralizedEpisodicReward(nn.Module):
 
     def update_memory(self, obs, action, reward_ext, td_error, next_obs=None):
         with torch.enable_grad():
-            obs_flat = obs.reshape(-1, obs.shape[-1]) # from [B, N, obs_dim] to [B*N, obs_dim]
+            obs_flat = obs.reshape(
+                -1, obs.shape[-1]
+            )  # from [B, N, obs_dim] to [B*N, obs_dim]
             n_flat = obs_flat.shape[0]
 
-            reward_flat = reward_ext.reshape(-1, 1) # from [B, N] to [B*N, 1]
+            reward_flat = reward_ext.reshape(-1, 1)  # from [B, N] to [B*N, 1]
             if reward_flat.shape[0] != n_flat:
                 # Nagroda globalna (QMIX) - rozszerzamy na liczbę agentów
-                repeats = n_flat // reward_flat.shape[0] # liczba agentów
+                repeats = n_flat // reward_flat.shape[0]  # liczba agentów
                 reward_flat = reward_flat.repeat_interleave(repeats, dim=0)
 
             td_error_flat = td_error.reshape(-1, 1)
             if td_error_flat.shape[0] != n_flat:
                 # TD error globalny (QMIX) - rozszerzamy na liczbę agentów
-                repeats = n_flat // td_error_flat.shape[0] # liczba agentów
+                repeats = n_flat // td_error_flat.shape[0]  # liczba agentów
                 td_error_flat = td_error_flat.repeat_interleave(repeats, dim=0)
 
             # Obsługa akcji
@@ -329,14 +333,15 @@ class DecentralizedEpisodicReward(nn.Module):
                 obs_flat.requires_grad_(True)
 
             e_s = self.encoders.phi_s(obs_flat)
-            e_s_norm = (e_s - e_s.mean(dim=0)) / (e_s.std(dim=0) + 1e-6)
+            # unbiased=False keeps std well-defined even for a single-sample batch.
+            e_s_norm = (e_s - e_s.mean(dim=0)) / (e_s.std(dim=0, unbiased=False) + 1e-6)
 
             if self.encoder_type == "idm" and next_obs is not None:
                 next_obs_flat = next_obs.reshape(-1, next_obs.shape[-1])
 
                 if not next_obs_flat.requires_grad:
                     next_obs_flat.requires_grad_(True)
-                
+
                 e_s_next = self.encoders.phi_s(next_obs_flat)
                 # A. Inverse Dynamics Loss: (e_s, e_s_next) -> akcja
                 pred_action = self.encoders.forward_kinematics(e_s, e_s_next)
