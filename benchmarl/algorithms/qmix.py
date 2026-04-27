@@ -14,6 +14,8 @@
 #   [2] # Inicjalizacja modułów nagrody wewnętrznej (DEMIR, RND, NGU)
 #   [3] # Zastowanie nagród wewnętrznych (DEMIR, RND, NGU) i dodanie ich do nagrody zewnętrznej w batchu.
 #   [4] # Dodanie pól konfiguracyjnych dla nagród wewnętrznych (DEMIR, RND, NGU) w dataclass QmixConfig.
+#   [5] # Zmiana estymatora wartości QMIX na TD(lambda) i podpięcie parametru td_lambda.
+#   [6] # Tryb baseline QMIX 1:1 i warunkowe (łatwe) włączanie intrinsic rewards.
 # ==============================================================================
 
 import torch
@@ -28,9 +30,6 @@ from torchrl.objectives import LossModule, QMixerLoss, ValueEstimators
 
 from benchmarl.algorithms.common import Algorithm, AlgorithmConfig
 from benchmarl.models.common import ModelConfig
-from benchmarl.algorithms.demir_module import DecentralizedEpisodicReward
-from benchmarl.algorithms.rnd_module import RNDModule
-from benchmarl.algorithms.ngu_module import NGUModule
 
 
 class Qmix(Algorithm):
@@ -41,15 +40,27 @@ class Qmix(Algorithm):
         loss_function (str): loss function for the value discrepancy. Can be one of "l1", "l2" or "smooth_l1".
         delay_value (bool): whether to separate the target value networks from the value networks used for
             data collection.
+        td_lambda (float): lambda parameter for TD(lambda) value estimation.
+        use_intrinsic_rewards (bool): whether intrinsic rewards (DEMIR/RND/NGU) are enabled.
 
     """
 
     def __init__(
-        self, mixing_embed_dim: int, delay_value: bool, loss_function: str, **kwargs
-    ):  
+        self,
+        mixing_embed_dim: int,
+        delay_value: bool,
+        loss_function: str,
+        td_lambda: float = 0.4,
+        use_intrinsic_rewards: bool = False,
+        **kwargs,
+    ):
         #############################
         # [1] Początek. Przypisanie parametrów nagród wewnętrznych (DEMIR, RND, NGU) w konstruktorze klasy Qmix.
         #############################
+        demir_scale = kwargs.pop("demir_scale", 0.0)
+        rnd_scale = kwargs.pop("rnd_scale", 0.0)
+        ngu_scale = kwargs.pop("ngu_scale", 0.0)
+
         self.int_rew_config = {
             "emb_dim_state": kwargs.pop("emb_dim_state", 64),
             "emb_dim_action": kwargs.pop("emb_dim_action", 16),
@@ -61,15 +72,15 @@ class Qmix(Algorithm):
             "sigma": kwargs.pop("sigma", 0.1),
             "n_efm": kwargs.pop("n_efm", 10000),
             "n_edm": kwargs.pop("n_edm", 5000),
-            "demir_scale": kwargs.pop("demir_scale", 0.0),
+            "demir_scale": demir_scale,
             "encoder_type": kwargs.pop("encoder_type", "idm"),
             # RND params
-            "rnd_scale": kwargs.pop("rnd_scale", 0.0),
+            "rnd_scale": rnd_scale,
             "rnd_embed_dim": kwargs.pop("rnd_embed_dim", 64),
             "rnd_hidden_dim": kwargs.pop("rnd_hidden_dim", 256),
             "rnd_lr": kwargs.pop("rnd_lr", 1e-4),
             # NGU params
-            "ngu_scale": kwargs.pop("ngu_scale", 0.0),
+            "ngu_scale": ngu_scale,
             "ngu_embed_dim": kwargs.pop("ngu_embed_dim", 64),
             "ngu_hidden_dim": kwargs.pop("ngu_hidden_dim", 256),
             "ngu_k": kwargs.pop("ngu_k", 10),
@@ -78,6 +89,16 @@ class Qmix(Algorithm):
             "ngu_n_episodic": kwargs.pop("ngu_n_episodic", 10000),
             "ngu_lr": kwargs.pop("ngu_lr", 1e-4),
         }
+
+        #############################
+        # [6] Początek. Tryb baseline QMIX 1:1 i warunkowe włączanie intrinsic rewards.
+        #############################
+        self.use_intrinsic_rewards = (
+            use_intrinsic_rewards or demir_scale > 0 or rnd_scale > 0 or ngu_scale > 0
+        )
+        #############################
+        # [6] Koniec.
+        #############################
         #############################
         # [1] Koniec.
         #############################
@@ -87,6 +108,7 @@ class Qmix(Algorithm):
         self.delay_value = delay_value
         self.loss_function = loss_function
         self.mixing_embed_dim = mixing_embed_dim
+        self.td_lambda = td_lambda
 
     #############################
     # Overridden abstract methods
@@ -116,9 +138,17 @@ class Qmix(Algorithm):
                 global_value="chosen_action_value",
                 priority="td_error",
             )
+            #############################
+            # [5] Początek. Zmiana estymatora wartości QMIX na TD(lambda) i podpięcie parametru td_lambda.
+            #############################
             loss_module.make_value_estimator(
-                ValueEstimators.TD0, gamma=self.experiment_config.gamma
+                ValueEstimators.TDLambda,
+                gamma=self.experiment_config.gamma,
+                lmbda=self.td_lambda,
             )
+            #############################
+            # [5] Koniec.
+            #############################
 
             return loss_module, True
 
@@ -177,39 +207,47 @@ class Qmix(Algorithm):
         #############################
         # [2] Początek. Inicjalizacja modułów nagrody wewnętrznej (DEMIR, RND, NGU)
         #############################
-        if not hasattr(self, "demir_modules"):
-            self.demir_modules = {}
-
-        if group not in self.demir_modules:
+        if self.use_intrinsic_rewards:
             obs_key = list(self.observation_spec[group].keys())[0]
             obs_dim = self.observation_spec[group, obs_key].shape[-1]
             action_dim = self.action_spec[group, "action"].space.n
 
-            self.demir_modules[group] = DecentralizedEpisodicReward(
-                obs_dim=obs_dim, action_dim=action_dim, config=self.int_rew_config
-            ).to(self.device)
+            if self.int_rew_config.get("demir_scale", 0.0) > 0:
+                from benchmarl.algorithms.demir_module import (
+                    DecentralizedEpisodicReward,
+                )
 
-        if not hasattr(self, "rnd_modules"):
-            self.rnd_modules = {}
-        if group not in self.rnd_modules:
-            obs_key = list(self.observation_spec[group].keys())[0]
-            obs_dim = self.observation_spec[group, obs_key].shape[-1]
-            self.rnd_modules[group] = RNDModule(
-                obs_dim=obs_dim,
-                config=self.int_rew_config,
-            ).to(self.device)
+                if not hasattr(self, "demir_modules"):
+                    self.demir_modules = {}
+                if group not in self.demir_modules:
+                    self.demir_modules[group] = DecentralizedEpisodicReward(
+                        obs_dim=obs_dim,
+                        action_dim=action_dim,
+                        config=self.int_rew_config,
+                    ).to(self.device)
 
-        if not hasattr(self, "ngu_modules"):
-            self.ngu_modules = {}
-        if group not in self.ngu_modules:
-            obs_key = list(self.observation_spec[group].keys())[0]
-            obs_dim = self.observation_spec[group, obs_key].shape[-1]
-            action_dim = self.action_spec[group, "action"].space.n
-            self.ngu_modules[group] = NGUModule(
-                obs_dim=obs_dim,
-                action_dim=action_dim,
-                config=self.int_rew_config,
-            ).to(self.device)
+            if self.int_rew_config.get("rnd_scale", 0.0) > 0:
+                from benchmarl.algorithms.rnd_module import RNDModule
+
+                if not hasattr(self, "rnd_modules"):
+                    self.rnd_modules = {}
+                if group not in self.rnd_modules:
+                    self.rnd_modules[group] = RNDModule(
+                        obs_dim=obs_dim,
+                        config=self.int_rew_config,
+                    ).to(self.device)
+
+            if self.int_rew_config.get("ngu_scale", 0.0) > 0:
+                from benchmarl.algorithms.ngu_module import NGUModule
+
+                if not hasattr(self, "ngu_modules"):
+                    self.ngu_modules = {}
+                if group not in self.ngu_modules:
+                    self.ngu_modules[group] = NGUModule(
+                        obs_dim=obs_dim,
+                        action_dim=action_dim,
+                        config=self.int_rew_config,
+                    ).to(self.device)
         #############################
         # [2] Koniec.
         #############################
@@ -260,6 +298,15 @@ class Qmix(Algorithm):
                 batch.get(("next", group, "reward")).mean(-2),
             )
 
+        #############################
+        # [6] Początek. Czysty baseline QMIX: brak modyfikacji nagrody, gdy intrinsic rewards są wyłączone.
+        #############################
+        if not self.use_intrinsic_rewards:
+            return batch
+        #############################
+        # [6] Koniec.
+        #############################
+
         def _reduce_intrinsic_to_reward_shape(r_int: torch.Tensor) -> torch.Tensor:
             # Intrinsic modules return per-agent rewards; QMIX expects one scalar reward per env/time step.
             if r_int.shape[-1] == 1 and r_int.ndim > batch.get(reward_key).ndim:
@@ -267,19 +314,22 @@ class Qmix(Algorithm):
             while r_int.ndim > batch.get(reward_key).ndim:
                 r_int = r_int.mean(dim=-1)
             return r_int
+
         #############################
         # [3] Początek. Zastowanie nagród wewnętrznych (DEMIR, RND, NGU) i dodanie ich do nagrody zewnętrznej w batchu.
         #############################
         # reward_key: [batch_size, time_steps] (średnia nagroda dla wszystkich agentów w każdej chwili czasowej)
         # r_int_to_add: [batch_size, time_steps] (akumulator nagród wewnętrznych)
         r_int_to_add = torch.zeros_like(batch.get(reward_key))
-        
+
         # --- LOGIKA DEMIR ---
         scale = self.int_rew_config.get("demir_scale", 0.0)
         if scale > 0 and hasattr(self, "demir_modules") and group in self.demir_modules:
             demir = self.demir_modules[group]
             # r_int z DEMIR: [batch_size, time_steps] (nagroda już zagregowana po agentach)
-            r_int = demir.get_shaping_reward(batch, group=group, gamma=self.experiment_config.gamma)
+            r_int = demir.get_shaping_reward(
+                batch, group=group, gamma=self.experiment_config.gamma
+            )
             # r_int_to_add: [batch_size, time_steps] + r_int: [batch_size, time_steps] -> [batch_size, time_steps]
             r_int_to_add = r_int_to_add + scale * r_int
 
@@ -289,10 +339,16 @@ class Qmix(Algorithm):
             rnd = self.rnd_modules[group]
             # RND novelty is measured on post-transition observations.
             obs_key = ("next", group, "observation")
-            obs_for_rnd = batch.get(obs_key) if obs_key in keys else batch.get((group, "observation"))
+            obs_for_rnd = (
+                batch.get(obs_key)
+                if obs_key in keys
+                else batch.get((group, "observation"))
+            )
             # obs z batchu: [batch_size, time_steps, n_agents, obs_dim]
             # r_int z RND: [batch_size, time_steps, n_agents, 1]
-            r_int = rnd.compute_intrinsic_reward(obs=obs_for_rnd, group=group, train=True)
+            r_int = rnd.compute_intrinsic_reward(
+                obs=obs_for_rnd, group=group, train=True
+            )
             r_int = _reduce_intrinsic_to_reward_shape(r_int)
             # r_int_to_add: [batch_size, time_steps] + r_int: [batch_size, time_steps] -> [batch_size, time_steps]
             r_int_to_add = r_int_to_add + rnd_scale * r_int
@@ -301,10 +357,10 @@ class Qmix(Algorithm):
         ngu_scale = self.int_rew_config.get("ngu_scale", 0.0)
         if ngu_scale > 0 and hasattr(self, "ngu_modules") and group in self.ngu_modules:
             ngu = self.ngu_modules[group]
-            
+
             if batch.get(done_key).any():
                 ngu.reset_episodic_memory()
-            
+
             next_obs = batch.get(("next", group, "observation"))
             if next_obs is not None:
                 # obs, next_obs: [batch_size, time_steps, n_agents, obs_dim]
@@ -314,7 +370,7 @@ class Qmix(Algorithm):
                     obs=batch[group, "observation"],
                     next_obs=next_obs,
                     action=batch[group, "action"],
-                    group=group
+                    group=group,
                 )
                 r_int = _reduce_intrinsic_to_reward_shape(r_int)
                 # r_int_to_add: [batch_size, time_steps] + r_int: [batch_size, time_steps] -> [batch_size, time_steps]
@@ -334,14 +390,10 @@ class Qmix(Algorithm):
     #####################
 
     def get_mixer(self, group: str) -> TensorDictModule:
-        n_agents = len(
-            self.group_map[group]
-        )
+        n_agents = len(self.group_map[group])
 
         if self.state_spec is not None:
-            global_state_key = list(self.state_spec.keys(True, True))[
-                0
-            ]
+            global_state_key = list(self.state_spec.keys(True, True))[0]
             state_shape = self.state_spec[global_state_key].shape
             in_keys = [
                 (group, "chosen_action_value"),
@@ -381,6 +433,8 @@ class QmixConfig(AlgorithmConfig):
     mixing_embed_dim: int = MISSING
     delay_value: bool = MISSING
     loss_function: str = MISSING
+    td_lambda: float = 0.4
+    use_intrinsic_rewards: bool = False
 
     #############################
     # [4] Początek. Dodanie pól konfiguracyjnych dla nagród wewnętrznych (DEMIR, RND, NGU) w dataclass QmixConfig.
@@ -397,9 +451,7 @@ class QmixConfig(AlgorithmConfig):
     n_efm: int = 10000
     n_edm: int = 5000
     demir_scale: float = 0.0
-    encoder_type: str = (
-        "idm"
-    )
+    encoder_type: str = "idm"
     # Parametry RND
     rnd_scale: float = 0.0
     rnd_embed_dim: int = 64

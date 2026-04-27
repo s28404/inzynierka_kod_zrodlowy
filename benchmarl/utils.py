@@ -1,5 +1,3 @@
-
-
 #  Copyright (c) Meta Platforms, Inc. and affiliates.
 #
 #  This source code is licensed under the license found in the
@@ -9,13 +7,12 @@ import contextlib
 import importlib
 import random
 import typing
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, Iterable, List, Union
 
 import torch
 import yaml
 from torchrl.data import Composite
 from torchrl.envs import Compose, EnvBase, InitTracker, TensorDictPrimer, TransformedEnv
-from typing import Iterable, Any
 
 if typing.TYPE_CHECKING:
     from benchmarl.models import ModelConfig
@@ -24,7 +21,6 @@ _has_numpy = importlib.util.find_spec("numpy") is not None
 
 
 DEVICE_TYPING = Union[torch.device, str, int]
-
 
 
 ### [1] Zmiana: Dodanie funkcji get_td_value do utils.py
@@ -54,6 +50,8 @@ def get_td_value(td, candidates: Iterable[Any] | None = None):
             except Exception:
                 continue
     return None
+
+
 ### [1] Koniec zmiany
 
 
@@ -151,7 +149,8 @@ def _add_rnn_transforms(
                     + (
                         [
                             TensorDictPrimer(
-                                spec_actor, reset_key="_reset", expand_specs=True
+                                primers=spec_actor,
+                                reset_key="_reset",
                             )
                         ]
                         if len(spec_actor.keys(True, True)) > 0

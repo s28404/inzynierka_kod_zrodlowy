@@ -14,6 +14,7 @@ defaults:
 mixing_embed_dim: 32
 delay_value: True
 loss_function: "l2"
+use_intrinsic_rewards: True
 
 # Hiperparametry DEMIR
 emb_dim_state: 64

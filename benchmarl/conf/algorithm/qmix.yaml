@@ -6,3 +6,5 @@ defaults:
 mixing_embed_dim: 32
 delay_value: True
 loss_function: "l2"
+td_lambda: 0.4
+use_intrinsic_rewards: False

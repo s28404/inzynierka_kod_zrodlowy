@@ -406,13 +406,21 @@ class Logger:
             import csv
             from pathlib import Path
 
+            def _mean_to_float(value):
+                if isinstance(value, torch.Tensor):
+                    return float(value.detach().float().mean().cpu().item())
+                return float(np.asarray(value, dtype=np.float32).mean())
+
             returns = json_metrics.get("return", None)
             if returns is not None:
-                returns = returns.numpy()
-                eval_return_mean = float(returns.mean())
-                eval_return_std = float(returns.std())
-                eval_return_min = float(returns.min())
-                eval_return_max = float(returns.max())
+                if isinstance(returns, torch.Tensor):
+                    returns_np = returns.detach().float().cpu().numpy()
+                else:
+                    returns_np = np.asarray(returns, dtype=np.float32)
+                eval_return_mean = float(returns_np.mean())
+                eval_return_std = float(returns_np.std())
+                eval_return_min = float(returns_np.min())
+                eval_return_max = float(returns_np.max())
             else:
                 eval_return_mean = eval_return_std = eval_return_min = (
                     eval_return_max
@@ -437,26 +445,26 @@ class Logger:
             }
 
             if "win_rate" in json_metrics:
-                row["eval_win_rate"] = float(json_metrics["win_rate"].float().mean())
+                row["eval_win_rate"] = _mean_to_float(json_metrics["win_rate"])
             if "eval_success_rate" in json_metrics:
-                row["eval_success_rate"] = float(
-                    json_metrics["eval_success_rate"].float().mean()
+                row["eval_success_rate"] = _mean_to_float(
+                    json_metrics["eval_success_rate"]
                 )
             if "eval_bottleneck_reached_rate" in json_metrics:
-                row["eval_bottleneck_reached_rate"] = float(
-                    json_metrics["eval_bottleneck_reached_rate"].float().mean()
+                row["eval_bottleneck_reached_rate"] = _mean_to_float(
+                    json_metrics["eval_bottleneck_reached_rate"]
                 )
             if "eval_rm_state_0_ratio" in json_metrics:
-                row["eval_rm_state_0_ratio"] = float(
-                    json_metrics["eval_rm_state_0_ratio"].float().mean()
+                row["eval_rm_state_0_ratio"] = _mean_to_float(
+                    json_metrics["eval_rm_state_0_ratio"]
                 )
             if "eval_rm_state_1_ratio" in json_metrics:
-                row["eval_rm_state_1_ratio"] = float(
-                    json_metrics["eval_rm_state_1_ratio"].float().mean()
+                row["eval_rm_state_1_ratio"] = _mean_to_float(
+                    json_metrics["eval_rm_state_1_ratio"]
                 )
             if "eval_rm_state_2_ratio" in json_metrics:
-                row["eval_rm_state_2_ratio"] = float(
-                    json_metrics["eval_rm_state_2_ratio"].float().mean()
+                row["eval_rm_state_2_ratio"] = _mean_to_float(
+                    json_metrics["eval_rm_state_2_ratio"]
                 )
 
             file_exists = csv_path.exists()
