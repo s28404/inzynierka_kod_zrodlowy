@@ -1,11 +1,11 @@
-#  Copyright (c) 2026 Kajetan Frąckowiak, s28404
-#
-#  Projekt: Algorytm DEMIR dla SMACv2 i Custom Logic Environment
-#  Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-#  Praca Inżynierska (2026)
-#
-#  Opis: Package initialization dla Logic Environment (SynchronizedFactory) integracji.
+"""
+Module implementing needed __all__ for logic-based environment
 
+Author: Kajetan Frąckowiak
+Date: 2026
+
+Description: This file implements the __all__ variable for logic-based environment, which is used to specify which classes/functions are exported when importing the module.
+"""
 from .common import LogicEnvClass, LogicEnvTask
 
 __all__ = [

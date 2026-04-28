@@ -1,15 +1,9 @@
-#  Copyright (c) Meta Platforms, Inc. and affiliates.
+# Configuration file for the SynchronizedFactory environment
 #
-#  This source code is licensed under the license found in the
-#  LICENSE file in the root directory of this source tree.
+# Author: Kajetan Frąckowiak
+# Date: 2026
 #
-# --- MODYFIKACJE / MODIFICATIONS ---
-# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Konfiguracja treningowa dla Logic Environment. Skopiowana z smacv2/conf/config.yaml
-#        z dostosowaniami dla SynchronizedFactory task.
-# Originał: BenchMARL (Meta Platforms), https://github.com/facebookresearch/BenchMARL
-# ---
+# Description: This file contains hiperparameters needed for SynchornizedFactory environment
 
 defaults:
   - experiment: base_experiment

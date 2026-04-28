@@ -1,5 +1,8 @@
-#!/usr/bin/env python3
-"""CPU-only R2D2 training for MiniGrid/BabyAI with optional intrinsic rewards.
+"""
+Module implementing R2D2 https://openreview.net/pdf?id=r1lyTjAqYX
+
+Author: Kajetan Frąckowiak
+Date: 2026
 
 Variants:
 - r2d2       : baseline recurrent DQN
@@ -7,7 +10,7 @@ Variants:
 - r2d2_ngu   : R2D2 + NGU intrinsic reward
 - r2d2_demir : R2D2 + DEMIR intrinsic reward
 
-Supports: MiniGrid environments and BabyAI hierarchical tasks.
+Description: This file contains the full implementation of the R2D2 algorithm
 """
 
 from __future__ import annotations
@@ -22,7 +25,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import gymnasium as gym
-import minigrid  # noqa: F401 - registers both MiniGrid-* and BabyAI-* env ids
+import minigrid
 import numpy as np
 import torch
 import torch.nn.functional as F

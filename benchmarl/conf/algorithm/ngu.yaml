@@ -1,34 +1,34 @@
-# Plik konfiguracyjny dla mechanizmu NGU
-
-# Autor: Kajetan Frąckowiak (s28404)
-# Data: 2026
-# Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
-
-# Opis: Plik zawiera hiperparametry oraz konfiguracje dla mechanizmu NGU bazujące na artukułach https://arxiv.org/abs/2002.06038 oraz https://arxiv.org/abs/2512.01321
-# gdzie pewne hiperparametry ze względu na brak informacji w artykułach zostały dobrane autorsko
+# Configuration file for the NGU (Never Give Up) mechanism
+#
+# Author: Kajetan Frąckowiak
+# Date: 2026
+#
+# Description: This file contains hyperparameters and configurations for the NGU mechanism
+# based on the papers https://arxiv.org/abs/2002.06038 and https://arxiv.org/abs/2512.01321.
+# Certain hyperparameters have been selected originally due to a lack of specific information in the papers.
 
 defaults:
   - ngu_config
   - _self_
 
-# Bazowe hiperparametry QMIX
+# Base QMIX hyperparameters
 mixing_embed_dim: 32
 delay_value: True
 loss_function: "l2"
 use_intrinsic_rewards: True
 
-# Skala nagrody wewnętrznej NGU
+# Intrinsic reward scales
 demir_scale: 0.0
 rnd_scale: 0.0
-# Autorsko dobrana skala nagrody NGU
+# Originally selected NGU reward scale
 ngu_scale: 0.1
 
-# Architektura NGU zgodna z artykułami wyzej
+# NGU architecture consistent with the papers cited above
 ngu_embed_dim: 64
 ngu_hidden_dim: 256
 ngu_k: 10
 
-# Autuorsko dobrane hiperparametry NGU
+# Originally selected NGU hyperparameters
 ngu_L: 5.0
 ngu_epsilon: 0.001
 ngu_n_episodic: 10000

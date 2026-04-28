@@ -3,25 +3,13 @@
 #  This source code is licensed under the license found in the
 #  LICENSE file in the root directory of this source tree.
 #
-# --- MODYFIKACJE / MODIFICATIONS ---
-# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Usunięto import MappoConfig (MAPPO usunięte z projektu);
-#        usunięto martwy blok walidacji GNN dla krytyków MAPPO;
-#        własne nazewnictwo eksperymentów W&B (projekt + run name z parametrami).
-# Oryginał: BenchMARL (Meta Platforms), https://github.com/facebookresearch/BenchMARL
-#
-# Ramki komentarzowe dodane w tej sesji (inline block markers):
-#
-#   [1] # --- MODYFIKACJE: własne nazewnictwo eksperymentów W&B ---
-#       # --- KONIEC MODYFIKACJI ---
-#       Lokalizacja: metoda _build_wandb_run_name() (nowa)
-#       Generuje nazwę runu W&B według schematu:
-#       qmix_{env}_{task}[_{reward}_scale{v}[_encoder_{t}]
-#       [_beta1_{v}_beta2_{v}]]_{data}
-#       Projekt W&B: "kod_zrodlowy_demir" (base_experiment.yaml).
-#   [2] # --- MODYFIKACJA: aktualizacja DEMIR po obliczeniu TD error ---
-# ---
+# ==============================================================================
+# Author: Kajetan Frąckowiak
+# Date: 2026
+# Modifications in this file:
+#   [1] # Creating own title name in Weight & Biases for better experiment tracking
+#   [2] # Update DEMIR after computing TD error
+# ==============================================================================
 
 from __future__ import annotations
 
@@ -560,14 +548,15 @@ class Experiment(CallbackNotifier):
                     "Collection via rollouts does not support initial random frames as of now."
                 )
             self.rollout_env = self.env_func().to(self.config.sampling_device)
-
-    # [1] --- MODYFIKACJE: własne nazewnictwo eksperymentów W&B ---
-    # Kajetan Frąckowiak, s28404 — format: qmix_{env}_{task}[_{reward}_scale{v}[_encoder_{t}][_beta1_{v}_beta2_{v}]]_{data}
+    #############################
+    # [1] Start. Creating own title name in Weight & Biases for better experiment tracking
+    #############################
+    # Kajetan Frąckowiak, s28404 — format: qmix_{env}_{task}[_{reward}_scale{v}[_encoder_{t}][_beta1_{v}_beta2_{v}]]_{date}
     def _build_wandb_run_name(self) -> str:
-        """Buduje nazwę runu W&B według schematu pracy inżynierskiej."""
+        """Builds a W&B run name according to the engineering thesis schema."""
         cfg = self.algorithm_config
-        env = self.environment_name  # "vmas" | "smacv2"
-        task = self.task_name  # "simple_spread" | "corridor" itd.
+        env = self.environment_name  # "vmas" | "smacv2" | "logic_env"
+        task = self.task_name  # "simple_spread" | "corridor" etc.
         now = datetime.now().strftime("%y_%m_%d-%H_%M_%S")
 
         def fmt(v: float) -> str:
@@ -601,7 +590,7 @@ class Experiment(CallbackNotifier):
         else:
             return f"qmix_{env}_{task}_seed{seed}_{now}"
 
-    # --- KONIEC MODYFIKACJI ---
+    # [1] End.
 
     def _setup_name(self):
         self.algorithm_name = self.algorithm_config.associated_class().__name__.lower()
@@ -892,7 +881,9 @@ class Experiment(CallbackNotifier):
 
                 optimizer.step()
                 optimizer.zero_grad()
-        ### [2] --- MODYFIKACJA: aktualizacja DEMIR po obliczeniu TD error --- ###
+        #############################
+        # [2] Update DEMIR after computing TD error
+        #############################
         # If DEMIR module exists for this group, provide it with the computed td_error
         td_error_val = None
         keys = list(subdata.keys(True, True))
@@ -947,7 +938,10 @@ class Experiment(CallbackNotifier):
                 except Exception:
                     # Never fail training loop because of DEMIR update issues
                     pass
-        ### [2] --- KONIEC MODYFIKACJI --- ###
+        #############################
+        # [2] End.
+        #############################
+
         self.replay_buffers[group].update_tensordict_priority(subdata)
         if self.target_updaters[group] is not None:
             self.target_updaters[group].step()

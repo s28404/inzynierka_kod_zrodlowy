@@ -1,12 +1,11 @@
 """
-Moduł implementujący mechanizm NGU (Never Give Up) do MARL bazująć na:
-https://arxiv.org/abs/2002.06038 oraz https://arxiv.org/abs/2512.01321.
+Module implementing the NGU (Never Give Up) mechanism for MARL based on:
+https://arxiv.org/abs/2002.06038 and https://arxiv.org/abs/2512.01321.
 
-Autor: Kajetan Frąckowiak (s28404)
-Data: 2026
-Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
+Author: Kajetan Frąckowiak 
+Date: 2026
 
-Opis: Plik zawiera pełną implementację mechanizmu NGU.
+Description: This file contains a full implementation of the NGU mechanism.
 """
 
 import numpy as np
@@ -61,7 +60,7 @@ class NGUModule(nn.Module):
             nn.ReLU(),
             nn.Linear(hidden, d),
         )
-        # Inverse Dynamics Model: (e_s, e_s') -> action
+        # Inverse Dynamics Model: (e_s, e_s') -> predicted action
         self.idm = nn.Sequential(
             nn.Linear(d * 2, hidden),
             nn.ReLU(),
@@ -76,6 +75,7 @@ class NGUModule(nn.Module):
         )
         for p in self.rnd_target.parameters():
             p.requires_grad = False
+            
         self.rnd_predictor = nn.Sequential(
             nn.Linear(obs_dim, hidden),
             nn.LeakyReLU(),
@@ -171,24 +171,26 @@ class NGUModule(nn.Module):
         group: str,
     ) -> torch.Tensor:
         """
-        Oblicz nagrodę wewnętrzną NGU (Never Give Up).
+        Compute the NGU (Never Give Up) intrinsic reward.
 
         Args:
             obs      : [batch_size, n_agents, obs_dim]
             next_obs : [batch_size, n_agents, obs_dim]
-            action   : [batch_size, n_agents] (akcje dyskretne) lub [batch_size, n_agents, action_dim] (ciągłe)
-            group    : nazwa grupy agentów
+            action   : [batch_size, n_agents] (discrete actions) or [batch_size, n_agents, action_dim] (continuous)
+            group    : name of the agent group
 
         Returns:
-            r_int : [batch_size, n_agents, 1] (nagroda wewnętrzna)
+            r_int : [batch_size, n_agents, 1] (intrinsic reward)
         """
-        original_shape = obs.shape  # zapamiętaj oryginalny kształt
-        # obs, next_obs: [batch_size, n_agents, obs_dim] -> [batch_size*n_agents, obs_dim]
+        # Store the original shape for reconstruction
+        original_shape = obs.shape 
+        
+        # Flatten: [batch_size, n_agents, obs_dim] -> [batch_size*n_agents, obs_dim]
         obs_flat = obs.reshape(-1, obs.shape[-1]).float()
         next_obs_flat = next_obs.reshape(-1, next_obs.shape[-1]).float()
-        n = obs_flat.shape[0]  # batch_size * n_agents
+        n = obs_flat.shape[0]  # total items (batch_size * n_agents)
 
-        # Action flat: [batch_size, n_agents] -> [batch_size*n_agents]
+        # Flatten actions: [batch_size, n_agents] -> [batch_size*n_agents]
         if not action.is_floating_point():
             action_idx = action.reshape(-1).long()
         else:
@@ -197,12 +199,12 @@ class NGUModule(nn.Module):
         # --- Train IDM + RND predictor ---
         self.optimizer.zero_grad()
 
-        # Ekstrakcja embeddingów
+        # Embedding extraction
         # obs_flat, next_obs_flat: [batch_size*n_agents, obs_dim] -> e_s, e_s_next: [batch_size*n_agents, embed_dim]
         e_s = self.phi(obs_flat)
         e_s_next = self.phi(next_obs_flat)
 
-        # IDM loss: predict discrete action with cross-entropy.
+        # IDM loss: predict discrete action using cross-entropy.
         pred_action_logits = self.idm(torch.cat([e_s, e_s_next], dim=-1))
         idm_loss = nn.functional.cross_entropy(pred_action_logits, action_idx)
 
@@ -216,7 +218,7 @@ class NGUModule(nn.Module):
         self.optimizer.step()
 
         with torch.no_grad():
-            # Use next-state embeddings for episodic novelty, as in transition-based curiosity.
+            # Use next-state embeddings for episodic novelty
             e_query_np = e_s_next.detach().cpu().numpy().astype(np.float32)
             rnd_r_np = (
                 ((rnd_pred_feat.detach() - rnd_target_feat) ** 2)
@@ -237,7 +239,7 @@ class NGUModule(nn.Module):
         # --- Combined intrinsic reward ---
         r_int = r_ep * alpha
 
-        # Keep reward positive and bounded by std-normalization and clipping.
+        # Normalize and clip the intrinsic reward
         self.ep_rms.update(r_int)
         ep_std = np.sqrt(self.ep_rms.var) + 1e-8
         r_int_norm = np.clip(r_int / ep_std, 0.0, self._p("ngu_reward_clip", 10.0))
@@ -276,7 +278,7 @@ class NGUModule(nn.Module):
                 commit=False,
             )
 
-        # Przekształć z powrotem do oryginalnego shape'u
+        # Reshape back to original dimensions
         # r_int_norm: [batch_size*n_agents] -> r_t: [batch_size*n_agents, 1] -> result: [batch_size, n_agents, 1]
         r_t = torch.from_numpy(r_int_norm.astype(np.float32)).to(obs.device)
         return r_t.reshape(*original_shape[:-1], 1)

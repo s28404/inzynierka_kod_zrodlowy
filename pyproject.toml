@@ -1,18 +1,3 @@
-# Autor: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Plik konfiguracji projektu Python (PEP 517/518).
-#        Zależności dobrane pod CUDA 11.8 + SMACv2 + VMAS + FAISS.
-#        Oparty na BenchMARL (Meta Platforms), rozszerzony o moduły
-#        DEMIR, RND, NGU oraz narzędzia plot_results i record_video.
-#
-# Kluczowe zależności:
-#   torch/torchrl/tensordict — framework MARL (TorchRL)
-#   vmas                    — środowiska MPE/continuous (VMAS)
-#   smacv2                  — StarCraft Multi-Agent Challenge v2
-#   faiss-cpu               — bufor epizodyczny k-NN (DEMIR / NGU)
-#   wandb                   — logowanie eksperymentów
-#   hydra-core              — zarządzanie konfiguracją
-
 [project]
 name = "benchmarl-demir"
 version = "0.1.0"
@@ -49,4 +34,3 @@ build-backend = "setuptools.build_meta"
 [[tool.uv.index]]
 name = "pytorch-cu118"
 url = "https://download.pytorch.org/whl/cu118"
-# Nie używamy 'explicit = true', aby pozwolić na fallback do PyPI

@@ -1,6 +1,6 @@
 #!/bin/bash
 # --- MODYFIKACJE / MODIFICATIONS ---
-# Autor: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
+# Autor: Kajetan Frąckowiak, s28404
 # Opis: Skrypt sanity check dla autorskiego środowiska SynchronizedFactory.
 # Obniża parametry do dosłownie jednej iteracji walidacyjnej, zmuszając 
 # thesis_logger do wczesnego wyplucia nagromadzonych metryk Reward Machine.

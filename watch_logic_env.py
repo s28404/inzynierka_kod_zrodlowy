@@ -2,12 +2,13 @@ import time
 import os
 from benchmarl.environments.logic_env.factory import SynchronizedFactory
 
+
 def main():
-    print("Inicjalizacja środowiska...")
+    print("Initializing environment...")
     env = SynchronizedFactory()
     obs, info = env.reset()
     
-    # Wyczyść ekran
+    # Clear the screen
     os.system('cls' if os.name == 'nt' else 'clear')
     env.render()
     time.sleep(1)
@@ -16,7 +17,7 @@ def main():
     step = 0
     
     while not done and step < 100:
-        # Losowe akcje dla każdego agenta
+        # Sample random actions for each agent
         actions = {
             agent: env.action_spaces[agent].sample() 
             for agent in env.agents
@@ -24,21 +25,22 @@ def main():
         
         obs, rewards, terminations, truncations, infos = env.step(actions)
         
-        # Wyczyść ekran i wyrysuj nową klatkę
+        # Clear screen and render new frame
         os.system('cls' if os.name == 'nt' else 'clear')
         env.render()
         
-        print(f"\nKrok: {step}")
-        print(f"Akcje: {actions}")
-        print(f"Nagrody: {rewards}")
+        print(f"\nStep: {step}")
+        print(f"Actions: {actions}")
+        print(f"Rewards: {rewards}")
         
         done = any(terminations.values()) or any(truncations.values())
         step += 1
         
-        # Poczekaj chwilę, żeby animacja była widoczna (0.2 sekundy)
+        # Wait a moment so the animation is visible (0.2 seconds)
         time.sleep(0.2)
         
-    print("\nZakończono epizod!")
+    print("\nEpisode finished!")
+
 
 if __name__ == "__main__":
     main()

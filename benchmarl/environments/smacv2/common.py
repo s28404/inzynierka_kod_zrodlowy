@@ -3,14 +3,6 @@
 #  This source code is licensed under the license found in the
 #  LICENSE file in the root directory of this source tree.
 #
-# --- MODYFIKACJE / MODIFICATIONS ---
-# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Ograniczono enum Smacv2Task do trzech map eksperymentalnych:
-#        SIX_H_VS_8Z (6h_vs_8z), CORRIDOR, THREE_M (3m).
-#        Usunięto: PROTOSS, TERRAN, ZERG (15 wpisów) — brak odpowiednich yaml.
-# Oryginał: BenchMARL (Meta Platforms), https://github.com/facebookresearch/BenchMARL
-# ---
 import copy
 from typing import Callable, Dict, List, Optional
 

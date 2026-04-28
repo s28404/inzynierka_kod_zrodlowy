@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Skrypt: run_qmix_vs_demir_protoss10.sh
-# Autor: Kajetan Frąckowiak (modyfikacja AI)
+# Autor: Kajetan Frąckowiak 
 # Cel: Uruchomienie eksperymentów QMIX i DEMIR na mapie Protoss 10 vs 10
 #
 set -e

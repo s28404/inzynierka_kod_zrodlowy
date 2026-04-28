@@ -1,12 +1,11 @@
 """
-Moduł implementujący mechanizm RND (Random Network Distillation) do MARL bazująć na:
-https://arxiv.org/abs/1810.12894 oraz https://arxiv.org/abs/2503.13077.
+Module implementing the RND (Random Network Distillation) mechanism for MARL based on:
+https://arxiv.org/abs/1810.12894 and https://arxiv.org/abs/2503.13077.
 
-Autor: Kajetan Frąckowiak (s28404)
-Data: 2026
-Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
+Author: Kajetan Frąckowiak
+Date: 2026
 
-Opis: Plik zawiera pełną implementację mechanizmu RND.
+Description: This file contains a complete implementation of the RND mechanism.
 """
 
 import numpy as np
@@ -68,30 +67,30 @@ class RNDModule(nn.Module):
         self, obs: torch.Tensor, group: str, train: bool = True
     ) -> torch.Tensor:
         """
-        Oblicz nagrodę wewnętrzną r_int = ||predictor(obs) - target(obs)||^2.
-        Opcjonalnie trenuj sieć predyktora.
+        Compute the intrinsic reward $r_{int} = \|\text{predictor}(obs) - \text{target}(obs)\|^2$.
+        Optionally train the predictor network.
 
         Args:
-            obs : [batch_size, n_agents, obs_dim] lub [batch_size*n_agents, obs_dim]
-            group: nazwa grupy agentów (do logowania w wandb)
-            train: czy aktualizować wagi predyktora
+            obs   : [batch_size, n_agents, obs_dim] or [batch_size*n_agents, obs_dim]
+            group : name of the agent group (for wandb logging)
+            train : whether to update the predictor weights
 
         Returns:
-            r_int : [batch_size, n_agents, 1] lub [batch_size, 1]
+            r_int : [batch_size, n_agents, 1] or [batch_size, 1]
         """
-        # Zapamiętaj oryginalny shape: [batch_size, n_agents, obs_dim]
+        # Store the original shape: [batch_size, n_agents, obs_dim]
         original_shape = obs.shape
-        # Spłaszcz do: [batch_size*n_agents, obs_dim]
+        # Flatten to: [batch_size*n_agents, obs_dim]
         obs_flat = obs.reshape(-1, obs.shape[-1]).float()
 
-        # Ekstrakcja cech z sieci target (bez aktualizacji)
+        # Extract features from the target network (no updates)
         # obs_flat: [batch_size*n_agents, obs_dim] -> target_feat: [batch_size*n_agents, embed_dim]
         with torch.no_grad():
             target_feat = self.target(obs_flat)
 
         if train:
             self.optimizer.zero_grad()
-            # Ekstrakcja cech z predyktora (sieci szkolonej)
+            # Extract features from the predictor (trained network)
             # obs_flat: [batch_size*n_agents, obs_dim] -> pred_feat: [batch_size*n_agents, embed_dim]
             pred_feat = self.predictor(obs_flat)
             loss = nn.functional.mse_loss(pred_feat, target_feat)
@@ -101,9 +100,9 @@ class RNDModule(nn.Module):
             with torch.no_grad():
                 pred_feat = self.predictor(obs_flat)
 
-        # Oblicz nagrodę RND (różnica kwadratów cech)
+        # Calculate RND reward (squared feature difference)
         # pred_feat, target_feat: [batch_size*n_agents, embed_dim]
-        # r_int_flat: [batch_size*n_agents] (średnia po wymiarze embed_dim)
+        # r_int_flat: [batch_size*n_agents] (mean across the embed_dim)
         with torch.no_grad():
             r_int_flat = ((pred_feat.detach() - target_feat) ** 2).mean(dim=-1)
 
@@ -112,10 +111,11 @@ class RNDModule(nn.Module):
         self.rms.update(r_np)
         r_std = np.sqrt(self.rms.var) + 1e-8
         r_norm = np.clip(r_np / r_std, 0.0, self._param("rnd_reward_clip", 10.0))
-        # Konwertuj z powrotem do tensora: [batch_size*n_agents]
+        
+        # Convert back to tensor: [batch_size*n_agents]
         r_norm_t = torch.from_numpy(r_norm.astype(np.float32)).to(obs.device)
 
-        # Logowanie do wandb
+        # Logging to wandb
         if _wandb is not None and _wandb.run is not None:
             _wandb.log(
                 {
@@ -125,7 +125,7 @@ class RNDModule(nn.Module):
                 commit=False,
             )
 
-        # Przekształć z powrotem do oryginalnego shape'u
+        # Reshape back to the original shape
         # r_norm_t: [batch_size*n_agents] -> result: [batch_size, n_agents, 1]
         result = r_norm_t.reshape(*original_shape[:-1], 1)
         return result

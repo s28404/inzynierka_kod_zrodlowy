@@ -1,13 +1,11 @@
-#  Copyright (c) Meta Platforms, Inc. and affiliates.
-#
-#  This source code is licensed under the license found in the
-#  LICENSE file in the root directory of this source tree.
-#
-# --- MODYFIKACJE / MODIFICATIONS ---
-# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Integracja custom environment "SynchronizedFactory" do systemu BenchMARL.
-# ---
+"""
+Module implementing configuration to SynchronizedFactory environment
+
+Author: Kajetan Frąckowiak
+Date: 2026
+
+Description: This file contains the whole configuration classes to SynchronizedFactory 
+"""
 
 import copy
 from typing import Callable, Dict, List, Optional

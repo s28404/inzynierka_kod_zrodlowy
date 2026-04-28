@@ -1,28 +1,18 @@
-#!/usr/bin/env python3
-#  Copyright (c) 2026 Kajetan Frąckowiak, s28404
-#
-#  Projekt: Algorytm DEMIR dla SMACv2 i Custom Logic Environment
-#  Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-#  Praca Inżynierska (2026)
-#
-#  Opis: Skrypt do generowania ogólnych wykresów z CSV logów.
-#  Format publikacyjny (High-quality figures do IEEE/ACM publikacji).
-
 """
-Rysuje krzywe uczenia z CSV logów zbieranych przez thesis_csv_logger.
+Plots learning curves from CSV logs collected by thesis_csv_logger.
 
-Użycie:
+Usage:
     python plot_thesis_results.py                              # all algorithms
-    python plot_thesis_results.py --algo qmix demir            # select algos
-    python plot_thesis_results.py --env smacv2                 # filter environment
+    python plot_thesis_results.py --algo qmix demir            # select specific algorithms
+    python plot_thesis_results.py --env smacv2                 # filter by environment
     python plot_thesis_results.py --task protoss_5_vs_5        # specific task
     python plot_thesis_results.py --metric eval_return_mean    # specific metric
     python plot_thesis_results.py --out plots/thesis/          # output directory
 
-Format CSV loga:
+CSV log format:
     frame,step,timestamp,eval_return_mean,eval_return_std,eval_win_rate,...
 
-Automatycznie szuka: logs_thesis/**/*.csv
+Automatically searches for: logs_thesis/**/*.csv
 """
 
 import argparse
@@ -102,7 +92,7 @@ METRIC_CONFIGS = {
 
 def load_csv_logs(logs_dir: Path = Path("logs_thesis")) -> dict:
     """
-    Zbiera wszystkie CSV logi.
+    Collects all CSV logs from the specified directory.
 
     Returns:
         dict: {(algo, env, task, seed): DataFrame}
@@ -113,10 +103,10 @@ def load_csv_logs(logs_dir: Path = Path("logs_thesis")) -> dict:
         try:
             df = pd.read_csv(csv_path)
 
-            # Ustal algorytm z nazwy pliku
+            # Determine algorithm from filename
             filename = csv_path.stem
 
-            # Priorytet dla autorskich modułów/wariantów umieszczonych w nazwie
+            # Priority for custom modules/variants in the filename
             algo_from_name = None
             for specific in ["demir", "ngu", "rnd"]:
                 if specific in filename:
@@ -125,13 +115,13 @@ def load_csv_logs(logs_dir: Path = Path("logs_thesis")) -> dict:
             if algo_from_name is None and "qmix" in filename:
                 algo_from_name = "qmix"
 
-            # Zawsze ufamy nazwie pliku bardziej ze względu na "algorithm=qmix" wewnątrz CSV
+            # We trust the filename more (due to "algorithm=qmix" possibly being inside CSV)
             algo = algo_from_name if algo_from_name else "unknown"
 
             if len(df) == 0:
                 continue
 
-            # Zmienne z kolumn
+            # Extract variables from columns
             env = (
                 df.iloc[0]["environment"] if "environment" in df.columns else "unknown"
             )
@@ -157,18 +147,18 @@ def plot_metric(
     task_filter: str = None,
 ):
     """
-    Rysuje metrykę z wielu runów (mean ± std po seedach).
+    Plots a metric from multiple runs (mean ± std across seeds).
 
     Args:
-        data: Dict z załadowanymi CSV'ami
-        metric: Nazwa metryki do wykreślenia
-        output_dir: Gdzie zapis plik
-        algo_filter: Filtr algorytmów (None = wszystkie)
-        env_filter: Filtr środowiska
-        task_filter: Filtr tasku
+        data: Dict with loaded CSVs
+        metric: Name of the metric to plot
+        output_dir: Directory to save the plot
+        algo_filter: List of algorithms to include (None = all)
+        env_filter: Environment filter
+        task_filter: Task filter
     """
 
-    # Grupuj po algorytmie, środowisku, tasku
+    # Group by algorithm, environment, and task
     grouped = defaultdict(lambda: defaultdict(list))  # (algo, env, task) -> seeds_data
 
     for (algo, env, task, seed), df in data.items():
@@ -187,20 +177,19 @@ def plot_metric(
         print(f"[!] No data found for metric={metric}")
         return
 
-    # Rysuj
+    # Plot
     fig, axes = plt.subplots(figsize=(12, 6))
 
     for (algo, env, task), seed_data in sorted(grouped.items()):
-        # Zbiór wszystkich x (frames) ze wszystkich seedów
+        # Collect all unique frames across all seeds
         all_frames = set()
         for seed, dfs in seed_data.items():
             for df in dfs:
                 all_frames.update(df.get("frame", []))
         all_frames = sorted(all_frames)
 
-        # Interpoluj każdy seed na wspólną siatkę
+        # Interpolate each seed onto the common frame grid
         seed_means = []
-        seed_stds = []
         for seed, dfs in seed_data.items():
             for df in dfs:
                 if len(df) > 0:
@@ -209,22 +198,22 @@ def plot_metric(
                     x = np.array(df["frame"])
                     y = np.array(df[metric])
 
-                    # Interpoluj na wszystkie frames
+                    # Interpolate onto all_frames
                     y_interp = np.interp(all_frames, x, y, left=np.nan, right=np.nan)
                     seed_means.append(y_interp)
 
         if not seed_means:
             continue
 
-        # Mean ± std across seeds
+        # Compute mean ± std across seeds
         seed_means = np.array(seed_means)
         mean_vals = np.nanmean(seed_means, axis=0)
         std_vals = np.nanstd(seed_means, axis=0)
 
-        # Style
+        # Get plotting style
         style = ALGO_STYLE.get(algo, {"color": "gray", "label": algo, "linestyle": "-"})
 
-        # Plot
+        # Plot mean line
         axes.plot(
             all_frames,
             mean_vals,
@@ -239,7 +228,7 @@ def plot_metric(
             },
         )
 
-        # Shaded region (±2 std errors)
+        # Shaded region (±1 std)
         axes.fill_between(
             all_frames,
             mean_vals - std_vals,
@@ -258,7 +247,7 @@ def plot_metric(
     axes.legend(loc="best", frameon=True, fancybox=True, shadow=True)
     axes.grid(True, alpha=0.3)
 
-    # Save
+    # Save plot
     output_dir.mkdir(parents=True, exist_ok=True)
     task_str = f"_{task_filter}" if task_filter else ""
     env_str = f"_{env_filter}" if env_filter else ""

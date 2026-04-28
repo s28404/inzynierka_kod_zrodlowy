@@ -4,10 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 # ==============================================================================
-# Autor: Kajetan Frąckowiak, s28404
-# Data: 2026
-# Modyfikacje w tym pliku :
-#   [1] # Implmenetcja klasy RunningMeanStd, która implementuje Welford's online algorithm do normalizacji jakości i nowości w czasie treningu.
+# Author: Kajetan Frąckowiak
+# Date: 2026
+# Modifications in this file:
+# [1] # Implementation of the RunningMeanStd class, which implements Welford's online algorithm for normalizing quality and novelty during training.
 # ==============================================================================
 
 import pathlib
@@ -487,8 +487,8 @@ class AlgorithmConfig:
         return self.has_centralized_critic() or self.has_independent_critic()
 
 #############################
-# [1]. Początek. Implementacja klasy RunningMeanStd, która implementuje Welford's online algorithm do normalizacji jakości i nowości w czasie treningu.
-#############################
+# [1]. Start. Implementation of the RunningMeanStd class, which implements Welford's online algorithm for normalizing quality and novelty during training.
+# #############################
 
 class RunningMeanStd:
     """Welford's online algorithm - normalizacja jakości i nowości w czasie treningu."""
@@ -516,5 +516,5 @@ class RunningMeanStd:
         return (x - self.mean) / (np.sqrt(self.var) + 1e-8)
 
 #############################
-# [1] Koniec.
+# [1] End.
 #############################

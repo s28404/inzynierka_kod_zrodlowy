@@ -3,45 +3,22 @@
 #  This source code is licensed under the license found in the
 #  LICENSE file in the root directory of this source tree.
 #
-# --- MODYFIKACJE / MODIFICATIONS ---
-# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Dodano logowanie win_rate (SMACv2 battle_won) do JSON i WandB;
-#        dodano metodę log_demir_stats do śledzenia metryk DEMIR.
-# Oryginał: BenchMARL (Meta Platforms), https://github.com/facebookresearch/BenchMARL
-#
-# Ramki komentarzowe dodane w tej sesji (inline block markers):
-#
-#   [1] # ── Win Rate (SMACv2 battle_won flag) ──────────────────────────
-#       Lokalizacja: log_evaluation()
-#       Oblicza win_rate z flagi battle_won i zapisuje do W&B oraz JSON.
-#
-#   [2] # ── DEMIR publication metrics ───────────────────────────────────
-#       Lokalizacja: log_demir_stats() — nagłówek metody
-#       Pełna metoda logowania metryk DEMIR: EDM/EFM size, beta, scale.
-#
-#   [3] # ── Coverage / Diversity ─────────────────────────────────────────
-#       Lokalizacja: log_demir_stats() — sekcja to_log
-#       edm_size i efm_size jako miary eksploracji (rosnące z liczbą klatek).
-#
-#   [4] # ── Ablation markers ──────────────────────────────────────────────
-#       Lokalizacja: log_demir_stats() — sekcja to_log
-#       beta1, beta2, demir_scale logowane stale — filtrowanie w W&B.
-#
-#   [5] # ── Intrinsic reward decomposition (opcjonalne) ──────────────────
-#       Lokalizacja: log_demir_stats() — opcjonalne pola to_log
-#       shaping_reward_mean, novelty_mean, quality_mean (jeśli podane).
-#
-#   [6] # ── Convenience: 5 Metric Keys do eksportu PDF (Elsevier) ────────
-#       Lokalizacja: ELSEVIER_METRIC_KEYS (atrybut klasy Logger)
-#       Lista 5 kluczy W&B gotowych do eksportu wykresu do publikacji.
-#
-#   [7] # ── Zmiana nazewnictwa plików .jsonl pod W&B ──────────────────────
-#       Lokalizacja: log() oraz __init__()
-#       Użycie `experiment_name` zamiast daty do nazywania plików. Wyłapywanie logów środowiskowych.
-#
-# ---
-
+# ==============================================================================
+# Author: Kajetan Frąckowiak
+# Date: 2026
+# Modification in this file
+#   [1] # Calculate win_rate from the battle_won flag and saves to W&B and JSON.
+#   [2] # Add full method for logging DEMIR metrics: EDM/EFM size, beta, scale.
+#   [3] # Add edm_size and efm_size as measures of exploration (increasing with frame count).
+#   [4] # Add beta1, beta2, demir_scale logged continuously — for filtering in W&B.
+#   [5] # Add shaping_reward_mean, novelty_mean, quality_mean (if provided).
+#   [6] # Add list of 5 W&B keys ready for plot export for publication.
+#   [7] # Use `experiment_name` instead of a date for file naming. Catching environmental logs.
+#   [8] # Debug: write when `log_collection` is called for tracing.
+#   [9] # CSV logging hook: a small CSV row for thesis analysis if the experiment provided `csv_path` via `_experiment_ref`.
+#   [10] # Append a flattened JSONL line to a central `logs_thesis directory for easy aggregation of thesis metrics.
+#   [11] # Custom Reward Machine metrics for logic_env / synchronized tasks: success, bottleneck rates and RM state ratios.
+# ==============================================================================
 import json
 import os
 import warnings
@@ -86,12 +63,13 @@ class Logger:
         self.model_name = model_name
         self.group_map = group_map
         self.seed = seed
+        #############################
+        # [7] Start. Use `experiment_name` instead of a date for file naming.
+        #############################
         self.experiment_name = experiment_name
-
-        # --- KAJETAN MOD: Unikalna data dla osobnych plików dla każdego uruchomienia ---
-        from datetime import datetime
-
-        self.run_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        #############################
+        # [7] End.
+        #############################
 
         if experiment_config.create_json:
             self.json_writer = JsonWriter(
@@ -161,12 +139,17 @@ class Logger:
         total_frames: int,
         step: int,
     ) -> float:
-        # DEBUG: Write to file na samym poczatku
+        #############################
+        # [8] Start. Debug: write when `log_collection` is called for tracing.
+        #############################
         with open("/tmp/log_collection_called.txt", "a") as f:
             f.write(
                 f"[log_collection] CALLED with total_frames={total_frames}, step={step}\n"
             )
             f.flush()
+        #############################
+        # [8] End.
+        #############################
 
         to_log = {}
         groups_episode_rewards = []
@@ -214,8 +197,9 @@ class Logger:
 
         self.log(to_log, step=step)
 
-        # --- CSV LOGGING HOOK ---
-        # Write metrics to CSV for thesis analysis
+        #############################
+        # [9] Start. CSV logging hook: a small CSV row for thesis analysis if the experiment provided `csv_path` via `_experiment_ref`.
+        #############################
         try:
             if (
                 hasattr(self, "_experiment_ref")
@@ -249,7 +233,9 @@ class Logger:
                     writer.writerow(row)
         except Exception:
             pass  # Silent fail
-        # --- END CSV LOGGING ---
+        #############################
+        # [9] End.
+        #############################
 
         return global_episode_rewards.mean().item()
 
@@ -312,9 +298,9 @@ class Logger:
             td.batch_size[0] for td in rollouts
         ) / len(rollouts)
 
-        # ── Win Rate (SMACv2 battle_won flag) ───────────────────────────────
-        # Kluczowa metryka dla publikacji Elsevier: oś X = total_frames,
-        # oś Y = % wygranych bitew. Wymagana do Sample-Efficiency comparison.
+        #############################
+        # [1] Start. Calculate win_rate from the battle_won flag and saves to W&B and JSON.
+        #############################
         try:
             battle_won_per_ep = []
             for td in rollouts:
@@ -322,18 +308,22 @@ class Logger:
                 bw = td.get(("next", "info", "battle_won"), None)
                 if bw is not None and done.any():
                     battle_won_per_ep.append(bw[done].to(torch.float).mean().item())
+
             if battle_won_per_ep:
                 win_rate = float(np.mean(battle_won_per_ep))
                 to_log["eval/info/win_rate"] = win_rate
-                # Przechowujemy też w JSON (do marl-eval / Seaborn)
                 json_metrics["win_rate"] = torch.tensor(
                     [float(w) for w in battle_won_per_ep]
                 )
         except Exception:
-            pass  # Non-SMACv2 task – brak battle_won, pomijamy
-        # ────────────────────────────────────────────────────────────────────
+            pass  # Non-SMACv2 task
+        #############################
+        # [1] End.
+        #############################
 
-        # ── Autorskie metryki RM (logic_env_factory) ─────────────────────────
+        #############################
+        # [11] Start. Custom Reward Machine metrics for logic_env / synchronized tasks: success, bottleneck rates and RM state ratios.
+        #############################
         try:
             if "logic_env" in self.task_name or "synchronized" in self.task_name:
                 success_rates = []
@@ -343,10 +333,7 @@ class Logger:
                 rm_2_ratios = []
 
                 for td in rollouts:
-                    # Wyciągamy rm_state z obserwacji dowolnego agenta (index 6).
-                    # Kształt ob: [time, n_agents, obs_dim]
                     obs = td.get(("next", "agents", "observation"))
-                    # Bierzemy z pierwszego agenta, bo RM state jest globalne/współdzielone
                     rm_state_seq = obs[:, 0, 6]
 
                     max_rm = rm_state_seq.max().item()
@@ -383,8 +370,10 @@ class Logger:
                     json_metrics["eval_rm_state_1_ratio"] = torch.tensor(rm_1_ratios)
                     json_metrics["eval_rm_state_2_ratio"] = torch.tensor(rm_2_ratios)
         except Exception as e:
-            pass  # Puste gdy nie pasuje do środowiska
-        # ────────────────────────────────────────────────────────────────────
+            return e
+        #############################
+        # [11] End.
+        #############################
 
         if self.json_writer is not None:
             self.json_writer.write(
@@ -400,7 +389,6 @@ class Logger:
                         json_file, base_path=os.path.dirname(json_file)
                     )
 
-        # --- ZAPIS DO CSV (MODYFIKACJA DLA PRACY INŻYNIERSKIEJ) ---
         try:
             import datetime
             import csv
@@ -499,7 +487,9 @@ class Logger:
 
                         logger.log_video("eval_video", vid, step=step)
 
-    # ── DEMIR publication metrics ─────────────────────────────────────────
+    #############################
+    # [2] Start. Add full method for logging DEMIR metrics: EDM/EFM size, beta, scale.
+    #############################
     def log_demir_stats(
         self,
         demir_module,
@@ -509,38 +499,7 @@ class Logger:
         novelty_mean: Optional[float] = None,
         quality_mean: Optional[float] = None,
     ) -> None:
-        """Log DEMIR episodic memory statistics to WandB / TensorBoard.
-
-        Designed for three plot types required by Elsevier reviewers:
-
-        1. **Diversity / Coverage** – ``demir/{group}/edm_size`` grows as the
-           agent explores new states. Compare DEMIR vs QMIX baseline on a
-           heat-map or coverage-vs-frames plot.
-
-        2. **Ablation Study** – ``demir/{group}/beta1`` and ``beta2`` are
-           logged every step, so each WandB run can be filtered by beta
-           combination::
-
-               Full DEMIR  : beta1 > 0, beta2 > 0
-               No Quality  : beta1 = 0, beta2 > 0
-               No Novelty  : beta1 > 0, beta2 = 0
-               Baseline    : beta1 = 0, beta2 = 0  (= QMIX)
-
-        3. **Intrinsic reward decomposition** – optional
-           ``shaping_reward_mean``, ``novelty_mean``, ``quality_mean`` allow
-           plotting the two reward components separately.
-
-        Call this method from the algorithm's ``_loss_fn`` or via a
-        :class:`~benchmarl.experiment.callback.Callback`.
-
-        Args:
-            demir_module: the :class:`DecentralizedEpisodicReward` instance.
-            group (str): agent group name.
-            step (int): current training step.
-            shaping_reward_mean (float, optional): pre-computed mean phi.
-            novelty_mean (float, optional): mean novelty (EDM component).
-            quality_mean (float, optional): mean quality (EFM component).
-        """
+        """Log DEMIR episodic memory statistics to WandB / TensorBoard."""
         if not len(self.loggers):
             return
 
@@ -554,53 +513,70 @@ class Logger:
             return getattr(cfg, name, default)
 
         to_log: Dict[str, Any] = {
-            # ── Coverage / Diversity ──────────────────────────────────────
+            #############################
+            # [3] Start. Add edm_size and efm_size as measures of exploration
+            #############################
             f"demir/{group}/edm_size": demir_module.edm_index.ntotal,
             f"demir/{group}/efm_size": demir_module.efm_index.ntotal,
-            # ── Ablation markers ─────────────────────────────────────────
-            # Stałe per-run — umożliwiają filtrowanie w WandB po beta.
+            #############################
+            # [3] End.
+            #############################
+            #############################
+            # [4] Start. Add beta1, beta2, demir_scale logged continuously — for filtering in W&B.
+            #############################
             f"demir/{group}/beta1": _cfg("beta1", 1.0),
             f"demir/{group}/beta2": _cfg("beta2", 0.5),
             f"demir/{group}/demir_scale": _cfg("demir_scale", 0.05),
+            #############################
+            # [4] End.
+            #############################
         }
 
-        # ── Intrinsic reward decomposition (opcjonalne) ───────────────────
+        #############################
+        # [5] Start. Add shaping_reward_mean, novelty_mean, quality_mean (if provided).
+        #############################
         if shaping_reward_mean is not None:
             to_log[f"demir/{group}/shaping_reward_mean"] = shaping_reward_mean
         if novelty_mean is not None:
             to_log[f"demir/{group}/novelty_mean"] = novelty_mean
         if quality_mean is not None:
             to_log[f"demir/{group}/quality_mean"] = quality_mean
+        #############################
+        # [5] End.
+        #############################
 
         self.log(to_log, step=step)
 
-    # ── Convenience: 5 Metric Keys do eksportu PDF (Elsevier) ─────────────
+    #############################
+    # [2] End.
+    #############################
+
+    #############################
+    # [6] Start. Add list of 5 W&B keys ready for plot export for publication.
+    #############################
     ELSEVIER_METRIC_KEYS: List[str] = [
-        "eval/info/win_rate",  # (1) Win Rate  – główna metryka SMACv2
-        "eval/reward/episode_reward_mean",  # (2) Episode Return  – backup jeśli brak win_rate
-        "demir/{group}/edm_size",  # (3) EDM Coverage  – dowód eksploracji
-        "demir/{group}/novelty_mean",  # (4) Novelty (β₂)  – składnik ablacji
-        "demir/{group}/quality_mean",  # (5) Quality (β₁)  – składnik ablacji
-        # Uwaga: zastąp {group} rzeczywistą nazwą grupy (np. 'agents').
-        # Do generowania PDF użyj: wandb.Api().run(...).history(keys=KEYS)
-        # i biblioteki Seaborn lub marl-eval. Zapisz jako .PDF/.EPS.
+        "eval/info/win_rate",  # (1) Win Rate – główna metryka SMACv2
+        "eval/reward/episode_reward_mean",  # (2) Episode Return
+        "demir/{group}/edm_size",  # (3) EDM Coverage
+        "demir/{group}/novelty_mean",  # (4) Novelty (β₂)
+        "demir/{group}/quality_mean",  # (5) Quality (β₁)
     ]
-    # ─────────────────────────────────────────────────────────────────────
+    #############################
+    # [6] End.
+    #############################
 
     def commit(self):
         for logger in self.loggers:
             if isinstance(logger, WandbLogger):
                 logger.experiment.log({}, commit=True)
 
+    #############################
+    # [7] Start. Use `experiment_name` instead of a date for file naming. Catching environmental logs.
+    #############################
     def log(self, dict_to_log: Dict, step: int = None):
-        # --- DODANE PRZEZ KAJETANA: Niestandardowy zrzut ewaluacji z każdego log() ---
-        # Zapisz my log-file do katalogu logs_thesis (bezwzględna ścieżka by ominąć Hydrę)
         thesis_dir = Path("/home/kajetan/Documents/inzynierka_kod_zrodlowy/logs_thesis")
         thesis_dir.mkdir(parents=True, exist_ok=True)
-        # Nazywamy w oparciu o obiekt głównej konfiguracji + timestamp dla UNIKALNOŚCI KAŻDEGO URUCHOMIENIA
-        safe_task_name = self.task_name.replace("/", "_")
 
-        # Zapis pod dokładnie taką nazwą jak w wandb
         fname = f"{thesis_dir}/{self.experiment_name}.jsonl"
 
         with open(fname, "a") as f:
@@ -614,7 +590,6 @@ class Logger:
                     clean_dict[k] = v
             clean_dict["_step"] = step
             f.write(json.dumps(clean_dict) + "\n")
-        # ---------------------------------------------------------------------
 
         for logger in self.loggers:
             if isinstance(logger, WandbLogger):
@@ -622,6 +597,10 @@ class Logger:
             else:
                 for key, value in dict_to_log.items():
                     logger.log_scalar(key.replace("/", "_"), value, step=step)
+
+    #############################
+    # [7] End.
+    #############################
 
     def finish(self):
         for logger in self.loggers:
@@ -812,9 +791,12 @@ class JsonWriter:
         with open(self.path, "w+") as f:
             json.dump(self.data, f, indent=4)
 
+        #############################
+        # [10] Start. Append a flattened JSONL line to a central `logs_thesis`
+        # directory for easy aggregation of thesis metrics.
+        #############################
         base_dir = "/home/kajetan/Documents/inzynierka_kod_zrodlowy/logs_thesis"
         os.makedirs(base_dir, exist_ok=True)
-        # Bierzemy średnie wartości z list dla danego kroku ewaluacji, chyba że lista jest pusta
         flat_metrics = {
             k: (sum(vals) / len(vals) if len(vals) > 0 else 0.0)
             for k, vals in metrics.items()
@@ -823,7 +805,10 @@ class JsonWriter:
         flat_metrics["evaluation_step"] = evaluation_step
         flat_metrics["timestamp_str"] = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-        file_name = f"thesis_metrics_raw.jsonl"
+        file_name = "thesis_metrics_raw.jsonl"
         file_path = os.path.join(base_dir, file_name)
         with open(file_path, "a") as fw:
             fw.write(json.dumps(flat_metrics) + "\n")
+        #############################
+        # [10] End.
+        #############################

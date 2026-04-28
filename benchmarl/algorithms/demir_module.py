@@ -1,11 +1,10 @@
 """
-Moduł implementujący mechanizm DEMIR (Decentralized Episodic Memory for Intrinsic Reward).
+Module implementing the DEMIR (Decentralized Episodic Memory for Intrinsic Reward) mechanism.
 
-Autor: Kajetan Frąckowiak (s28404)
-Data: 2026
-Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
+Author: Kajetan Frąckowiak
+Date: 2026
 
-Opis: Plik zawiera pełną implementację mechanizmu DEMIR.
+Description: This file contains the full implementation of the DEMIR mechanism.
 """
 
 import torch
@@ -39,14 +38,11 @@ class DemirEncoders(nn.Module):
             nn.Linear(action_dim, 32), nn.ReLU(), nn.Linear(32, self.d_a)
         )
         self.phi_r = nn.Sequential(nn.Linear(1, 16), nn.ReLU(), nn.Linear(16, self.d_r))
-        # Auxiliary: Inverse Dynamics Model (e_s_t, e_s_{t+1}) -> akcja
-        # Gwarantuje "actionable" embeddingi - ignoruje szum nie wpływający na agenta
         self.inverse_dynamics = nn.Sequential(
             nn.Linear(self.d_s * 2, 128), nn.ReLU(), nn.Linear(128, action_dim)
         )
 
     def forward_kinematics(self, e_s, e_s_next):
-        """Przewiduje akcję z pary stanów (Inverse Dynamics)."""
         return self.inverse_dynamics(torch.cat([e_s, e_s_next], dim=-1))
 
     def encoder_state(self, obs):
@@ -56,7 +52,7 @@ class DemirEncoders(nn.Module):
         e_s = self.phi_s(obs)
         e_a = self.phi_a(action)
 
-        # Reward musi być (batch, 1)
+        # Reward must be (batch, 1)
         if reward_ext.dim() == 0 or reward_ext.dim() == 1:
             reward_ext = reward_ext.view(-1, 1)
 

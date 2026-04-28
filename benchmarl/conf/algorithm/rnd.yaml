@@ -1,28 +1,29 @@
-# Plik konfiguracyjny dla mechanizmu RND
-
-# Autor: Kajetan Frąckowiak (s28404)
-# Data: 2026
-# Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
-
-# Opis: Plik zawiera hiperparametry oraz konfiguracje dla mechanizmu RND bazujące na artukułach https://arxiv.org/abs/1810.12894 oraz https://arxiv.org/abs/2503.13077
+# Configuration file for the RND (Random Network Distillation) mechanism
+#
+# Author: Kajetan Frąckowiak
+# Date: 2026
+#
+# Description: This file contains hyperparameters and configurations for the RND mechanism
+# based on the papers https://arxiv.org/abs/1810.12894 and https://arxiv.org/abs/2503.13077.
+# Certain hyperparameters have been selected originally due to a lack of specific information in the papers.
 
 defaults:
   - rnd_config
   - _self_
 
-# Bazowe hiperparametry QMIX
+# Base QMIX hyperparameters
 mixing_embed_dim: 32
 delay_value: True
 loss_function: "l2"
 use_intrinsic_rewards: True
 
-# Skala nagrody wewnętrznej RND
+# Intrinsic reward scales
 demir_scale: 0.0
 ngu_scale: 0.0
-rnd_scale: 0.1 # Autorsko dobrana skala nagrody RND
+rnd_scale: 0.1 # Originally selected RND reward scale
 
-# Architektura RND zgodna z artykułami wyżej
+# RND architecture consistent with the papers cited above
 rnd_embed_dim: 64
 rnd_hidden_dim: 256
-# Autorsko dobrany learning rate dla RND
+# Originally selected learning rate for RND
 rnd_lr: 0.0001

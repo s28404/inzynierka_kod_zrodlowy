@@ -1,3 +1,12 @@
+"""
+Module implementing the SynchronizedFactory mechanism.
+
+Author: Kajetan Frąckowiak
+Date: 2026
+
+Description: This file contains the full implementation of the SynchronizedFactory mechanism.
+"""
+
 import numpy as np
 from pettingzoo.utils.env import ParallelEnv
 from gymnasium import spaces

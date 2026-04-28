@@ -1,22 +1,22 @@
-# Plik konfiguracyjny dla mechanizmu DEMIR
-
-# Autor: Kajetan Frąckowiak (s28404)
-# Data: 2026
-# Praca inżynierska: Polsko-Japońska Akademia Technik Komputerowych
-
-# Opis: Plik zawiera autorskie dobranie hiperparametrów oraz konfiguracji dla mechanizmu DEMIR
+# Configuration file for the DEMIR mechanism
+#
+# Author: Kajetan Frąckowiak
+# Date: 2026
+#
+# Description: This file contains original selection of hyperparameters and 
+# configuration for the DEMIR mechanism.
 
 defaults:
   - demir_config
   - _self_
 
-# Bazowe hiperparametry QMIX
+# Base QMIX hyperparameters
 mixing_embed_dim: 32
 delay_value: True
 loss_function: "l2"
 use_intrinsic_rewards: True
 
-# Hiperparametry DEMIR
+# DEMIR hyperparameters
 emb_dim_state: 64
 emb_dim_action: 16
 emb_dim_reward: 8
@@ -28,6 +28,6 @@ sigma: 0.5
 n_efm: 10000
 n_edm: 5000
 demir_scale: 0.05
-encoder_type: "idm"  # "idm" (IDM+decorrelation) lub "mlp" (ablacja - samo decorrelation)
+encoder_type: "idm"  # "idm" (IDM+decorrelation) or "mlp" (ablation - decorrelation only)
 rnd_scale: 0.0
 ngu_scale: 0.0

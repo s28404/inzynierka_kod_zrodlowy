@@ -1,20 +1,19 @@
-# Autor: Kajetan Frąckowiak, s28404 (2026)
-# Plik napisany od podstaw w ramach pracy inżynierskiej
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Opis: Skrypt do nagrywania epizodów wytrenowanych agentów
-#        do pliku MP4 (VMAS/MPE i SMACv2).
+# Author: Kajetan Frąckowiak, s28404 (2026)
+# File written from scratch as part of an engineering thesis
+# Description: Script for recording episodes of trained agents
+#              to MP4 files (supports VMAS/MPE and SMACv2).
 
 """
-Wczytuje checkpoint z treningu i nagrywa epizod do pliku MP4.
+Loads a training checkpoint and records episodes to an MP4 video file.
 
-VMAS (MPE):  działa headless, bez monitora
-SMACv2:      wymaga DISPLAY (np. Xvfb) — patrz instrukcja poniżej
+VMAS (MPE):  works headless (no monitor required)
+SMACv2:      requires DISPLAY (e.g. Xvfb) — see instructions below
 
-Użycie:
+Usage:
     python record_video.py outputs/.../checkpoint.pt
     python record_video.py outputs/.../checkpoint.pt --episodes 3 --out video.mp4 --fps 20
 
-Dla SMACv2 (bez monitora):
+For SMACv2 (without a monitor):
     Xvfb :99 -screen 0 1024x768x24 &
     DISPLAY=:99 python record_video.py ...
 """
@@ -44,21 +43,24 @@ def record(
     fps: int = 20,
     deterministic: bool = True,
 ):
+    """
+    Records one or more episodes from a trained agent and saves them as an MP4 video.
+    """
     if not _HAS_IMAGEIO:
         raise ImportError(
-            "imageio i imageio-ffmpeg są wymagane:\n"
+            "imageio and imageio-ffmpeg are required:\n"
             "    pip install imageio imageio-ffmpeg"
         )
 
     checkpoint_file = str(Path(checkpoint_file).resolve())
-    print(f"Wczytuję checkpoint: {checkpoint_file}")
+    print(f"Loading checkpoint: {checkpoint_file}")
 
-    # ── Wczytanie eksperymentu ───────────────────────────────────────────────
+    # ── Load experiment from checkpoint ─────────────────────────────────────
     experiment = reload_experiment_from_file(checkpoint_file)
 
-    # Wymuszamy render=True (może być False w zapisanym configu)
+    # Force rendering to be enabled (it might be disabled in the saved config)
     experiment.config.render = True
-    # Resetujemy środowisko testowe żeby użyło nowego configu
+    # Reset test environment so it picks up the new config
     if hasattr(experiment, "_test_env"):
         del experiment._test_env
 
@@ -66,17 +68,17 @@ def record(
 
     if not experiment.task.has_render(env):
         raise RuntimeError(
-            f"Środowisko {type(env).__name__} nie wspiera renderowania. "
-            "Dla SMACv2 upewnij się że masz DISPLAY (Xvfb)."
+            f"Environment {type(env).__name__} does not support rendering. "
+            "For SMACv2 make sure you have a DISPLAY set up (e.g. Xvfb)."
         )
 
-    # ── Zbieranie klatek ────────────────────────────────────────────────────
+    # ── Collect frames ──────────────────────────────────────────────────────
     all_frames = []
     exploration = (
         ExplorationType.DETERMINISTIC if deterministic else ExplorationType.RANDOM
     )
 
-    print(f"Nagrywam {n_episodes} epizod(ów)...")
+    print(f"Recording {n_episodes} episode(s)...")
     with set_exploration_type(exploration):
         for ep in range(n_episodes):
             ep_frames = []
@@ -94,26 +96,26 @@ def record(
                 break_when_any_done=True,
             )
             all_frames.extend(ep_frames)
-            print(f"  Epizod {ep+1}/{n_episodes}: {len(ep_frames)} klatek")
+            print(f"  Episode {ep+1}/{n_episodes}: {len(ep_frames)} frames")
 
     if not all_frames:
-        raise RuntimeError("Nie zebrano żadnych klatek. Sprawdź czy render działa.")
+        raise RuntimeError("No frames were collected. Check if rendering is working correctly.")
 
-    # ── Zapis MP4 ───────────────────────────────────────────────────────────
+    # ── Save as MP4 ─────────────────────────────────────────────────────────
     if out_path is None:
         ckpt_path = Path(checkpoint_file)
-        # Szukamy nazwy eksperymentu w ścieżce
+        # Use experiment directory for output
         exp_dir = ckpt_path.parent
         out_path = str(exp_dir / f"video_{ckpt_path.stem}.mp4")
 
-    # Upewniamy się że klatki są uint8 RGB
+    # Ensure frames are uint8 RGB format
     frames_np = []
     for f in all_frames:
         if not isinstance(f, np.ndarray):
             f = np.array(f)
         if f.dtype != np.uint8:
             f = (f * 255).clip(0, 255).astype(np.uint8)
-        # Upewnij się że kształt to (H, W, 3)
+        # Ensure shape is (H, W, 3)
         if f.ndim == 2:
             f = np.stack([f, f, f], axis=-1)
         elif f.shape[-1] == 4:
@@ -127,34 +129,34 @@ def record(
     writer.close()
 
     total_s = len(frames_np) / fps
-    print(f"\nZapisano {len(frames_np)} klatek ({total_s:.1f}s) → {out_path}")
+    print(f"\nSaved {len(frames_np)} frames ({total_s:.1f}s) → {out_path}")
     return out_path
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Nagrywa epizod wytrenowanego agenta do MP4."
+        description="Record episodes of a trained agent to MP4 video."
     )
     parser.add_argument(
         "checkpoint_file",
         type=str,
-        help="Ścieżka do pliku .pt checkpointu (np. outputs/.../checkpoint_100000.pt)",
+        help="Path to the .pt checkpoint file (e.g. outputs/.../checkpoint_100000.pt)",
     )
     parser.add_argument(
         "--episodes", type=int, default=1,
-        help="Liczba epizodów do nagrania (domyślnie: 1)",
+        help="Number of episodes to record (default: 1)",
     )
     parser.add_argument(
         "--out", type=str, default=None,
-        help="Plik wyjściowy MP4 (domyślnie: obok checkpointu)",
+        help="Output MP4 file path (default: next to the checkpoint)",
     )
     parser.add_argument(
         "--fps", type=int, default=20,
-        help="FPS wideo (domyślnie: 20)",
+        help="Video FPS (default: 20)",
     )
     parser.add_argument(
         "--stochastic", action="store_true",
-        help="Użyj stochastycznej polityki zamiast deterministycznej",
+        help="Use stochastic policy instead of deterministic",
     )
     args = parser.parse_args()
 

@@ -1,7 +1,7 @@
-# Oryginał: BenchMARL (Meta Platforms) — zmodyfikowano 1 parametr:
-# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
-# Polsko-Japońska Akademia Technik Komputerowych, Wydział Informatyki
-# Zmiana: project_name "benchmarl" → "kod_zrodlowy_demir" (nazwa projektu W&B)
+# Original: BenchMARL (Meta Platforms) — 1 parameter modified:
+# Author of modifications: Kajetan Frąckowiak, s28404 (2026) — Engineering Thesis
+# Polish-Japanese Academy of Information Technology, Faculty of Computer Science
+# Change: project_name "benchmarl" → "kod_zrodlowy_demir" (W&B project name)
 
 defaults:
   - experiment_config

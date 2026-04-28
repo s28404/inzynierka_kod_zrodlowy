@@ -5,7 +5,7 @@
 #
 
 # --- MODYFIKACJE / MODIFICATIONS ---
-# Autor zmian: Kajetan Frąckowiak, s28404 (2026) — praca inżynierska
+# Autor zmian: Kajetan Frąckowiak
 # Dodano wpięcie ThesisJSONLoggerCallback dla lepszego zbierania statystyk
 # ---
 

@@ -2,7 +2,13 @@
 #
 #  This source code is licensed under the license found in the
 #  LICENSE file in the root directory of this source tree.
-# [1] Zmiana: Dodanie funkcji get_td_value do utils.py
+#
+# ==============================================================================
+# Author: Kajetan Frąckowiak
+# Date: 2026
+# Modifications in this file:
+#   [1] # Added get_td_value for better handling of TensorDicts in the logger, allowing flexible key retrieval.
+# ==============================================================================
 import contextlib
 import importlib
 import random
@@ -22,8 +28,9 @@ _has_numpy = importlib.util.find_spec("numpy") is not None
 
 DEVICE_TYPING = Union[torch.device, str, int]
 
-
-### [1] Zmiana: Dodanie funkcji get_td_value do utils.py
+#############################
+### [1] Start. Added get_td_value for better handling of TensorDicts in the logger, allowing flexible key retrieval.
+#############################
 def get_td_value(td, candidates: Iterable[Any] | None = None):
     """Return the first value from ``td`` for which a key in ``candidates`` exists.
 
@@ -52,7 +59,9 @@ def get_td_value(td, candidates: Iterable[Any] | None = None):
     return None
 
 
-### [1] Koniec zmiany
+#############################
+# [1] End.
+#############################
 
 
 def _read_yaml_config(config_file: str) -> Dict[str, Any]:
