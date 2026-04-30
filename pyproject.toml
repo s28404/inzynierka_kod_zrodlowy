@@ -25,6 +25,7 @@ dependencies = [
     "matplotlib",
     "seaborn",
     "hydra-core",
+    "ray[default]",
 ]
 
 [build-system]
