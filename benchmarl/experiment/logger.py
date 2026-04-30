@@ -574,7 +574,7 @@ class Logger:
     # [7] Start. Use `experiment_name` instead of a date for file naming. Catching environmental logs.
     #############################
     def log(self, dict_to_log: Dict, step: int = None):
-        thesis_dir = Path("/home/kajetan/Documents/inzynierka_kod_zrodlowy/logs_thesis")
+        thesis_dir = Path("logs_thesis")
         thesis_dir.mkdir(parents=True, exist_ok=True)
 
         fname = f"{thesis_dir}/{self.experiment_name}.jsonl"
@@ -795,7 +795,7 @@ class JsonWriter:
         # [10] Start. Append a flattened JSONL line to a central `logs_thesis`
         # directory for easy aggregation of thesis metrics.
         #############################
-        base_dir = "/home/kajetan/Documents/inzynierka_kod_zrodlowy/logs_thesis"
+        base_dir = "logs_thesis"
         os.makedirs(base_dir, exist_ok=True)
         flat_metrics = {
             k: (sum(vals) / len(vals) if len(vals) > 0 else 0.0)
