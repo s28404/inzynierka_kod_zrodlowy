@@ -2,6 +2,11 @@
 
 cd "$(dirname "$0")/../../"
 
+if [[ -n "${CLUSTER_HOSTS_FILE:-}" ]]; then
+    python3 -u runs/full/dispatch_smacv2_jobs.py --hosts "$CLUSTER_HOSTS_FILE"
+    exit $?
+fi
+
 # Mapy wybrane do Direct Science (Prosta, Asymetryczna, Inna Frakcja)
 TASKS=("smacv2/protoss_5_vs_5" "smacv2/protoss_10_vs_11" "smacv2/terran_10_vs_10")
 # Algorytmy do porównania
