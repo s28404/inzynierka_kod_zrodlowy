@@ -4,10 +4,18 @@ set -euo pipefail
 # Start a Ray head node on this machine. Run inside WSL or a Linux shell.
 cd "$(dirname "$0")/../../"
 
-echo "Installing Ray (user install)..."
-python3 -m pip install --user "ray[default]"
+export PATH="$HOME/.local/bin:$PATH"
+
+if command -v uv >/dev/null 2>&1; then
+    echo "Using uv to sync environment (preferred)..."
+    uv sync || true
+else
+    echo "Installing Ray (user install)..."
+    python3 -m pip install --user "ray[default]"
+fi
 
 echo "Stopping any existing Ray instance..."
+command -v ray >/dev/null 2>&1 || { echo "ray CLI not found in PATH; ensure ~/.local/bin is in PATH or install Ray in your env"; }
 ray stop -f || true
 
 echo "Starting Ray head..."
