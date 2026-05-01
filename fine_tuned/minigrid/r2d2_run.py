@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import wandb
 import random
 from collections import deque
 from dataclasses import dataclass
@@ -659,6 +660,13 @@ def main() -> None:
     )
     csv_writer.writeheader()
 
+    wandb.init(
+        project="kod_zrodlowy_demir",
+        name=run_name,
+        config=vars(cfg),
+        dir=str(save_dir),
+    )
+
     env = make_env(cfg.env_id, seed=cfg.seed)
     obs_raw, _ = env.reset(seed=cfg.seed)
     obs = preprocess_obs(obs_raw)
@@ -832,20 +840,20 @@ def main() -> None:
                 f"loss={last_loss:.5f} ext100={mean_ext:.3f} total100={mean_total:.3f}"
             )
 
-            csv_writer.writerow(
-                {
-                    "step": step,
-                    "episodes": episodes_finished,
-                    "mean_ext_return_100": mean_ext,
-                    "mean_int_return_100": mean_int,
-                    "mean_total_return_100": mean_total,
-                    "epsilon": epsilon,
-                    "replay_sequences": len(replay),
-                    "loss": last_loss,
-                    "eval_ext_return": last_eval_return,
-                }
-            )
+            log_dict = {
+                "step": step,
+                "episodes": episodes_finished,
+                "mean_ext_return_100": mean_ext,
+                "mean_int_return_100": mean_int,
+                "mean_total_return_100": mean_total,
+                "epsilon": epsilon,
+                "replay_sequences": len(replay),
+                "loss": last_loss,
+                "eval_ext_return": last_eval_return,
+            }
+            csv_writer.writerow(log_dict)
             csv_file.flush()
+            wandb.log(log_dict, step=step)
 
         if cfg.checkpoint_interval > 0 and step % cfg.checkpoint_interval == 0:
             checkpoint_path = ckpt_dir / f"{run_name}_step{step}.pt"
@@ -874,6 +882,7 @@ def main() -> None:
 
     env.close()
     csv_file.close()
+    wandb.finish()
 
     print("=" * 72)
     print(f"Training finished: {run_name}")
