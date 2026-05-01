@@ -90,7 +90,7 @@ class R2D2Config:
     demir_beta1: float
     demir_beta2: float
     demir_encoder_type: str
-    save_dir: str
+    device: str
 
 
 class RecurrentDuelingQNetwork(nn.Module):
@@ -312,6 +312,9 @@ class IntrinsicRewardAdapter:
             )
         else:
             self.module = None
+        
+        if self.module is not None:
+            self.module.to(cfg.device)
 
     def reset_episode(self) -> None:
         if self.kind == "ngu" and self.module is not None:
@@ -323,13 +326,14 @@ class IntrinsicRewardAdapter:
         next_obs: np.ndarray,
         action: int,
         reward_ext: float,
+        device: torch.device,
     ) -> float:
         if self.kind == "none" or self.module is None:
             return 0.0
 
-        obs_t = torch.as_tensor(obs, dtype=torch.float32).view(1, 1, -1)
-        next_obs_t = torch.as_tensor(next_obs, dtype=torch.float32).view(1, 1, -1)
-        action_t = torch.tensor([[action]], dtype=torch.long)
+        obs_t = torch.as_tensor(obs, dtype=torch.float32, device=device).view(1, 1, -1)
+        next_obs_t = torch.as_tensor(next_obs, dtype=torch.float32, device=device).view(1, 1, -1)
+        action_t = torch.tensor([[action]], dtype=torch.long, device=device)
 
         if self.kind == "rnd":
             r_int = self.module.compute_intrinsic_reward(
@@ -349,7 +353,7 @@ class IntrinsicRewardAdapter:
             return float(r_int.squeeze().item())
 
         # DEMIR
-        reward_t = torch.tensor([reward_ext], dtype=torch.float32)
+        reward_t = torch.tensor([reward_ext], dtype=torch.float32, device=device)
         td_error_t = torch.zeros_like(reward_t)
 
         td = TensorDict(
@@ -405,8 +409,9 @@ def select_action(
     hidden: tuple[torch.Tensor, torch.Tensor] | None,
     epsilon: float,
     action_dim: int,
+    device: torch.device,
 ) -> Tuple[int, tuple[torch.Tensor, torch.Tensor]]:
-    obs_t = torch.as_tensor(obs, dtype=torch.float32).view(1, 1, -1)
+    obs_t = torch.as_tensor(obs, dtype=torch.float32, device=device).view(1, 1, -1)
     with torch.no_grad():
         q_values, next_hidden = model(obs_t, hidden)
 
@@ -424,6 +429,7 @@ def train_step(
     optimizer: torch.optim.Optimizer,
     replay: PrioritizedSequenceReplay,
     step: int,
+    device: torch.device,
 ) -> Tuple[float, np.ndarray]:
     beta = linear_schedule(
         cfg.prio_beta_start,
@@ -433,11 +439,11 @@ def train_step(
     )
     batch = replay.sample(cfg.batch_size, beta)
 
-    obs = torch.as_tensor(batch["obs"], dtype=torch.float32)
-    actions = torch.as_tensor(batch["actions"], dtype=torch.long)
-    rewards = torch.as_tensor(batch["rewards"], dtype=torch.float32)
-    dones = torch.as_tensor(batch["dones"], dtype=torch.float32)
-    weights = torch.as_tensor(batch["weights"], dtype=torch.float32).view(-1, 1)
+    obs = torch.as_tensor(batch["obs"], dtype=torch.float32, device=device)
+    actions = torch.as_tensor(batch["actions"], dtype=torch.long, device=device)
+    rewards = torch.as_tensor(batch["rewards"], dtype=torch.float32, device=device)
+    dones = torch.as_tensor(batch["dones"], dtype=torch.float32, device=device)
+    weights = torch.as_tensor(batch["weights"], dtype=torch.float32, device=device).view(-1, 1)
 
     burn = cfg.burn_in
     unroll = cfg.unroll_len
@@ -501,6 +507,7 @@ def evaluate_policy(
     model: RecurrentDuelingQNetwork,
     seed: int,
     episodes: int,
+    device: torch.device,
 ) -> float:
     returns = []
 
@@ -519,6 +526,8 @@ def evaluate_policy(
                 hidden=hidden,
                 epsilon=0.0,
                 action_dim=env.action_space.n,
+                device=device,
+                
             )
             next_obs_raw, reward, terminated, truncated, _ = env.step(action)
             done = bool(terminated or truncated)
@@ -579,6 +588,9 @@ def parse_args() -> R2D2Config:
     parser.add_argument("--demir-beta1", type=float, default=0.7)
     parser.add_argument("--demir-beta2", type=float, default=0.3)
     parser.add_argument("--demir-encoder-type", type=str, default="idm")
+    parser.add_argument(
+        "--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu"
+    )
 
     args = parser.parse_args()
 
@@ -624,17 +636,21 @@ def parse_args() -> R2D2Config:
         demir_beta1=args.demir_beta1,
         demir_beta2=args.demir_beta2,
         demir_encoder_type=args.demir_encoder_type,
+        device=args.device,
     )
 
 
 def main() -> None:
     cfg = parse_args()
+    device = torch.device(cfg.device)
 
     random.seed(cfg.seed)
     np.random.seed(cfg.seed)
     torch.manual_seed(cfg.seed)
-    if cfg.num_threads > 0:
-        torch.set_num_threads(cfg.num_threads)
+    if device.type == "cuda":
+        torch.cuda.manual_seed_all(cfg.seed)
+
+    
 
     run_name = build_run_name(cfg)
     save_dir = Path(cfg.save_dir)
@@ -673,8 +689,8 @@ def main() -> None:
     obs_dim = obs.shape[0]
     action_dim = int(env.action_space.n)
 
-    online_net = RecurrentDuelingQNetwork(obs_dim, action_dim, cfg.hidden_dim)
-    target_net = RecurrentDuelingQNetwork(obs_dim, action_dim, cfg.hidden_dim)
+    online_net = RecurrentDuelingQNetwork(obs_dim, action_dim, cfg.hidden_dim).to(device)
+    target_net = RecurrentDuelingQNetwork(obs_dim, action_dim, cfg.hidden_dim).to(device)
     target_net.load_state_dict(online_net.state_dict())
 
     optimizer = torch.optim.Adam(online_net.parameters(), lr=cfg.lr, eps=cfg.adam_eps)
@@ -720,7 +736,7 @@ def main() -> None:
     print(
         f"Variant: {cfg.variant} | Intrinsic kind: {intrinsic_kind} | Scale: {cfg.intrinsic_scale}"
     )
-    print(f"Env: {cfg.env_id} | Device: CPU | Threads: {torch.get_num_threads()}")
+    print(f"Env: {cfg.env_id} | Device: {device} | Threads: {torch.get_num_threads()}")
     print("=" * 72)
 
     for step in range(1, cfg.total_steps + 1):
@@ -737,6 +753,7 @@ def main() -> None:
             hidden=actor_hidden,
             epsilon=epsilon,
             action_dim=action_dim,
+            device=device,
         )
 
         next_obs_raw, reward_ext, terminated, truncated, _ = env.step(action)
@@ -748,6 +765,7 @@ def main() -> None:
             next_obs=next_obs,
             action=action,
             reward_ext=float(reward_ext),
+            device=device,
         )
         reward_total = float(reward_ext) + cfg.intrinsic_scale * reward_int
 
@@ -803,6 +821,7 @@ def main() -> None:
                     optimizer=optimizer,
                     replay=replay,
                     step=step,
+                    device=device,
                 )
                 train_updates += 1
 
@@ -815,6 +834,7 @@ def main() -> None:
                 model=online_net,
                 seed=cfg.seed,
                 episodes=cfg.eval_episodes,
+                device=device,
             )
             print(
                 f"[eval] step={step} episodes={episodes_finished} "

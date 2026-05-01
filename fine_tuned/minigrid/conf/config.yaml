@@ -4,11 +4,11 @@ variant: r2d2
 env_id: MiniGrid-Empty-8x8-v0
 seed: 1
 
-total_steps: 300000
-warmup_steps: 10000
+total_steps: 10_000_000
+warmup_steps: 50_000
 train_every: 4
 grad_steps: 1
-batch_size: 32
+batch_size: 64
 replay_capacity_sequences: 40000
 
 burn_in: 20
@@ -25,7 +25,7 @@ max_grad_norm: 10.0
 
 epsilon_start: 1.0
 epsilon_end: 0.05
-epsilon_decay_steps: 200000
+epsilon_decay_steps: 1_000_000
 
 prio_alpha: 0.6
 prio_beta_start: 0.4

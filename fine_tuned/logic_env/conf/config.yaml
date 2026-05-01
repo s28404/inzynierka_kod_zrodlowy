@@ -22,7 +22,7 @@ seed: 0
 
 experiment:
   sampling_device: "cpu"
-  train_device: "cpu"
+  train_device: "cuda"
   buffer_device: "cpu"
 
   share_policy_params: True

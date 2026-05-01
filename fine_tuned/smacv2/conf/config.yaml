@@ -14,9 +14,9 @@ hydra:
 seed: 0
 
 experiment:
-  sampling_device: "cuda"
+  sampling_device: "cpu"
   train_device: "cuda"
-  buffer_device: "cuda"
+  buffer_device: "cpu"
 
   share_policy_params: True
   prefer_continuous_actions: True
