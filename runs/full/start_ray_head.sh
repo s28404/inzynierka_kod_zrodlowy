@@ -21,7 +21,9 @@ $RAY_CMD stop -f || true
 
 echo "Starting Ray head..."
 $RAY_CMD start --head \
+    --node-ip-address=192.168.0.101 \
     --port=6379 \
+    --dashboard-host=0.0.0.0 \
     --dashboard-port=8265 \
     --node-manager-port=8077 \
     --object-manager-port=8076 \
