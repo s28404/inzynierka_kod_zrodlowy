@@ -17,17 +17,18 @@ export PATH="$HOME/.local/bin:$PATH"
 if command -v uv >/dev/null 2>&1; then
     echo "Using uv to sync environment (preferred)..."
     uv sync || true
+    RAY_CMD="uv run ray"
 else
     echo "Installing Ray (user install)..."
     python3 -m pip install --user "ray[default]"
+    RAY_CMD="ray"
 fi
 
 echo "Stopping any existing Ray instance..."
-command -v ray >/dev/null 2>&1 || { echo "ray CLI not found in PATH; ensure ~/.local/bin is in PATH or install Ray in your env"; }
-ray stop -f || true
+$RAY_CMD stop -f || true
 
 echo "Starting Ray worker and connecting to ${HEAD_IP}:6379"
-ray start --address=${HEAD_IP}:6379 \
+$RAY_CMD start --address=${HEAD_IP}:6379 \
     --node-manager-port=8077 \
     --object-manager-port=8076 \
     --min-worker-port=11000 \

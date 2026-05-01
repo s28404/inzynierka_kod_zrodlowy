@@ -332,7 +332,7 @@ class DecentralizedEpisodicReward(nn.Module):
             # unbiased=False keeps std well-defined even for a single-sample batch.
             e_s_norm = (e_s - e_s.mean(dim=0)) / (e_s.std(dim=0, unbiased=False) + 1e-6)
 
-            if self.encoder_type == "idm" and next_obs is not None:
+            if self.encoder_type in ["idm", "idm_no_barlow"] and next_obs is not None:
                 next_obs_flat = next_obs.reshape(-1, next_obs.shape[-1])
 
                 if not next_obs_flat.requires_grad:
@@ -342,12 +342,17 @@ class DecentralizedEpisodicReward(nn.Module):
                 # A. Inverse Dynamics Loss: (e_s, e_s_next) -> akcja
                 pred_action = self.encoders.forward_kinematics(e_s, e_s_next)
                 inv_loss = nn.functional.mse_loss(pred_action, action_flat)
-                # B. Decorrelation (Redundancy Reduction) - zapobiega kolapsowi wymiarów
-                # Normalizacja wzdłuż batcha
-                c = e_s_norm.T @ e_s_norm / n_flat
-                diag_vals = torch.diag(c)
-                red_loss = (c - torch.diag(diag_vals)).pow(2).mean()
-                encoder_loss = inv_loss + 0.01 * red_loss
+
+                if self.encoder_type == "idm_no_barlow":
+                    encoder_loss = inv_loss
+                else:
+                    # B. Decorrelation (Redundancy Reduction) - zapobiega kolapsowi wymiarów
+                    # Normalizacja wzdłuż batcha
+                    c = e_s_norm.T @ e_s_norm / n_flat
+                    diag_vals = torch.diag(c)
+                    red_loss = (c - torch.diag(diag_vals)).pow(2).mean()
+                    encoder_loss = inv_loss + 0.01 * red_loss
+
                 encoder_loss.backward()
                 self.encoder_opt.step()
             elif self.encoder_type == "mlp":

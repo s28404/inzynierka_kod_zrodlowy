@@ -1,6 +1,0 @@
-# Dispatcher (launcher/head) - run from this machine
-# s28404@172.17.107.3
-
-# Workers
-s28404@172.17.107.2
-s28404@172.17.107.1

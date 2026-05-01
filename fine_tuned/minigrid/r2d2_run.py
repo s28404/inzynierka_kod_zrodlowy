@@ -86,6 +86,10 @@ class R2D2Config:
     checkpoint_interval: int
     num_threads: int
     save_dir: str
+    demir_beta1: float
+    demir_beta2: float
+    demir_encoder_type: str
+    save_dir: str
 
 
 class RecurrentDuelingQNetwork(nn.Module):
@@ -254,6 +258,7 @@ class PrioritizedSequenceReplay:
 class IntrinsicRewardAdapter:
     def __init__(
         self,
+        cfg: R2D2Config,
         intrinsic_kind: str,
         obs_dim: int,
         action_dim: int,
@@ -294,14 +299,14 @@ class IntrinsicRewardAdapter:
                     "emb_dim_action": 16,
                     "emb_dim_reward": 8,
                     "alpha": 0.5,
-                    "beta1": 0.7,
-                    "beta2": 0.3,
+                    "beta1": cfg.demir_beta1,
+                    "beta2": cfg.demir_beta2,
                     "k": 10,
                     "sigma": 0.5,
                     "n_efm": 10000,
                     "n_edm": 5000,
                     "warmup": 100,
-                    "encoder_type": "idm",
+                    "encoder_type": cfg.demir_encoder_type,
                 },
             )
         else:
@@ -570,6 +575,9 @@ def parse_args() -> R2D2Config:
     parser.add_argument("--checkpoint-interval", type=int, default=50_000)
     parser.add_argument("--num-threads", type=int, default=4)
     parser.add_argument("--save-dir", type=str, default="logs_thesis/minigrid")
+    parser.add_argument("--demir-beta1", type=float, default=0.7)
+    parser.add_argument("--demir-beta2", type=float, default=0.3)
+    parser.add_argument("--demir-encoder-type", type=str, default="idm")
 
     args = parser.parse_args()
 
@@ -612,6 +620,9 @@ def parse_args() -> R2D2Config:
         checkpoint_interval=args.checkpoint_interval,
         num_threads=args.num_threads,
         save_dir=args.save_dir,
+        demir_beta1=args.demir_beta1,
+        demir_beta2=args.demir_beta2,
+        demir_encoder_type=args.demir_encoder_type,
     )
 
 
@@ -670,6 +681,7 @@ def main() -> None:
 
     intrinsic_kind = VARIANT_TO_INTRINSIC[cfg.variant]
     intrinsic = IntrinsicRewardAdapter(
+        cfg=cfg,
         intrinsic_kind=intrinsic_kind,
         obs_dim=obs_dim,
         action_dim=action_dim,
