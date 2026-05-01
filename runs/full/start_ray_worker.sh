@@ -28,10 +28,6 @@ echo "Stopping any existing Ray instance..."
 $RAY_CMD stop -f || true
 
 echo "Starting Ray worker and connecting to ${HEAD_IP}:6379"
-$RAY_CMD start --address=${HEAD_IP}:6379 \
-    --node-manager-port=8077 \
-    --object-manager-port=8076 \
-    --min-worker-port=11000 \
-    --max-worker-port=11050
+$RAY_CMD start --address=${HEAD_IP}:6379
 
 echo "Ray worker started and connected to head at ${HEAD_IP}:6379"

@@ -2,6 +2,15 @@
 set -euo pipefail
 
 # Start a Ray head node on this machine. Run inside WSL or a Linux shell.
+
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 <YOUR_IP>"
+    echo "For example, if your machine's IP is 172.17.107.3, run:"
+    echo "  $0 172.17.107.3"
+    exit 2
+fi
+HEAD_IP=$1
+
 cd "$(dirname "$0")/../../"
 
 export PATH="$HOME/.local/bin:$PATH"
@@ -21,13 +30,8 @@ $RAY_CMD stop -f || true
 
 echo "Starting Ray head..."
 $RAY_CMD start --head \
-    --node-ip-address=192.168.0.101 \
+    --node-ip-address=${HEAD_IP} \
     --port=6379 \
-    --dashboard-host=0.0.0.0 \
-    --dashboard-port=8265 \
-    --node-manager-port=8077 \
-    --object-manager-port=8076 \
-    --min-worker-port=11000 \
-    --max-worker-port=11050
+    --dashboard-host=0.0.0.0
 
-echo "Ray head started. Dashboard: http://localhost:8265 (or use SSH tunnel/VPN to access remotely)"
+echo "Ray head started. Dashboard: http://${HEAD_IP}:8265"
