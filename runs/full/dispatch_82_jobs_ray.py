@@ -276,7 +276,23 @@ def main():
 
     os.makedirs(args.out_dir, exist_ok=True)
 
-    ray.init(address=f"{args.head}:6379")
+    ray.init(
+        address=f"{args.head}:6379",
+        runtime_env={
+            "working_dir": ".",
+            "excludes": [
+                "logs_thesis",  # Stare wyniki
+                "results_thesis",  # To tutaj pobierane będą z zipów logi
+                ".git",  # Git database
+                ".venv",  # Virtual env
+                ".uv",  # UV files
+                "__pycache__",  # Skompilowany cache
+                "outputs",  # Stare outputy Hydra
+                "runs",  # Niepotrzebne katalogi do logowania
+                "benchmarl_demir.egg-info",
+            ],
+        },
+    )
 
     # Queue them up
     futures = [run_job_remote.remote(j) for j in jobs]
