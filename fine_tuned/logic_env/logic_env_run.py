@@ -25,7 +25,9 @@ def hydra_experiment(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
 
     experiment: Experiment = load_experiment_from_hydra(cfg, task_name=task_name)
-    experiment.callbacks = list(experiment.callbacks) + [ThesisJSONLoggerCallback(log_dir="logs_thesis")]
+    new_callback = ThesisJSONLoggerCallback(log_dir="logs_thesis")
+    new_callback.experiment = experiment
+    experiment.callbacks = list(experiment.callbacks) + [new_callback]
     experiment.run()
 
 

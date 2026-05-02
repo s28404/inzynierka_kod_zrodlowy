@@ -746,6 +746,11 @@ class JsonWriter:
         seed: int,
     ):
         self.path = Path(folder) / Path(name)
+        self.experiment_name = name.replace(".json", "")
+        self.algorithm_name = algorithm_name
+        self.task_name = task_name
+        self.environment_name = environment_name
+        self.seed = seed
         self.run_data = {"absolute_metrics": {}}
         self.data = {
             environment_name: {
@@ -804,6 +809,12 @@ class JsonWriter:
         flat_metrics["step_count"] = total_frames
         flat_metrics["evaluation_step"] = evaluation_step
         flat_metrics["timestamp_str"] = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        # Add experiment identifiers
+        flat_metrics["experiment_name"] = self.experiment_name
+        flat_metrics["algorithm"] = self.algorithm_name
+        flat_metrics["environment"] = self.environment_name
+        flat_metrics["task"] = self.task_name
+        flat_metrics["seed"] = self.seed
 
         file_name = "thesis_metrics_raw.jsonl"
         file_path = os.path.join(base_dir, file_name)
