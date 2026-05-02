@@ -28,6 +28,7 @@ ray stop -f || true
 
 echo "Starting Ray worker and connecting to ${HEAD_IP}:6379"
 ray start --address=${HEAD_IP}:6379 \
+    --bind-address=0.0.0.0 \
     --node-manager-port=8077 \
     --object-manager-port=8076 \
     --min-worker-port=11000 \

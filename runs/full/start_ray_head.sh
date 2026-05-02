@@ -20,6 +20,7 @@ ray stop -f || true
 
 echo "Starting Ray head..."
 ray start --head \
+    --node-ip-address=172.17.107.3 \
     --port=6379 \
     --dashboard-port=8265 \
     --node-manager-port=8077 \

@@ -25,6 +25,7 @@ beta1: 0.7
 beta2: 0.3
 k: 10
 sigma: 0.5
+barlow_scale: 0.01
 n_efm: 10000
 n_edm: 5000
 demir_scale: 0.05

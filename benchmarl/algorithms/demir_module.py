@@ -93,6 +93,7 @@ class DecentralizedEpisodicReward(nn.Module):
 
         # 5. Typ enkodera: "idm" (Inverse Dynamics) lub "mlp" (tylko dekorelacja)
         self.encoder_type = self._get_config_param("encoder_type", "idm")
+        self.barlow_scale = self._get_config_param("barlow_scale", 0.01)
 
         # 6. Optymalizator enkoderów (auxiliary reward prediction loss)
         self.encoder_opt = torch.optim.Adam(self.encoders.parameters(), lr=1e-4)
@@ -347,7 +348,7 @@ class DecentralizedEpisodicReward(nn.Module):
                 c = e_s_norm.T @ e_s_norm / n_flat
                 diag_vals = torch.diag(c)
                 red_loss = (c - torch.diag(diag_vals)).pow(2).mean()
-                encoder_loss = inv_loss + 0.01 * red_loss
+                encoder_loss = inv_loss + self.barlow_scale * red_loss
                 encoder_loss.backward()
                 self.encoder_opt.step()
             elif self.encoder_type == "mlp":
@@ -355,7 +356,7 @@ class DecentralizedEpisodicReward(nn.Module):
                 c = e_s_norm.T @ e_s_norm / n_flat
                 diag_vals = torch.diag(c)
                 red_loss = (c - torch.diag(diag_vals)).pow(2).mean()
-                (0.01 * red_loss).backward()
+                (self.barlow_scale * red_loss).backward()
                 self.encoder_opt.step()
 
         # Re-encode bez gradienta do FAISS

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DIR="$(cd "$(dirname "$0")" && pwd)"
+exec "$DIR/run_one_minigrid.sh" "BabyAI-KeyCorridorS4R3-v0" "r2d2_demir" "100" --demir-beta1 0.7 --demir-beta2 0.3 --demir-encoder-type mlp

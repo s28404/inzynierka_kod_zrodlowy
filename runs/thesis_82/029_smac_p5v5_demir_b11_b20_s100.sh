@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DIR="$(cd "$(dirname "$0")" && pwd)"
+exec "$DIR/run_one_smac.sh" "smacv2/protoss_5_vs_5" "demir" "100" algorithm.beta1=1.0 algorithm.beta2=0.0 algorithm.encoder_type=idm

@@ -67,6 +67,7 @@ class Qmix(Algorithm):
             "beta2": kwargs.pop("beta2", 0.5),
             "k": kwargs.pop("k", 10),
             "sigma": kwargs.pop("sigma", 0.1),
+            "barlow_scale": kwargs.pop("barlow_scale", 0.01),
             "n_efm": kwargs.pop("n_efm", 10000),
             "n_edm": kwargs.pop("n_edm", 5000),
             "demir_scale": demir_scale,
@@ -469,6 +470,7 @@ class QmixConfig(AlgorithmConfig):
     beta2: float = 0.5
     k: int = 10
     sigma: float = 0.1
+    barlow_scale: float = 0.01
     n_efm: int = 10000
     n_edm: int = 5000
     demir_scale: float = 0.0
