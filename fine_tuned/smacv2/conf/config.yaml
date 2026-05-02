@@ -20,7 +20,7 @@ experiment:
 
   share_policy_params: True
   prefer_continuous_actions: True
-  parallel_collection: True
+  parallel_collection: False
 
   gamma: 0.99
   lr: 0.001
@@ -56,9 +56,9 @@ experiment:
   evaluation_interval: 2_000
   evaluation_episodes: 20
 
-  loggers: [wandb]
+  loggers: [csv, wandb]
   create_json: True
 
   save_folder: null
   restore_file: null
-  checkpoint_interval: 0
+  checkpoint_interval: 60000

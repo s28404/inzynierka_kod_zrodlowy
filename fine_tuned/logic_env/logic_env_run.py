@@ -10,6 +10,7 @@ Description: This module defines the main function for executing experiments usi
 import hydra
 from benchmarl.experiment import Experiment
 from benchmarl.hydra_config import load_experiment_from_hydra
+from benchmarl.experiment.thesis_logger import ThesisJSONLoggerCallback
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, OmegaConf
 
@@ -24,7 +25,7 @@ def hydra_experiment(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
 
     experiment: Experiment = load_experiment_from_hydra(cfg, task_name=task_name)
-
+    experiment.callbacks = list(experiment.callbacks) + [ThesisJSONLoggerCallback(log_dir="logs_thesis")]
     experiment.run()
 
 

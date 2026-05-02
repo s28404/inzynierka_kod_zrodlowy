@@ -58,7 +58,7 @@ setup(
         "minigrid",
     ],
     extras_require={
-        "vmas": ["vmas>=1.3.4"],
+        # vmas extra removed — VMAS environments removed from the codebase
         "pettingzoo": ["pettingzoo[all]>=1.24.3"],
         "meltingpot": ["dm-meltingpot"],
         "gnn": ["torch_geometric"],

@@ -8,7 +8,7 @@ dependencies = [
     "torchvision==0.20.1+cu118",
     "torchrl==0.6.0",
     "tensordict==0.6.0",
-    "vmas>=1.5.2",
+    # removed vmas dependency (not used in this workspace)
     "numpy<2.0.0",
     "faiss-cpu",
     "hydra-core",
@@ -25,7 +25,6 @@ dependencies = [
     "matplotlib",
     "seaborn",
     "hydra-core",
-    "ray[default]==2.31.0",
 ]
 
 [build-system]
