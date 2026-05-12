@@ -33,11 +33,12 @@ class RNDModule(nn.Module):
         super().__init__()
         self.config = config
 
+        # We set default values for the hyperparemeters, they are used if are not found in the config.
         embed_dim = self._param("rnd_embed_dim", 64)
         hidden_dim = self._param("rnd_hidden_dim", 256)
         lr = self._param("rnd_lr", 1e-4)
 
-        # Fixed random target - NEVER trained
+        # Fixed random target - never trained
         self.target = nn.Sequential(
             nn.Linear(obs_dim, hidden_dim),
             nn.LeakyReLU(),
@@ -68,7 +69,6 @@ class RNDModule(nn.Module):
     ) -> torch.Tensor:
         """
         Compute the intrinsic reward $r_{int} = \|\text{predictor}(obs) - \text{target}(obs)\|^2$.
-        Optionally train the predictor network.
 
         Args:
             obs   : [batch_size, n_agents, obs_dim] or [batch_size*n_agents, obs_dim]
@@ -78,21 +78,18 @@ class RNDModule(nn.Module):
         Returns:
             r_int : [batch_size, n_agents, 1] or [batch_size, 1]
         """
-        # Store the original shape: [batch_size, n_agents, obs_dim]
-        original_shape = obs.shape
-        # Flatten to: [batch_size*n_agents, obs_dim]
-        obs_flat = obs.reshape(-1, obs.shape[-1]).float()
+        # obs_dim is the dimension of the vector what the one concrete agent sees like position [x, y], health [hp] would have obs_dim=3
+        original_shape = obs.shape                        # [batch_size, n_agents, obs_dim]
+        obs_flat = obs.reshape(-1, obs.shape[-1]).float() # [batch_size*n_agents, obs_dim]
 
         # Extract features from the target network (no updates)
-        # obs_flat: [batch_size*n_agents, obs_dim] -> target_feat: [batch_size*n_agents, embed_dim]
         with torch.no_grad():
-            target_feat = self.target(obs_flat)
+            target_feat = self.target(obs_flat)           # [batch_size*n_agents, obs_dim] -> [batch_size*n_agents, embed_dim]
 
         if train:
             self.optimizer.zero_grad()
             # Extract features from the predictor (trained network)
-            # obs_flat: [batch_size*n_agents, obs_dim] -> pred_feat: [batch_size*n_agents, embed_dim]
-            pred_feat = self.predictor(obs_flat)
+            pred_feat = self.predictor(obs_flat)          # [batch_size*n_agents, obs_dim] -> [batch_size*n_agents, embed_dim]
             loss = nn.functional.mse_loss(pred_feat, target_feat)
             loss.backward()
             self.optimizer.step()
@@ -101,21 +98,21 @@ class RNDModule(nn.Module):
                 pred_feat = self.predictor(obs_flat)
 
         # Calculate RND reward (squared feature difference)
-        # pred_feat, target_feat: [batch_size*n_agents, embed_dim]
-        # r_int_flat: [batch_size*n_agents] (mean across the embed_dim)
         with torch.no_grad():
-            r_int_flat = ((pred_feat.detach() - target_feat) ** 2).mean(dim=-1)
+            # ((pred_feat.detach() - target_feat) ** 2).shape = [batch_size*n_agents, embed_dim]
+            # we want the mean across the embed_dim .mean(dim=-1) -> [batch_size*n_agents]
+            r_int_flat = ((pred_feat.detach() - target_feat) ** 2).mean(dim=-1) 
 
-        # Normalize using running std only to keep intrinsic reward non-negative.
+        # Normalize using the std and clip, not the full z-score from rms to not get negative rewards
+        # Rms wants numpy arrays
         r_np = r_int_flat.cpu().numpy()  # [batch_size*n_agents]
-        self.rms.update(r_np)
+        self.rms.update(r_np)            # update running mean and std with the new batch of rewards
         r_std = np.sqrt(self.rms.var) + 1e-8
         r_norm = np.clip(r_np / r_std, 0.0, self._param("rnd_reward_clip", 10.0))
         
         # Convert back to tensor: [batch_size*n_agents]
         r_norm_t = torch.from_numpy(r_norm.astype(np.float32)).to(obs.device)
 
-        # Logging to wandb
         if _wandb is not None and _wandb.run is not None:
             _wandb.log(
                 {
@@ -126,6 +123,8 @@ class RNDModule(nn.Module):
             )
 
         # Reshape back to the original shape
-        # r_norm_t: [batch_size*n_agents] -> result: [batch_size, n_agents, 1]
+        # original_shape = [batch_size, n_agents, obs_dim]
+        # We want obs_dim to be 1, because the reward is a scalar
+        # [batch_size*n_agents] -> [batch_size, n_agents, 1]
         result = r_norm_t.reshape(*original_shape[:-1], 1)
         return result

@@ -32,13 +32,6 @@ DEVICE_TYPING = Union[torch.device, str, int]
 ### [1] Start. Added get_td_value for better handling of TensorDicts in the logger, allowing flexible key retrieval.
 #############################
 def get_td_value(td, candidates: Iterable[Any] | None = None):
-    """Return the first value from ``td`` for which a key in ``candidates`` exists.
-
-    - ``td``: a TensorDict-like object with ``keys(True, True)`` and ``get``.
-    - ``candidates``: iterable of keys (e.g. ("next", group, "reward") or "reward").
-
-    Returns the value (td.get(key)) or ``None`` if no candidate key is present or all gets fail.
-    """
     if candidates is None:
         return None
     try:

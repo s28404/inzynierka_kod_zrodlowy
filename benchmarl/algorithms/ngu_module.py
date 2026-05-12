@@ -45,16 +45,16 @@ class NGUModule(nn.Module):
         self.obs_dim = obs_dim
         self.action_dim = action_dim
 
-        d = self._p("ngu_embed_dim", 64)
-        hidden = self._p("ngu_hidden_dim", 256)
-        self.k = self._p("ngu_k", 10)
-        self.L = self._p("ngu_L", 5.0)
-        self.eps = self._p("ngu_epsilon", 0.001)
-        self.n_episodic = self._p("ngu_n_episodic", 10000)
-        lr = self._p("ngu_lr", 1e-4)
-        self.rebuild_interval = self._p("ngu_rebuild_interval", 50)
+        d = self._param("ngu_embed_dim", 64)
+        hidden = self._param("ngu_hidden_dim", 256)
+        self.k = self._param("ngu_k", 10)
+        self.L = self._param("ngu_L", 5.0)
+        self.eps = self._param("ngu_epsilon", 0.001)
+        self.n_episodic = self._param("ngu_n_episodic", 10000)
+        lr = self._param("ngu_lr", 1e-4)
+        self.rebuild_interval = self._param("ngu_rebuild_interval", 50)
 
-        # --- Embedding network (trained via IDM) ---
+        # Embedding network (trained via IDM)
         self.phi = nn.Sequential(
             nn.Linear(obs_dim, hidden),
             nn.ReLU(),
@@ -62,12 +62,13 @@ class NGUModule(nn.Module):
         )
         # Inverse Dynamics Model: (e_s, e_s') -> predicted action
         self.idm = nn.Sequential(
+             # to predict action that caused stransition we need two states not one so we multiple d by 2
             nn.Linear(d * 2, hidden),
             nn.ReLU(),
             nn.Linear(hidden, action_dim),
         )
 
-        # --- RND for lifelong curiosity ---
+        # RND for lifelong curiosity
         self.rnd_target = nn.Sequential(
             nn.Linear(obs_dim, hidden),
             nn.LeakyReLU(),
@@ -91,51 +92,67 @@ class NGUModule(nn.Module):
             lr=lr,
         )
 
-        # --- Episodic buffer (rolling, FAISS-backed) ---
+        # Episodic buffer (rolling, FAISS-backed) 
         self.epi_buffer = np.zeros((self.n_episodic, d), dtype=np.float32)
         self.epi_ptr = 0
         self.epi_count = 0
         self.faiss_index = faiss.IndexFlatL2(d) if faiss is not None else None
         self._update_counter = 0
 
-        # --- Normalization ---
+        # Normalization 
         self.rnd_rms = RunningMeanStd()
         self.ep_rms = RunningMeanStd()
 
     def reset_episodic_memory(self):
         """
         Resets the episodic buffer and FAISS index at the start of a new episode.
-        This is CRITICAL for NGU to function as intended.
         """
-        d = self._p("ngu_embed_dim", 64)
+        d = self._param("ngu_embed_dim", 64)
         self.epi_buffer = np.zeros((self.n_episodic, d), dtype=np.float32)
         self.epi_ptr = 0
         self.epi_count = 0
         self.faiss_index = faiss.IndexFlatL2(d) if faiss is not None else None
         self._update_counter = 0
 
-    def _p(self, name, default):
+    def _param(self, name, default):
         if self.config is None:
             return default
         return getattr(self.config, name, default)
 
-    def _vec_write(self, buf, ptr, count, data, capacity):
-        n = data.shape[0]
-        if n >= capacity:
-            buf[:] = data[-capacity:]
-            return 0, capacity
+    def _vec_write(self, buf, ptr, count, data, n_episodic):
+        # data.shape = [n, d]
+        n = data.shape[0]               # number of new items to write
+        if n >= n_episodic:
+            # If the number of new items exceeds n_episodic
+            # take the whole buffer from start to the end buf[:]
+            # and fill with the last n_episodic items from data
+            buf[:] = data[-n_episodic:]
+            return 0, n_episodic
+        # end = where we ended up in last write + how many new items we want to write
         end = ptr + n
-        if end <= capacity:
+        if end <= n_episodic:
+            # When ptr=9000, n=500, n_episodic=10000
+            # We can just write from 9000 to 9500
             buf[ptr:end] = data
         else:
-            split = capacity - ptr
+            # When ptr=9000, n=1500, n_episodic=10000
+            # Split=1000
+            split = n_episodic - ptr
+            # buf[9000:10000] = data[:1000]
             buf[ptr:] = data[:split]
+            # buf[0:500] = data[1000:1500]
             buf[: n - split] = data[split:]
-        return end % capacity, min(count + n, capacity)
+        epi_ptr = end % n_episodic
+        epi_count = min(count + n, n_episodic)
+        return epi_ptr, epi_count
 
     def _rebuild_faiss_index(self):
         if faiss is None:
             return
+        # Since faiss does not know about our overwriting buf[ptr:end] = data
+        # we need to rebuild the index from the buffer every self.rebuild_interval updates.
+        # with filling the index with the data that are in the buffer
+        # epi_buffer.shape = [n_episodic, d]
         dim = self.epi_buffer.shape[1]
         self.faiss_index = faiss.IndexFlatL2(dim)
         filled = min(self.epi_count, self.n_episodic)
@@ -143,8 +160,13 @@ class NGUModule(nn.Module):
             self.faiss_index.add(self.epi_buffer[:filled])
 
     def _episodic_reward_from_knn(self, query_embeddings: np.ndarray) -> np.ndarray:
+        # query_embeddings is the e_s_next that we use to calculate the reward
         filled = min(self.epi_count, self.n_episodic)
         if filled < self.k:
+            # query_embeddings.shape = [batch_size*n_agents, embed_dim]
+            # If we have less neighbors in filled than is set k we cannot calculate 
+            # the similarity to k neighbors, so we return a maximum value 1 for all queries to encourage exploration 
+            # until we have enough samples in the buffer.
             return np.ones(query_embeddings.shape[0], dtype=np.float32)
 
         if (
@@ -154,13 +176,26 @@ class NGUModule(nn.Module):
         ):
             distances, _ = self.faiss_index.search(query_embeddings, self.k)
         else:
+            # ref.shape = [filled, embed_dim]
             ref = self.epi_buffer[:filled]
+            # If query_embeddings.shape = [128, 64], filled = 500
+            # then query_embeddings[:, None, :].shape = [128, 1, 64]
+            # and ref[None, :, :].shape = [1, 500, 64]
+            # subtraction will broadcast:
+            # query_embedding.shape [128, 1, 64] -> [128, 500, 64]
+            # ref.shape [1, 500, 64] -> [128, 500, 64]
+            # np.sum(query_embeddings[:, None, :] - ref[None, :, :])**2, axis=-1) 
+            # from [128, 500, 64] -> [128, 500] = [batch_size*n_agents, filled]
             sq_dist = np.sum(
                 (query_embeddings[:, None, :] - ref[None, :, :]) ** 2,
                 axis=-1,
             )
+            # We want only the k smallest distances for each query, so we use np.partition which is more efficient than sorting the whole array
             distances = np.partition(sq_dist, kth=self.k - 1, axis=1)[:, : self.k]
 
+        # distances.shape = [batch_size*n_agents, k]
+        # mean(distance, axis=1).shape = [batch_size*n_agents]
+        # Instead of calculating the kernel density estimate, we use the distance to the k-th nearest neighbor as a proxy for novelty.
         return 1.0 / (np.sqrt(np.mean(distances, axis=1) + 1e-8) + self.eps)
 
     def compute_intrinsic_reward(
@@ -182,36 +217,29 @@ class NGUModule(nn.Module):
         Returns:
             r_int : [batch_size, n_agents, 1] (intrinsic reward)
         """
-        # Store the original shape for reconstruction
-        original_shape = obs.shape 
+        original_shape = obs.shape # [batch_size, n_agents, obs_dim]
         
-        # Flatten: [batch_size, n_agents, obs_dim] -> [batch_size*n_agents, obs_dim]
-        obs_flat = obs.reshape(-1, obs.shape[-1]).float()
-        next_obs_flat = next_obs.reshape(-1, next_obs.shape[-1]).float()
-        n = obs_flat.shape[0]  # total items (batch_size * n_agents)
+        obs_flat = obs.reshape(-1, obs.shape[-1]).float()                # [batch_size, n_agents, obs_dim] -> [batch_size*n_agents, obs_dim]
+        next_obs_flat = next_obs.reshape(-1, next_obs.shape[-1]).float() # [batch_size, n_agents, obs_dim] -> [batch_size*n_agents, obs_dim]
+        n = obs_flat.shape[0]
 
-        # Flatten actions: [batch_size, n_agents] -> [batch_size*n_agents]
+        # Batch of actions' indices that we want to predict with IDM. If actions are discrete, we can just flatten them.
         if not action.is_floating_point():
-            action_idx = action.reshape(-1).long()
+            action_idx = action.reshape(-1).long()                           # [batch_size, n_agents] -> [batch_size*n_agents]
         else:
-            action_idx = action.reshape(-1, action.shape[-1]).argmax(dim=-1)
+            action_idx = action.reshape(-1, action.shape[-1]).argmax(dim=-1) # [batch_size, n_agents, action_dim] -> [batch_size*n_agents, action_dim] -> [batch_size*n_agents]
 
-        # --- Train IDM + RND predictor ---
         self.optimizer.zero_grad()
 
-        # Embedding extraction
-        # obs_flat, next_obs_flat: [batch_size*n_agents, obs_dim] -> e_s, e_s_next: [batch_size*n_agents, embed_dim]
-        e_s = self.phi(obs_flat)
-        e_s_next = self.phi(next_obs_flat)
+        e_s = self.phi(obs_flat)           # [batch_size*n_agents, obs_dim] -> [batch_size*n_agents, embed_dim]
+        e_s_next = self.phi(next_obs_flat) # [batch_size*n_agents, obs_dim] -> [batch_size*n_agents, embed_dim]
 
-        # IDM loss: predict discrete action using cross-entropy.
-        pred_action_logits = self.idm(torch.cat([e_s, e_s_next], dim=-1))
+        pred_action_logits = self.idm(torch.cat([e_s, e_s_next], dim=-1))       # [batch_size*n_agents, embed_dim*2] -> [batch_size*n_agents, action_dim]
         idm_loss = nn.functional.cross_entropy(pred_action_logits, action_idx)
-
-        # RND loss: train predictor on post-transition states.
+ 
         with torch.no_grad():
-            rnd_target_feat = self.rnd_target(next_obs_flat)
-        rnd_pred_feat = self.rnd_predictor(next_obs_flat)
+            rnd_target_feat = self.rnd_target(next_obs_flat) # [batch_size*n_agents, obs_dim] -> [batch_size*n_agents, embed_dim]
+        rnd_pred_feat = self.rnd_predictor(next_obs_flat)    # [batch_size*n_agents, obs_dim] -> [batch_size*n_agents, embed_dim]
         rnd_loss = nn.functional.mse_loss(rnd_pred_feat, rnd_target_feat)
 
         (idm_loss + rnd_loss).backward()
@@ -226,25 +254,26 @@ class NGUModule(nn.Module):
                 .cpu()
                 .numpy()
             )
+            # rnd_r_np.shape = [batch_size*n_agents]
 
-        # --- Episodic reward (k-NN in embedding space) ---
+        # Episodic reward from k-nearest neighbors in the embedding space
         r_ep = self._episodic_reward_from_knn(e_query_np)
 
-        # --- Lifelong curiosity (RND-based alpha) ---
+        # Lifelong curiosity (RND-based alpha) 
         self.rnd_rms.update(rnd_r_np)
         rnd_std = np.sqrt(self.rnd_rms.var) + 1e-8
         rnd_scaled = np.clip(rnd_r_np / rnd_std, 0.0, self.L - 1.0)
         alpha = np.clip(1.0 + rnd_scaled, 1.0, self.L)
 
-        # --- Combined intrinsic reward ---
+        # Combined intrinsic reward 
         r_int = r_ep * alpha
 
         # Normalize and clip the intrinsic reward
         self.ep_rms.update(r_int)
         ep_std = np.sqrt(self.ep_rms.var) + 1e-8
-        r_int_norm = np.clip(r_int / ep_std, 0.0, self._p("ngu_reward_clip", 10.0))
+        r_int_norm = np.clip(r_int / ep_std, 0.0, self._param("ngu_reward_clip", 10.0))
 
-        # --- Update episodic memory after reward computation ---
+        # Update episodic memory after reward computation 
         old_ptr = self.epi_ptr
         old_count = self.epi_count
         self.epi_ptr, self.epi_count = self._vec_write(

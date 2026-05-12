@@ -501,19 +501,19 @@ class RunningMeanStd:
     def update(self, x: np.ndarray):
         b_mean = float(np.mean(x))
         b_var = float(np.var(x))
-        b_count = x.shape[0]
-        delta = b_mean - self.mean
-        tot = self.count + b_count
-        self.mean += delta * b_count / tot
+        b_count = x.shape[0]                # how many elements is in the batch
+        delta = b_mean - self.mean          # difference between the batch mean and the current mean
+        tot = self.count + b_count          # total amount of elements after adding the batch
+        self.mean += delta * b_count / tot  # correct the mean with the new batch mean
         self.var = (
-            self.var * self.count
-            + b_var * b_count
-            + delta**2 * self.count * b_count / tot
+            self.var * self.count                   # variance of the previous data
+            + b_var * b_count                       # variance of the new batch
+            + delta**2 * self.count * b_count / tot # correction term for the variance due to the change in mean
         ) / tot
         self.count = tot
 
-    def normalize(self, x: np.ndarray) -> np.ndarray:
-        return (x - self.mean) / (np.sqrt(self.var) + 1e-8)
+    def normalize(self, x: np.ndarray) -> np.ndarray: 
+        return (x - self.mean) / (np.sqrt(self.var) + 1e-8) # z-score
 
 #############################
 # [1] End.
