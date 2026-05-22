@@ -1,0 +1,23 @@
+  0%|          | 0/5025 [00:00<?, ?it/s]
+[iter    0 | frames     2,000 / 10,050,000] mean_return=3.1118
+[2026-05-02 18:35:10,164][absl][INFO] - Launching SC2: /home/kajetan/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 45753 -dataDir /home/kajetan/StarCraftII/ -tempDir /tmp/sc-kkgm42_s/
+[2026-05-02 18:35:10,165][absl][INFO] - Connecting to: ws://127.0.0.1:45753/sc2api, attempt: 0, running: True
+[2026-05-02 18:35:11,166][absl][INFO] - Connecting to: ws://127.0.0.1:45753/sc2api, attempt: 1, running: True
+[2026-05-02 18:35:12,167][absl][INFO] - Connecting to: ws://127.0.0.1:45753/sc2api, attempt: 2, running: True
+[2026-05-02 18:35:12,274][absl][INFO] - Shutdown gracefully.
+[2026-05-02 18:35:12,275][absl][INFO] - Shutdown with return code: -15
+
+
+Experiment failed and is closing gracefully
+
+
+[2026-05-02 18:35:29,394][absl][INFO] - Shutdown gracefully.
+[2026-05-02 18:35:29,395][absl][INFO] - Shutdown with return code: -15
+[2026-05-02 18:35:29,497][absl][INFO] - Shutdown gracefully.
+[2026-05-02 18:35:29,498][absl][INFO] - Shutdown with return code: -15
+[2026-05-02 18:35:29,600][absl][INFO] - Shutdown gracefully.
+[2026-05-02 18:35:29,601][absl][INFO] - Shutdown with return code: -15
+[2026-05-02 18:35:29,705][absl][INFO] - Shutdown gracefully.
+[2026-05-02 18:35:29,706][absl][INFO] - Shutdown with return code: -15
+[2026-05-02 18:35:29,818][absl][INFO] - Shutdown gracefully.
+[2026-05-02 18:35:29,818][absl][INFO] - Shutdown with return code: -15

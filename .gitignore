@@ -3,5 +3,4 @@ __pycache__/
 *.swp
 benchmarl_demir.egg*
 .vscode/
-outputs/
 .venv/

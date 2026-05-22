@@ -1,0 +1,3 @@
+- task=smacv2/protoss_5_vs_5
+- algorithm=qmix
+- seed=100
