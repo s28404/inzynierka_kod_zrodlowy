@@ -17,20 +17,23 @@ from __future__ import annotations
 
 import argparse
 import csv
-import wandb
 import random
+import re
+import time
 from collections import deque
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
+
+import wandb
 
 import gymnasium as gym
 import minigrid
 import numpy as np
 import torch
 import torch.nn.functional as F
-from minigrid.wrappers import ImgObsWrapper
+from omegaconf import OmegaConf
 from tensordict import TensorDict
 from torch import nn
 
@@ -49,8 +52,99 @@ VARIANT_DEFAULT_SCALE = {
     "r2d2": 0.0,
     "r2d2_rnd": 0.1,
     "r2d2_ngu": 0.1,
-    "r2d2_demir": 0.05,
+    "r2d2_demir": 0.1,
 }
+
+DEFAULT_CONFIG_PATH = str(Path(__file__).resolve().parent / "conf" / "config.yaml")
+DEFAULT_MISSION_MAX_TOKENS = 24
+DEFAULT_MISSION_VOCAB = [
+    "go",
+    "to",
+    "the",
+    "a",
+    "red",
+    "green",
+    "blue",
+    "purple",
+    "yellow",
+    "grey",
+    "ball",
+    "box",
+    "key",
+    "door",
+    "goal",
+    "lava",
+    "open",
+    "pick",
+    "up",
+    "then",
+    "and",
+    "toggle",
+    "unlock",
+    "put",
+    "next",
+    "behind",
+    "in",
+    "front",
+    "of",
+    "<unk>",
+]
+MISSION_TOKEN_RE = re.compile(r"[a-z0-9_]+")
+
+
+class MissionEncoder:
+    def __init__(self, vocab: List[str], max_tokens: int) -> None:
+        self.vocab = vocab
+        self.max_tokens = max_tokens
+        self.token_to_idx = {token: idx for idx, token in enumerate(vocab)}
+
+    def encode(self, mission: str) -> np.ndarray:
+        tokens = MISSION_TOKEN_RE.findall(mission.lower())
+        vec = np.zeros((self.max_tokens, len(self.vocab)), dtype=np.float32)
+        for i, token in enumerate(tokens[: self.max_tokens]):
+            idx = self.token_to_idx.get(token, self.token_to_idx.get("<unk>"))
+            if idx is not None:
+                vec[i, idx] = 1.0
+        return vec.reshape(-1)
+
+
+def load_config_defaults(path: str) -> Dict[str, Any]:
+    if not path:
+        return {}
+    cfg_path = Path(path)
+    if not cfg_path.is_file():
+        return {}
+    cfg = OmegaConf.load(str(cfg_path))
+    return OmegaConf.to_container(cfg, resolve=True) or {}
+
+
+def format_duration(seconds: float) -> str:
+    total = max(0, int(seconds))
+    hours, remainder = divmod(total, 3600)
+    minutes, secs = divmod(remainder, 60)
+    if hours > 0:
+        return f"{hours}:{minutes:02d}:{secs:02d}"
+    return f"{minutes:02d}:{secs:02d}"
+
+
+def build_mission_encoder(env: gym.Env, max_tokens: int) -> MissionEncoder | None:
+    if max_tokens <= 0:
+        return None
+
+    vocab = None
+    mission_space = getattr(env.unwrapped, "mission_space", None)
+    if mission_space is not None:
+        vocab = getattr(mission_space, "vocab", None)
+        if vocab is not None:
+            vocab = [str(token) for token in vocab]
+
+    if not vocab:
+        vocab = list(DEFAULT_MISSION_VOCAB)
+
+    if "<unk>" not in vocab:
+        vocab.append("<unk>")
+
+    return MissionEncoder(vocab=vocab, max_tokens=max_tokens)
 
 
 @dataclass
@@ -87,6 +181,8 @@ class R2D2Config:
     checkpoint_interval: int
     num_threads: int
     save_dir: str
+    mission_max_tokens: int
+    config_path: str
     demir_beta1: float
     demir_beta2: float
     demir_encoder_type: str
@@ -312,7 +408,7 @@ class IntrinsicRewardAdapter:
             )
         else:
             self.module = None
-        
+
         if self.module is not None:
             self.module.to(cfg.device)
 
@@ -332,7 +428,9 @@ class IntrinsicRewardAdapter:
             return 0.0
 
         obs_t = torch.as_tensor(obs, dtype=torch.float32, device=device).view(1, 1, -1)
-        next_obs_t = torch.as_tensor(next_obs, dtype=torch.float32, device=device).view(1, 1, -1)
+        next_obs_t = torch.as_tensor(next_obs, dtype=torch.float32, device=device).view(
+            1, 1, -1
+        )
         action_t = torch.tensor([[action]], dtype=torch.long, device=device)
 
         if self.kind == "rnd":
@@ -383,17 +481,30 @@ class IntrinsicRewardAdapter:
         return float(r_int.squeeze().item())
 
 
-def make_env(env_id: str, seed: int | None = None) -> gym.Env:
-    env = gym.make(env_id)
-    env = ImgObsWrapper(env)
-    if seed is not None:
-        env.reset(seed=seed)
-    return env
+def make_env(env_id: str) -> gym.Env:
+    return gym.make(env_id)
 
 
-def preprocess_obs(obs: np.ndarray) -> np.ndarray:
-    arr = np.asarray(obs, dtype=np.float32).reshape(-1)
-    return arr / 10.0
+def preprocess_obs(obs: Any, mission_encoder: MissionEncoder | None) -> np.ndarray:
+    if isinstance(obs, dict):
+        image = obs.get("image", obs)
+        direction = obs.get("direction", None)
+        mission = obs.get("mission", "")
+    else:
+        image = obs
+        direction = None
+        mission = ""
+
+    image_vec = np.asarray(image, dtype=np.float32).reshape(-1) / 10.0
+    extras = []
+    if direction is not None:
+        extras.append(np.array([float(direction) / 3.0], dtype=np.float32))
+    if mission_encoder is not None:
+        extras.append(mission_encoder.encode(str(mission)))
+
+    if extras:
+        return np.concatenate([image_vec] + extras, axis=0)
+    return image_vec
 
 
 def linear_schedule(start: float, end: float, step: int, total_steps: int) -> float:
@@ -443,7 +554,9 @@ def train_step(
     actions = torch.as_tensor(batch["actions"], dtype=torch.long, device=device)
     rewards = torch.as_tensor(batch["rewards"], dtype=torch.float32, device=device)
     dones = torch.as_tensor(batch["dones"], dtype=torch.float32, device=device)
-    weights = torch.as_tensor(batch["weights"], dtype=torch.float32, device=device).view(-1, 1)
+    weights = torch.as_tensor(
+        batch["weights"], dtype=torch.float32, device=device
+    ).view(-1, 1)
 
     burn = cfg.burn_in
     unroll = cfg.unroll_len
@@ -508,13 +621,14 @@ def evaluate_policy(
     seed: int,
     episodes: int,
     device: torch.device,
+    mission_encoder: MissionEncoder | None,
 ) -> float:
     returns = []
 
     for ep in range(episodes):
-        env = make_env(env_id, seed=seed + 10000 + ep)
-        obs_raw, _ = env.reset()
-        obs = preprocess_obs(obs_raw)
+        env = make_env(env_id)
+        obs_raw, _ = env.reset(seed=seed + 10000 + ep)
+        obs = preprocess_obs(obs_raw, mission_encoder)
         done = False
         hidden = None
         ep_return = 0.0
@@ -527,11 +641,10 @@ def evaluate_policy(
                 epsilon=0.0,
                 action_dim=env.action_space.n,
                 device=device,
-                
             )
             next_obs_raw, reward, terminated, truncated, _ = env.step(action)
             done = bool(terminated or truncated)
-            obs = preprocess_obs(next_obs_raw)
+            obs = preprocess_obs(next_obs_raw, mission_encoder)
             ep_return += float(reward)
 
         returns.append(ep_return)
@@ -547,49 +660,117 @@ def build_run_name(cfg: R2D2Config) -> str:
 
 
 def parse_args() -> R2D2Config:
+    pre_parser = argparse.ArgumentParser(add_help=False)
+    pre_parser.add_argument("--config", type=str, default=DEFAULT_CONFIG_PATH)
+    pre_args, _ = pre_parser.parse_known_args()
+    cfg_defaults = load_config_defaults(pre_args.config)
+
+    def cfg_value(name: str, fallback):
+        return cfg_defaults.get(name, fallback)
+
+    default_device = "cuda" if torch.cuda.is_available() else "cpu"
+
     parser = argparse.ArgumentParser(description="R2D2 MiniGrid trainer")
+    parser.add_argument("--config", type=str, default=pre_args.config)
     parser.add_argument(
         "--variant",
         type=str,
-        default="r2d2",
+        default=cfg_value("variant", "r2d2"),
         choices=sorted(VARIANT_TO_INTRINSIC.keys()),
     )
-    parser.add_argument("--env-id", type=str, default="MiniGrid-Empty-8x8-v0")
-    parser.add_argument("--seed", type=int, default=1)
-    parser.add_argument("--total-steps", type=int, default=300_000)
-    parser.add_argument("--warmup-steps", type=int, default=10_000)
-    parser.add_argument("--train-every", type=int, default=4)
-    parser.add_argument("--grad-steps", type=int, default=1)
-    parser.add_argument("--batch-size", type=int, default=32)
-    parser.add_argument("--replay-capacity-sequences", type=int, default=40_000)
-    parser.add_argument("--burn-in", type=int, default=20)
-    parser.add_argument("--unroll-len", type=int, default=40)
-    parser.add_argument("--n-step", type=int, default=5)
-    parser.add_argument("--gamma", type=float, default=0.997)
-    parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--adam-eps", type=float, default=1e-8)
-    parser.add_argument("--hidden-dim", type=int, default=256)
-    parser.add_argument("--target-update-interval", type=int, default=2000)
-    parser.add_argument("--max-grad-norm", type=float, default=10.0)
-    parser.add_argument("--epsilon-start", type=float, default=1.0)
-    parser.add_argument("--epsilon-end", type=float, default=0.05)
-    parser.add_argument("--epsilon-decay-steps", type=int, default=200_000)
-    parser.add_argument("--prio-alpha", type=float, default=0.6)
-    parser.add_argument("--prio-beta-start", type=float, default=0.4)
-    parser.add_argument("--prio-beta-end", type=float, default=1.0)
-    parser.add_argument("--prio-eta", type=float, default=0.9)
-    parser.add_argument("--intrinsic-scale", type=float, default=None)
-    parser.add_argument("--log-interval", type=int, default=2000)
-    parser.add_argument("--eval-interval", type=int, default=20000)
-    parser.add_argument("--eval-episodes", type=int, default=5)
-    parser.add_argument("--checkpoint-interval", type=int, default=50_000)
-    parser.add_argument("--num-threads", type=int, default=4)
-    parser.add_argument("--save-dir", type=str, default="logs_thesis/minigrid")
-    parser.add_argument("--demir-beta1", type=float, default=0.7)
-    parser.add_argument("--demir-beta2", type=float, default=0.3)
-    parser.add_argument("--demir-encoder-type", type=str, default="idm")
     parser.add_argument(
-        "--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu"
+        "--env-id", type=str, default=cfg_value("env_id", "MiniGrid-Empty-8x8-v0")
+    )
+    parser.add_argument("--seed", type=int, default=cfg_value("seed", 1))
+    parser.add_argument(
+        "--total-steps", type=int, default=cfg_value("total_steps", 300_000)
+    )
+    parser.add_argument(
+        "--warmup-steps", type=int, default=cfg_value("warmup_steps", 10_000)
+    )
+    parser.add_argument("--train-every", type=int, default=cfg_value("train_every", 4))
+    parser.add_argument("--grad-steps", type=int, default=cfg_value("grad_steps", 1))
+    parser.add_argument("--batch-size", type=int, default=cfg_value("batch_size", 32))
+    parser.add_argument(
+        "--replay-capacity-sequences",
+        type=int,
+        default=cfg_value("replay_capacity_sequences", 40_000),
+    )
+    parser.add_argument("--burn-in", type=int, default=cfg_value("burn_in", 20))
+    parser.add_argument("--unroll-len", type=int, default=cfg_value("unroll_len", 40))
+    parser.add_argument("--n-step", type=int, default=cfg_value("n_step", 5))
+    parser.add_argument("--gamma", type=float, default=cfg_value("gamma", 0.997))
+    parser.add_argument("--lr", type=float, default=cfg_value("lr", 1e-4))
+    parser.add_argument("--adam-eps", type=float, default=cfg_value("adam_eps", 1e-8))
+    parser.add_argument("--hidden-dim", type=int, default=cfg_value("hidden_dim", 256))
+    parser.add_argument(
+        "--target-update-interval",
+        type=int,
+        default=cfg_value("target_update_interval", 2000),
+    )
+    parser.add_argument(
+        "--max-grad-norm", type=float, default=cfg_value("max_grad_norm", 10.0)
+    )
+    parser.add_argument(
+        "--epsilon-start", type=float, default=cfg_value("epsilon_start", 1.0)
+    )
+    parser.add_argument(
+        "--epsilon-end", type=float, default=cfg_value("epsilon_end", 0.05)
+    )
+    parser.add_argument(
+        "--epsilon-decay-steps",
+        type=int,
+        default=cfg_value("epsilon_decay_steps", 200_000),
+    )
+    parser.add_argument(
+        "--prio-alpha", type=float, default=cfg_value("prio_alpha", 0.6)
+    )
+    parser.add_argument(
+        "--prio-beta-start", type=float, default=cfg_value("prio_beta_start", 0.4)
+    )
+    parser.add_argument(
+        "--prio-beta-end", type=float, default=cfg_value("prio_beta_end", 1.0)
+    )
+    parser.add_argument("--prio-eta", type=float, default=cfg_value("prio_eta", 0.9))
+    parser.add_argument(
+        "--intrinsic-scale", type=float, default=cfg_value("intrinsic_scale", None)
+    )
+    parser.add_argument(
+        "--log-interval", type=int, default=cfg_value("log_interval", 2000)
+    )
+    parser.add_argument(
+        "--eval-interval", type=int, default=cfg_value("eval_interval", 20000)
+    )
+    parser.add_argument(
+        "--eval-episodes", type=int, default=cfg_value("eval_episodes", 5)
+    )
+    parser.add_argument(
+        "--checkpoint-interval",
+        type=int,
+        default=cfg_value("checkpoint_interval", 50_000),
+    )
+    parser.add_argument("--num-threads", type=int, default=cfg_value("num_threads", 4))
+    parser.add_argument(
+        "--save-dir", type=str, default=cfg_value("save_dir", "logs_thesis/minigrid")
+    )
+    parser.add_argument(
+        "--mission-max-tokens",
+        type=int,
+        default=cfg_value("mission_max_tokens", DEFAULT_MISSION_MAX_TOKENS),
+    )
+    parser.add_argument(
+        "--demir-beta1", type=float, default=cfg_value("demir_beta1", 0.7)
+    )
+    parser.add_argument(
+        "--demir-beta2", type=float, default=cfg_value("demir_beta2", 0.3)
+    )
+    parser.add_argument(
+        "--demir-encoder-type",
+        type=str,
+        default=cfg_value("demir_encoder_type", "idm"),
+    )
+    parser.add_argument(
+        "--device", type=str, default=cfg_value("device", default_device)
     )
 
     args = parser.parse_args()
@@ -633,6 +814,8 @@ def parse_args() -> R2D2Config:
         checkpoint_interval=args.checkpoint_interval,
         num_threads=args.num_threads,
         save_dir=args.save_dir,
+        mission_max_tokens=args.mission_max_tokens,
+        config_path=args.config,
         demir_beta1=args.demir_beta1,
         demir_beta2=args.demir_beta2,
         demir_encoder_type=args.demir_encoder_type,
@@ -650,7 +833,7 @@ def main() -> None:
     if device.type == "cuda":
         torch.cuda.manual_seed_all(cfg.seed)
 
-    
+    torch.set_num_threads(cfg.num_threads)
 
     run_name = build_run_name(cfg)
     save_dir = Path(cfg.save_dir)
@@ -683,14 +866,19 @@ def main() -> None:
         dir=str(save_dir),
     )
 
-    env = make_env(cfg.env_id, seed=cfg.seed)
+    env = make_env(cfg.env_id)
+    mission_encoder = build_mission_encoder(env, cfg.mission_max_tokens)
     obs_raw, _ = env.reset(seed=cfg.seed)
-    obs = preprocess_obs(obs_raw)
+    obs = preprocess_obs(obs_raw, mission_encoder)
     obs_dim = obs.shape[0]
     action_dim = int(env.action_space.n)
 
-    online_net = RecurrentDuelingQNetwork(obs_dim, action_dim, cfg.hidden_dim).to(device)
-    target_net = RecurrentDuelingQNetwork(obs_dim, action_dim, cfg.hidden_dim).to(device)
+    online_net = RecurrentDuelingQNetwork(obs_dim, action_dim, cfg.hidden_dim).to(
+        device
+    )
+    target_net = RecurrentDuelingQNetwork(obs_dim, action_dim, cfg.hidden_dim).to(
+        device
+    )
     target_net.load_state_dict(online_net.state_dict())
 
     optimizer = torch.optim.Adam(online_net.parameters(), lr=cfg.lr, eps=cfg.adam_eps)
@@ -739,6 +927,7 @@ def main() -> None:
     print(f"Env: {cfg.env_id} | Device: {device} | Threads: {torch.get_num_threads()}")
     print("=" * 72)
 
+    start_time = time.time()
     for step in range(1, cfg.total_steps + 1):
         epsilon = linear_schedule(
             cfg.epsilon_start,
@@ -758,7 +947,7 @@ def main() -> None:
 
         next_obs_raw, reward_ext, terminated, truncated, _ = env.step(action)
         done = bool(terminated or truncated)
-        next_obs = preprocess_obs(next_obs_raw)
+        next_obs = preprocess_obs(next_obs_raw, mission_encoder)
 
         reward_int = intrinsic.compute(
             obs=obs,
@@ -797,7 +986,7 @@ def main() -> None:
             intrinsic.reset_episode()
 
             obs_raw, _ = env.reset()
-            obs = preprocess_obs(obs_raw)
+            obs = preprocess_obs(obs_raw, mission_encoder)
             actor_hidden = None
 
             episode_obs = [obs.copy()]
@@ -835,6 +1024,7 @@ def main() -> None:
                 seed=cfg.seed,
                 episodes=cfg.eval_episodes,
                 device=device,
+                mission_encoder=mission_encoder,
             )
             print(
                 f"[eval] step={step} episodes={episodes_finished} "
@@ -854,8 +1044,13 @@ def main() -> None:
                 else float("nan")
             )
 
+            elapsed = time.time() - start_time
+            sec_per_step = elapsed / step if step > 0 else 0.0
+            eta = (cfg.total_steps - step) * sec_per_step
+            timing = f"{format_duration(elapsed)}<{format_duration(eta)}, {sec_per_step:.3f}s/step"
+
             print(
-                f"[train] step={step:>8} episodes={episodes_finished:>5} "
+                f"[train] {timing} step={step:>8} episodes={episodes_finished:>5} "
                 f"eps={epsilon:.3f} replay={len(replay):>6} "
                 f"loss={last_loss:.5f} ext100={mean_ext:.3f} total100={mean_total:.3f}"
             )

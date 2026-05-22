@@ -42,3 +42,11 @@ checkpoint_interval: 50000
 
 num_threads: 4
 save_dir: logs_thesis/minigrid
+
+# Mission encoding for BabyAI instructions
+mission_max_tokens: 24
+
+# DEMIR-specific defaults for r2d2_demir
+demir_beta1: 0.7
+demir_beta2: 0.3
+demir_encoder_type: idm
