@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../../"
 
 TASKS=("smacv2/protoss_5_vs_5")
-ALGOS=("qmix" "rnd" "ngu" "demir")
+ALGOS=("demir")
 SEEDS=(100 101 102)
 
 LOG_DIR="./logs/runs_$(date +%Y%m%d_%H%M%S)"
