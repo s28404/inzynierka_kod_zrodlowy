@@ -366,11 +366,10 @@ class IntrinsicRewardAdapter:
         self.gamma = gamma
         self.online_net = online_net
 
-        obs_shape = [obs_dim]
 
         if self.kind == "rnd":
             self.module = RNDModule(
-                obs_shape=obs_shape,
+                obs_dim=obs_dim,
                 config={
                     "rnd_embed_dim": 64,
                     "rnd_hidden_dim": 256,
@@ -379,7 +378,7 @@ class IntrinsicRewardAdapter:
             )
         elif self.kind == "ngu":
             self.module = NGUModule(
-                obs_shape=obs_shape,
+                obs_dim=obs_dim,
                 action_dim=action_dim,
                 config={
                     "ngu_embed_dim": 64,
