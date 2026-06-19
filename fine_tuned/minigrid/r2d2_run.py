@@ -58,36 +58,9 @@ VARIANT_DEFAULT_SCALE = {
 DEFAULT_CONFIG_PATH = str(Path(__file__).resolve().parent / "conf" / "config.yaml")
 DEFAULT_MISSION_MAX_TOKENS = 24
 DEFAULT_MISSION_VOCAB = [
-    "go",
-    "to",
-    "the",
-    "a",
-    "red",
-    "green",
-    "blue",
-    "purple",
-    "yellow",
-    "grey",
-    "ball",
-    "box",
-    "key",
-    "door",
-    "goal",
-    "lava",
-    "open",
-    "pick",
-    "up",
-    "then",
-    "and",
-    "toggle",
-    "unlock",
-    "put",
-    "next",
-    "behind",
-    "in",
-    "front",
-    "of",
-    "<unk>",
+    "go", "to", "the", "a", "red", "green", "blue", "purple", "yellow", "grey",
+    "ball", "box", "key", "door", "goal", "lava", "open", "pick", "up", "then",
+    "and", "toggle", "unlock", "put", "next", "behind", "in", "front", "of", "<unk>",
 ]
 MISSION_TOKEN_RE = re.compile(r"[a-z0-9_]+")
 
@@ -130,20 +103,16 @@ def format_duration(seconds: float) -> str:
 def build_mission_encoder(env: gym.Env, max_tokens: int) -> MissionEncoder | None:
     if max_tokens <= 0:
         return None
-
     vocab = None
     mission_space = getattr(env.unwrapped, "mission_space", None)
     if mission_space is not None:
         vocab = getattr(mission_space, "vocab", None)
         if vocab is not None:
             vocab = [str(token) for token in vocab]
-
     if not vocab:
         vocab = list(DEFAULT_MISSION_VOCAB)
-
     if "<unk>" not in vocab:
         vocab.append("<unk>")
-
     return MissionEncoder(vocab=vocab, max_tokens=max_tokens)
 
 
@@ -192,14 +161,26 @@ class R2D2Config:
 class RecurrentDuelingQNetwork(nn.Module):
     def __init__(self, obs_dim: int, action_dim: int, hidden_dim: int):
         super().__init__()
-        self.encoder = nn.Sequential(
-            nn.Linear(obs_dim, hidden_dim),
+        self.img_flat_dim = 147 
+        self.extra_dim = obs_dim - self.img_flat_dim
+        
+        self.cnn = nn.Sequential(
+            nn.Unflatten(-1, (3, 7, 7)),
+            nn.Conv2d(3, 16, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Linear(hidden_dim, hidden_dim),
+            nn.Conv2d(16, 32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Flatten(),
+            nn.Linear(32 * 7 * 7, hidden_dim)
+        )
+        
+        self.extra_encoder = nn.Sequential(
+            nn.Linear(self.extra_dim, hidden_dim // 2),
             nn.ReLU(),
         )
+        
         self.lstm = nn.LSTM(
-            input_size=hidden_dim,
+            input_size=hidden_dim + (hidden_dim // 2),
             hidden_size=hidden_dim,
             num_layers=1,
             batch_first=True,
@@ -220,14 +201,28 @@ class RecurrentDuelingQNetwork(nn.Module):
         obs_seq: torch.Tensor,
         state: tuple[torch.Tensor, torch.Tensor] | None = None,
     ) -> Tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
-        # obs_seq shape: [batch, time, obs_dim]
-        z = self.encoder(obs_seq)
+        batch_size, seq_len, _ = obs_seq.shape
+        
+        img_flat = obs_seq[:, :, :self.img_flat_dim]
+        extra = obs_seq[:, :, self.img_flat_dim:]
+        
+        # Spłaszczamy batch i time dla CNN (bo Conv2d nie przyjmuje 5D)
+        img_flat = img_flat.reshape(-1, self.img_flat_dim)
+        z_img = self.cnn(img_flat)
+        # Przywracamy wymiar czasu z powrotem
+        z_img = z_img.view(batch_size, seq_len, -1)
+        
+        # Extra encoder (Linear) poradzi sobie z 3D bez problemu
+        z_extra = self.extra_encoder(extra)
+        
+        # Łączymy cechy z CNN i z tekstu
+        z = torch.cat([z_img, z_extra], dim=-1)
+        
         out, next_state = self.lstm(z, state)
         adv = self.adv_head(out)
         val = self.val_head(out)
         q = val + adv - adv.mean(dim=-1, keepdim=True)
         return q, next_state
-
 
 class PrioritizedSequenceReplay:
     def __init__(
@@ -264,7 +259,12 @@ class PrioritizedSequenceReplay:
     ) -> None:
         episode_len = actions.shape[0]
         if episode_len < self.sequence_horizon:
-            return
+            pad_len = self.sequence_horizon - episode_len + 1
+            obs = np.pad(obs, ((0, pad_len), (0, 0)), mode='edge')
+            actions = np.pad(actions, (0, pad_len), mode='constant', constant_values=0)
+            rewards = np.pad(rewards, (0, pad_len), mode='constant', constant_values=0.0)
+            dones = np.pad(dones, (0, pad_len), mode='constant', constant_values=1.0)
+            episode_len = self.sequence_horizon
 
         episode_id = self.next_episode_id
         self.next_episode_id += 1
@@ -360,9 +360,11 @@ class IntrinsicRewardAdapter:
         obs_dim: int,
         action_dim: int,
         gamma: float,
+        online_net: nn.Module = None,
     ):
         self.kind = intrinsic_kind
         self.gamma = gamma
+        self.online_net = online_net
 
         if self.kind == "rnd":
             self.module = RNDModule(
@@ -452,7 +454,14 @@ class IntrinsicRewardAdapter:
 
         # DEMIR
         reward_t = torch.tensor([reward_ext], dtype=torch.float32, device=device)
-        td_error_t = torch.zeros_like(reward_t)
+        
+        with torch.no_grad():
+            obs_t_for_q = obs_t
+            next_obs_t_for_q = next_obs_t
+            q_curr, _ = self.online_net(obs_t_for_q, None)
+            q_next, _ = self.online_net(next_obs_t_for_q, None)
+            best_next_q = q_next.max(dim=-1)[0]
+            td_error_t = reward_t + self.gamma * best_next_q - q_curr.max(dim=-1)[0]
 
         td = TensorDict(
             {
@@ -654,10 +663,18 @@ def evaluate_policy(
 
 
 def build_run_name(cfg: R2D2Config) -> str:
-    timestamp = datetime.now().strftime("%y_%m_%d-%H_%M_%S")
+    timestamp = datetime.now().strftime("%y_%m_%d-%H-%M_%S")
     env_name = cfg.env_id.replace("-", "_")
-    return f"{cfg.variant}_{env_name}_seed{cfg.seed}_{timestamp}"
-
+    name = f"{cfg.variant}_{env_name}_seed{cfg.seed}"
+    
+    # Automatyczne dodawanie parametrów DEMIR do nazwy runa w WandB
+    if cfg.variant == "r2d2_demir":
+        # Zamieniamy myślniki na podkreślniki, żeby WandB ładnie to wyświetlał (np. idm_no_barlow)
+        enc_type = cfg.demir_encoder_type.replace("-", "_")
+        name += f"_{enc_type}_b1_{cfg.demir_beta1}_b2_{cfg.demir_beta2}"
+        
+    name += f"_{timestamp}"
+    return name
 
 def parse_args() -> R2D2Config:
     pre_parser = argparse.ArgumentParser(add_help=False)
@@ -836,12 +853,20 @@ def main() -> None:
     torch.set_num_threads(cfg.num_threads)
 
     run_name = build_run_name(cfg)
-    save_dir = Path(cfg.save_dir)
-    save_dir.mkdir(parents=True, exist_ok=True)
-    ckpt_dir = save_dir / "checkpoints"
+    
+    # Tworzymy GŁÓWNY folder na logi (bez nazwy runa)
+    base_save_dir = Path(cfg.save_dir)
+    base_save_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Tworzymy DEDYKOWANY podfolder dla tego konkretnego runa
+    run_dir = base_save_dir / run_name
+    run_dir.mkdir(parents=True, exist_ok=True)
+    
+    ckpt_dir = run_dir / "checkpoints"
     ckpt_dir.mkdir(parents=True, exist_ok=True)
 
-    csv_path = save_dir / f"{run_name}.csv"
+    csv_path = run_dir / f"{run_name}.csv"
+
     csv_file = csv_path.open("w", newline="", encoding="utf-8")
     csv_writer = csv.DictWriter(
         csv_file,
@@ -863,7 +888,7 @@ def main() -> None:
         project="kod_zrodlowy_demir",
         name=run_name,
         config=vars(cfg),
-        dir=str(save_dir),
+        dir=str(run_dir),
     )
 
     env = make_env(cfg.env_id)
@@ -898,6 +923,7 @@ def main() -> None:
         obs_dim=obs_dim,
         action_dim=action_dim,
         gamma=cfg.gamma,
+        online_net=online_net,
     )
 
     episode_obs: List[np.ndarray] = [obs.copy()]
@@ -1082,6 +1108,11 @@ def main() -> None:
                 },
                 checkpoint_path,
             )
+            existing_ckpt = sorted(ckpt_dir.glob(f"{run_name}_step*.pt"))
+            while len(existing_ckpt) > 3:
+                oldest = existing_ckpt.pop(0)
+                oldest.unlink(missing_ok=True)
+                print(f"[ckpt] Deleted old checkpoint: {oldest.name}")
 
     final_ckpt = ckpt_dir / f"{run_name}_final.pt"
     torch.save(
