@@ -366,6 +366,8 @@ class IntrinsicRewardAdapter:
         self.gamma = gamma
         self.online_net = online_net
 
+        obs_shape = [obs_dim]
+
         if self.kind == "rnd":
             self.module = RNDModule(
                 obs_dim=obs_dim,
