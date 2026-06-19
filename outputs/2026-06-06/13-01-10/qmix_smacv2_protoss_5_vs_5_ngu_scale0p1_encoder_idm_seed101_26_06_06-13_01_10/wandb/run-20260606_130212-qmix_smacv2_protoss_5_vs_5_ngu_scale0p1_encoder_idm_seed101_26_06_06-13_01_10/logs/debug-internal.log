@@ -1,0 +1,6 @@
+{"time":"2026-06-06T13:02:13.075364014+02:00","level":"INFO","msg":"stream: starting","core version":"0.25.0"}
+{"time":"2026-06-06T13:02:13.46185258+02:00","level":"INFO","msg":"stream: created new stream","id":"qmix_smacv2_protoss_5_vs_5_ngu_scale0p1_encoder_idm_seed101_26_06_06-13_01_10"}
+{"time":"2026-06-06T13:02:13.46199561+02:00","level":"INFO","msg":"handler: started","stream_id":"qmix_smacv2_protoss_5_vs_5_ngu_scale0p1_encoder_idm_seed101_26_06_06-13_01_10"}
+{"time":"2026-06-06T13:02:13.462090618+02:00","level":"INFO","msg":"stream: started","id":"qmix_smacv2_protoss_5_vs_5_ngu_scale0p1_encoder_idm_seed101_26_06_06-13_01_10"}
+{"time":"2026-06-06T13:02:13.462159231+02:00","level":"INFO","msg":"sender: started","stream_id":"qmix_smacv2_protoss_5_vs_5_ngu_scale0p1_encoder_idm_seed101_26_06_06-13_01_10"}
+{"time":"2026-06-06T13:02:13.462186133+02:00","level":"INFO","msg":"writer: started","stream_id":"qmix_smacv2_protoss_5_vs_5_ngu_scale0p1_encoder_idm_seed101_26_06_06-13_01_10"}

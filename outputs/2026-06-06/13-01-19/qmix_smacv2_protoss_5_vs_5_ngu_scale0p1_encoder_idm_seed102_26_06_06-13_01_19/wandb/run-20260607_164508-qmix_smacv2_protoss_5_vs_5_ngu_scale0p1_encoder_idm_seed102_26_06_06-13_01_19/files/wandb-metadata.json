@@ -1,0 +1,42 @@
+{
+  "os":  "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python":  "CPython 3.12.2",
+  "startedAt":  "2026-06-07T14:45:08.680419Z",
+  "args":  [
+    "outputs/2026-06-06/13-01-19/qmix_smacv2_protoss_5_vs_5_ngu_scale0p1_encoder_idm_seed102_26_06_06-13_01_19/checkpoints/checkpoint_360000.pt"
+  ],
+  "program":  "/home/s28404/projects/inzynierka_kod_zrodlowy/benchmarl/resume.py",
+  "codePath":  "benchmarl/resume.py",
+  "codePathLocal":  "benchmarl/resume.py",
+  "git":  {
+    "remote":  "https://github.com/s28404/inzynierka_kod_zrodlowy.git",
+    "commit":  "c82b7bc4cc6fa60ddf6f9a491a0a03af5a2db635"
+  },
+  "email":  "kajetan.piotr.frackowiak@gmail.com",
+  "root":  "/home/s28404/projects/inzynierka_kod_zrodlowy/outputs/2026-06-06/13-01-19/qmix_smacv2_protoss_5_vs_5_ngu_scale0p1_encoder_idm_seed102_26_06_06-13_01_19",
+  "host":  "GDA302-02",
+  "executable":  "/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/bin/python",
+  "cpu_count":  24,
+  "cpu_count_logical":  48,
+  "gpu":  "NVIDIA GeForce RTX 3060",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "1081101176832",
+      "used":  "14462320640"
+    }
+  },
+  "memory":  {
+    "total":  "33577299968"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA GeForce RTX 3060",
+      "memoryTotal":  "12884901888",
+      "architecture":  "Ampere",
+      "uuid":  "GPU-2852b22e-bffe-8683-e3a8-123a8c2609d4"
+    }
+  ],
+  "cudaVersion":  "13.2",
+  "writerId":  "cdqfjdywrbdw1vtedrb2kb9ye7upyjdx"
+}
