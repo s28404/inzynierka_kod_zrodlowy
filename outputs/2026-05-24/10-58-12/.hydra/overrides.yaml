@@ -1,0 +1,5 @@
+- task=smacv2/protoss_5_vs_5
+- algorithm=demir
+- seed=100
+- algorithm.beta1=0.0
+- algorithm.beta2=1.0

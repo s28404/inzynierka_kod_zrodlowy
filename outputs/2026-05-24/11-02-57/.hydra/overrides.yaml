@@ -1,0 +1,3 @@
+- task=logic_env/synchronized
+- algorithm=qmix
+- seed=100

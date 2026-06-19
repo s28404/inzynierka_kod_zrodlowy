@@ -1,0 +1,46 @@
+{
+  "os":  "Linux-6.6.114.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+  "python":  "CPython 3.12.2",
+  "startedAt":  "2026-05-24T10:39:46.139837Z",
+  "args":  [
+    "task=smacv2/protoss_5_vs_5",
+    "algorithm=demir",
+    "seed=100",
+    "algorithm.beta1=0.0",
+    "algorithm.beta2=1.0"
+  ],
+  "program":  "/home/s28404/inzynierka_kod_zrodlowy/fine_tuned/smacv2/smacv2_run.py",
+  "codePath":  "fine_tuned/smacv2/smacv2_run.py",
+  "codePathLocal":  "fine_tuned/smacv2/smacv2_run.py",
+  "git":  {
+    "remote":  "https://github.com/s28404/inzynierka_kod_zrodlowy.git",
+    "commit":  "59dbb8deb1f70e29181fe9edf26cfa45922f638b"
+  },
+  "email":  "kajetan.piotr.frackowiak@gmail.com",
+  "root":  "/home/s28404/inzynierka_kod_zrodlowy/outputs/2026-05-24/12-38-40/qmix_smacv2_protoss_5_vs_5_demir_scale0p1_encoder_idm_beta1_0p0_beta2_1p0_seed100_26_05_24-12_38_40",
+  "host":  "GDA-BSS02",
+  "executable":  "/home/s28404/inzynierka_kod_zrodlowy/.venv/bin/python3",
+  "cpu_count":  24,
+  "cpu_count_logical":  48,
+  "gpu":  "NVIDIA GeForce RTX 3060",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "1081101176832",
+      "used":  "16399081472"
+    }
+  },
+  "memory":  {
+    "total":  "33579278336"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA GeForce RTX 3060",
+      "memoryTotal":  "12884901888",
+      "architecture":  "Ampere",
+      "uuid":  "GPU-5e3004d3-e4cb-8d75-cb79-35a756e0fddc"
+    }
+  ],
+  "cudaVersion":  "13.2",
+  "writerId":  "k0tur7ktjfvw2v9balhrolif0f9k6v2u"
+}

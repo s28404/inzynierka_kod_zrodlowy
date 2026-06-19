@@ -1,0 +1,1365 @@
+  0%|          | 0/5025 [00:00<?, ?it/s]wandb: WARNING Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+[iter    0 | frames     2,000 / 10,050,000] mean_return=3.3272
+[2026-06-06 10:25:55,065][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 40899 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-st67qigp/
+[2026-06-06 10:25:55,070][absl][INFO] - Connecting to: ws://127.0.0.1:40899/sc2api, attempt: 0, running: True
+[2026-06-06 10:25:56,071][absl][INFO] - Connecting to: ws://127.0.0.1:40899/sc2api, attempt: 1, running: True
+[2026-06-06 10:25:57,072][absl][INFO] - Connecting to: ws://127.0.0.1:40899/sc2api, attempt: 2, running: True
+[2026-06-06 10:25:57,179][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:25:57,180][absl][INFO] - Shutdown with return code: -15
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.72956919670105:   0%|          | 16/5025 [48:50<258:31:16, 185.80s/it]  
+[iter    1 | frames     4,000 / 10,050,000] mean_return=3.3577
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    2 | frames     6,000 / 10,050,000] mean_return=3.1715
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    3 | frames     8,000 / 10,050,000] mean_return=2.6729
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    4 | frames    10,000 / 10,050,000] mean_return=2.4890
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    5 | frames    12,000 / 10,050,000] mean_return=2.5697
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    6 | frames    14,000 / 10,050,000] mean_return=2.8863
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    7 | frames    16,000 / 10,050,000] mean_return=2.6236
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    8 | frames    18,000 / 10,050,000] mean_return=3.1895
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    9 | frames    20,000 / 10,050,000] mean_return=2.7550
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   10 | frames    22,000 / 10,050,000] mean_return=2.7657
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   11 | frames    24,000 / 10,050,000] mean_return=2.9108
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   12 | frames    26,000 / 10,050,000] mean_return=2.8427
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   13 | frames    28,000 / 10,050,000] mean_return=2.8098
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   14 | frames    30,000 / 10,050,000] mean_return=2.7733
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   15 | frames    32,000 / 10,050,000] mean_return=2.7296
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   16 | frames    34,000 / 10,050,000] mean_return=3.1090
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   17 | frames    36,000 / 10,050,000] mean_return=3.1694
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   18 | frames    38,000 / 10,050,000] mean_return=2.6902
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   19 | frames    40,000 / 10,050,000] mean_return=2.9375
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   20 | frames    42,000 / 10,050,000] mean_return=2.6850
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   21 | frames    44,000 / 10,050,000] mean_return=3.2284
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   22 | frames    46,000 / 10,050,000] mean_return=2.7290
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   23 | frames    48,000 / 10,050,000] mean_return=2.9797
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   24 | frames    50,000 / 10,050,000] mean_return=2.9143
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   25 | frames    52,000 / 10,050,000] mean_return=3.4693
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   26 | frames    54,000 / 10,050,000] mean_return=3.3411
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   27 | frames    56,000 / 10,050,000] mean_return=2.6704
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   28 | frames    58,000 / 10,050,000] mean_return=2.7691
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   29 | frames    60,000 / 10,050,000] mean_return=2.6786
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   30 | frames    62,000 / 10,050,000] mean_return=2.7057
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   31 | frames    64,000 / 10,050,000] mean_return=3.1191
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   32 | frames    66,000 / 10,050,000] mean_return=2.8618
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   33 | frames    68,000 / 10,050,000] mean_return=2.5632
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   34 | frames    70,000 / 10,050,000] mean_return=2.9008
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   35 | frames    72,000 / 10,050,000] mean_return=2.9373
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   36 | frames    74,000 / 10,050,000] mean_return=2.6512
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   37 | frames    76,000 / 10,050,000] mean_return=3.0036
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   38 | frames    78,000 / 10,050,000] mean_return=2.4791
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   39 | frames    80,000 / 10,050,000] mean_return=2.5688
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   40 | frames    82,000 / 10,050,000] mean_return=3.2566
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   41 | frames    84,000 / 10,050,000] mean_return=2.9127
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   42 | frames    86,000 / 10,050,000] mean_return=2.7923
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   43 | frames    88,000 / 10,050,000] mean_return=3.1954
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   44 | frames    90,000 / 10,050,000] mean_return=3.0469
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   45 | frames    92,000 / 10,050,000] mean_return=2.9802
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   46 | frames    94,000 / 10,050,000] mean_return=2.7139
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   47 | frames    96,000 / 10,050,000] mean_return=2.5317
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   48 | frames    98,000 / 10,050,000] mean_return=2.9076
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   49 | frames   100,000 / 10,050,000] mean_return=3.0629
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   50 | frames   102,000 / 10,050,000] mean_return=2.6135
+[2026-06-06 12:57:05,738][absl][INFO] - Shutdown gracefully.
+[2026-06-06 12:57:05,738][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 12:57:05,744][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 37603 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-0th2ertm/
+[2026-06-06 12:57:05,745][absl][INFO] - Connecting to: ws://127.0.0.1:37603/sc2api, attempt: 0, running: True
+[2026-06-06 12:57:06,746][absl][INFO] - Connecting to: ws://127.0.0.1:37603/sc2api, attempt: 1, running: True
+[2026-06-06 12:57:07,748][absl][INFO] - Connecting to: ws://127.0.0.1:37603/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   51 | frames   104,000 / 10,050,000] mean_return=2.7474
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   52 | frames   106,000 / 10,050,000] mean_return=3.3819
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   53 | frames   108,000 / 10,050,000] mean_return=2.6012
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   54 | frames   110,000 / 10,050,000] mean_return=2.8021
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   55 | frames   112,000 / 10,050,000] mean_return=2.9889
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   56 | frames   114,000 / 10,050,000] mean_return=2.6921
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   57 | frames   116,000 / 10,050,000] mean_return=3.0454
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   58 | frames   118,000 / 10,050,000] mean_return=2.5983
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   59 | frames   120,000 / 10,050,000] mean_return=2.7803
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   60 | frames   122,000 / 10,050,000] mean_return=2.9902
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   61 | frames   124,000 / 10,050,000] mean_return=3.1712
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   62 | frames   126,000 / 10,050,000] mean_return=2.2610
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   63 | frames   128,000 / 10,050,000] mean_return=2.8693
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   64 | frames   130,000 / 10,050,000] mean_return=2.6289
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   65 | frames   132,000 / 10,050,000] mean_return=2.4910
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   66 | frames   134,000 / 10,050,000] mean_return=3.1328
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   67 | frames   136,000 / 10,050,000] mean_return=2.5032
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   68 | frames   138,000 / 10,050,000] mean_return=3.1762
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   69 | frames   140,000 / 10,050,000] mean_return=3.0545
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   70 | frames   142,000 / 10,050,000] mean_return=2.7712
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   71 | frames   144,000 / 10,050,000] mean_return=2.5997
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   72 | frames   146,000 / 10,050,000] mean_return=2.8268
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   73 | frames   148,000 / 10,050,000] mean_return=2.7856
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   74 | frames   150,000 / 10,050,000] mean_return=3.2173
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   75 | frames   152,000 / 10,050,000] mean_return=2.0978
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   76 | frames   154,000 / 10,050,000] mean_return=2.3909
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   77 | frames   156,000 / 10,050,000] mean_return=2.9962
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   78 | frames   158,000 / 10,050,000] mean_return=3.1441
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   79 | frames   160,000 / 10,050,000] mean_return=2.9771
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   80 | frames   162,000 / 10,050,000] mean_return=3.2038
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   81 | frames   164,000 / 10,050,000] mean_return=3.0219
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   82 | frames   166,000 / 10,050,000] mean_return=2.9092
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   83 | frames   168,000 / 10,050,000] mean_return=2.9584
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   84 | frames   170,000 / 10,050,000] mean_return=2.5239
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   85 | frames   172,000 / 10,050,000] mean_return=2.6455
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   86 | frames   174,000 / 10,050,000] mean_return=2.7805
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   87 | frames   176,000 / 10,050,000] mean_return=2.9059
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   88 | frames   178,000 / 10,050,000] mean_return=3.0955
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   89 | frames   180,000 / 10,050,000] mean_return=2.9446
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   90 | frames   182,000 / 10,050,000] mean_return=2.8535
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   91 | frames   184,000 / 10,050,000] mean_return=2.8279
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   92 | frames   186,000 / 10,050,000] mean_return=3.1603
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   93 | frames   188,000 / 10,050,000] mean_return=2.6289
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   94 | frames   190,000 / 10,050,000] mean_return=3.3086
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   95 | frames   192,000 / 10,050,000] mean_return=3.0929
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   96 | frames   194,000 / 10,050,000] mean_return=2.7254
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   97 | frames   196,000 / 10,050,000] mean_return=2.6495
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   98 | frames   198,000 / 10,050,000] mean_return=2.6094
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter   99 | frames   200,000 / 10,050,000] mean_return=3.0810
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  100 | frames   202,000 / 10,050,000] mean_return=3.3901
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  101 | frames   204,000 / 10,050,000] mean_return=2.9938
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  102 | frames   206,000 / 10,050,000] mean_return=3.0064
+[2026-06-06 15:15:59,472][absl][INFO] - Shutdown gracefully.
+[2026-06-06 15:15:59,473][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 15:15:59,477][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43097 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-uhtbsavs/
+[2026-06-06 15:15:59,478][absl][INFO] - Connecting to: ws://127.0.0.1:43097/sc2api, attempt: 0, running: True
+[2026-06-06 15:16:00,479][absl][INFO] - Connecting to: ws://127.0.0.1:43097/sc2api, attempt: 1, running: True
+[2026-06-06 15:16:01,480][absl][INFO] - Connecting to: ws://127.0.0.1:43097/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  103 | frames   208,000 / 10,050,000] mean_return=2.8457
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  104 | frames   210,000 / 10,050,000] mean_return=3.0735
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  105 | frames   212,000 / 10,050,000] mean_return=2.6967
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  106 | frames   214,000 / 10,050,000] mean_return=3.1445
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  107 | frames   216,000 / 10,050,000] mean_return=2.9058
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  108 | frames   218,000 / 10,050,000] mean_return=2.8184
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  109 | frames   220,000 / 10,050,000] mean_return=2.9369
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  110 | frames   222,000 / 10,050,000] mean_return=2.4301
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  111 | frames   224,000 / 10,050,000] mean_return=3.1064
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  112 | frames   226,000 / 10,050,000] mean_return=3.0524
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  113 | frames   228,000 / 10,050,000] mean_return=2.8407
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  114 | frames   230,000 / 10,050,000] mean_return=3.0944
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  115 | frames   232,000 / 10,050,000] mean_return=2.6095
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  116 | frames   234,000 / 10,050,000] mean_return=2.8680
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  117 | frames   236,000 / 10,050,000] mean_return=2.7131
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  118 | frames   238,000 / 10,050,000] mean_return=2.7257
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  119 | frames   240,000 / 10,050,000] mean_return=2.9475
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  120 | frames   242,000 / 10,050,000] mean_return=2.9550
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  121 | frames   244,000 / 10,050,000] mean_return=2.9516
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  122 | frames   246,000 / 10,050,000] mean_return=2.9254
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  123 | frames   248,000 / 10,050,000] mean_return=3.0871
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  124 | frames   250,000 / 10,050,000] mean_return=2.9721
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  125 | frames   252,000 / 10,050,000] mean_return=2.8586
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  126 | frames   254,000 / 10,050,000] mean_return=3.2800
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  127 | frames   256,000 / 10,050,000] mean_return=2.9930
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  128 | frames   258,000 / 10,050,000] mean_return=2.9462
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[2026-06-06 16:25:42,426][absl][INFO] - Shutdown gracefully.
+[2026-06-06 16:25:42,427][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 16:25:42,433][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 40561 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-0q6p3_27/
+[2026-06-06 16:25:42,434][absl][INFO] - Connecting to: ws://127.0.0.1:40561/sc2api, attempt: 0, running: True
+[2026-06-06 16:25:43,435][absl][INFO] - Connecting to: ws://127.0.0.1:40561/sc2api, attempt: 1, running: True
+[2026-06-06 16:25:44,436][absl][INFO] - Connecting to: ws://127.0.0.1:40561/sc2api, attempt: 2, running: True
+[2026-06-06 16:25:49,441][absl][INFO] - Shutdown gracefully.
+[2026-06-06 16:25:49,442][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 16:25:49,445][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 46673 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-b32x5ow3/
+[2026-06-06 16:25:49,446][absl][INFO] - Connecting to: ws://127.0.0.1:46673/sc2api, attempt: 0, running: True
+[2026-06-06 16:25:50,447][absl][INFO] - Connecting to: ws://127.0.0.1:46673/sc2api, attempt: 1, running: True
+[2026-06-06 16:25:51,449][absl][INFO] - Connecting to: ws://127.0.0.1:46673/sc2api, attempt: 2, running: True
+[2026-06-06 16:25:56,503][absl][INFO] - Shutdown gracefully.
+[2026-06-06 16:25:56,504][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 16:25:56,506][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 41663 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-2whaabg6/
+[2026-06-06 16:25:56,508][absl][INFO] - Connecting to: ws://127.0.0.1:41663/sc2api, attempt: 0, running: True
+[2026-06-06 16:25:57,509][absl][INFO] - Connecting to: ws://127.0.0.1:41663/sc2api, attempt: 1, running: True
+[2026-06-06 16:25:58,510][absl][INFO] - Connecting to: ws://127.0.0.1:41663/sc2api, attempt: 2, running: True
+[2026-06-06 16:26:03,608][absl][INFO] - Shutdown gracefully.
+[2026-06-06 16:26:03,609][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 16:26:03,614][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 33267 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-haz7fwgv/
+[2026-06-06 16:26:03,616][absl][INFO] - Connecting to: ws://127.0.0.1:33267/sc2api, attempt: 0, running: True
+[2026-06-06 16:26:04,617][absl][INFO] - Connecting to: ws://127.0.0.1:33267/sc2api, attempt: 1, running: True
+[2026-06-06 16:26:05,618][absl][INFO] - Connecting to: ws://127.0.0.1:33267/sc2api, attempt: 2, running: True
+[iter  129 | frames   260,000 / 10,050,000] mean_return=2.9176
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  130 | frames   262,000 / 10,050,000] mean_return=2.4862
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  131 | frames   264,000 / 10,050,000] mean_return=2.9548
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  132 | frames   266,000 / 10,050,000] mean_return=2.6598
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  133 | frames   268,000 / 10,050,000] mean_return=3.0684
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  134 | frames   270,000 / 10,050,000] mean_return=3.0589
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  135 | frames   272,000 / 10,050,000] mean_return=2.7769
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  136 | frames   274,000 / 10,050,000] mean_return=2.9177
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  137 | frames   276,000 / 10,050,000] mean_return=2.9012
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  138 | frames   278,000 / 10,050,000] mean_return=2.8983
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  139 | frames   280,000 / 10,050,000] mean_return=3.0973
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  140 | frames   282,000 / 10,050,000] mean_return=2.7275
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  141 | frames   284,000 / 10,050,000] mean_return=2.6686
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  142 | frames   286,000 / 10,050,000] mean_return=2.6124
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  143 | frames   288,000 / 10,050,000] mean_return=2.8702
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  144 | frames   290,000 / 10,050,000] mean_return=2.9500
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  145 | frames   292,000 / 10,050,000] mean_return=2.6102
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  146 | frames   294,000 / 10,050,000] mean_return=3.1326
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  147 | frames   296,000 / 10,050,000] mean_return=2.4458
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  148 | frames   298,000 / 10,050,000] mean_return=2.5083
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  149 | frames   300,000 / 10,050,000] mean_return=3.0297
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  150 | frames   302,000 / 10,050,000] mean_return=2.6850
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  151 | frames   304,000 / 10,050,000] mean_return=3.1232
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  152 | frames   306,000 / 10,050,000] mean_return=3.0963
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  153 | frames   308,000 / 10,050,000] mean_return=2.7821
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  154 | frames   310,000 / 10,050,000] mean_return=2.8857
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  155 | frames   312,000 / 10,050,000] mean_return=2.6665
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  156 | frames   314,000 / 10,050,000] mean_return=2.9696
+[2026-06-06 17:40:07,286][absl][INFO] - Shutdown gracefully.
+[2026-06-06 17:40:07,287][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 17:40:07,292][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 44739 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-prtx6gl2/
+[2026-06-06 17:40:07,294][absl][INFO] - Connecting to: ws://127.0.0.1:44739/sc2api, attempt: 0, running: True
+[2026-06-06 17:40:08,295][absl][INFO] - Connecting to: ws://127.0.0.1:44739/sc2api, attempt: 1, running: True
+[2026-06-06 17:40:09,297][absl][INFO] - Connecting to: ws://127.0.0.1:44739/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  157 | frames   316,000 / 10,050,000] mean_return=2.5616
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  158 | frames   318,000 / 10,050,000] mean_return=2.6279
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  159 | frames   320,000 / 10,050,000] mean_return=2.6096
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  160 | frames   322,000 / 10,050,000] mean_return=3.0950
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  161 | frames   324,000 / 10,050,000] mean_return=2.7819
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  162 | frames   326,000 / 10,050,000] mean_return=2.9572
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  163 | frames   328,000 / 10,050,000] mean_return=2.5549
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  164 | frames   330,000 / 10,050,000] mean_return=2.7211
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  165 | frames   332,000 / 10,050,000] mean_return=2.7398
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  166 | frames   334,000 / 10,050,000] mean_return=3.3601
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  167 | frames   336,000 / 10,050,000] mean_return=3.2308
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  168 | frames   338,000 / 10,050,000] mean_return=3.0262
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  169 | frames   340,000 / 10,050,000] mean_return=2.6619
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  170 | frames   342,000 / 10,050,000] mean_return=2.5421
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  171 | frames   344,000 / 10,050,000] mean_return=2.7513
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  172 | frames   346,000 / 10,050,000] mean_return=3.3291
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  173 | frames   348,000 / 10,050,000] mean_return=2.8899
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  174 | frames   350,000 / 10,050,000] mean_return=2.6734
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  175 | frames   352,000 / 10,050,000] mean_return=3.0824
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  176 | frames   354,000 / 10,050,000] mean_return=2.5481
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  177 | frames   356,000 / 10,050,000] mean_return=2.9137
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  178 | frames   358,000 / 10,050,000] mean_return=3.0667
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  179 | frames   360,000 / 10,050,000] mean_return=2.5843
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  180 | frames   362,000 / 10,050,000] mean_return=2.8787
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  181 | frames   364,000 / 10,050,000] mean_return=2.9509
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  182 | frames   366,000 / 10,050,000] mean_return=2.8817
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  183 | frames   368,000 / 10,050,000] mean_return=3.1957
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  184 | frames   370,000 / 10,050,000] mean_return=2.9825
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  185 | frames   372,000 / 10,050,000] mean_return=3.2523
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  186 | frames   374,000 / 10,050,000] mean_return=2.9905
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  187 | frames   376,000 / 10,050,000] mean_return=3.1083
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  188 | frames   378,000 / 10,050,000] mean_return=2.7329
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  189 | frames   380,000 / 10,050,000] mean_return=3.0106
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  190 | frames   382,000 / 10,050,000] mean_return=2.9814
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  191 | frames   384,000 / 10,050,000] mean_return=2.7954
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  192 | frames   386,000 / 10,050,000] mean_return=3.3491
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  193 | frames   388,000 / 10,050,000] mean_return=2.7505
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  194 | frames   390,000 / 10,050,000] mean_return=2.8960
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  195 | frames   392,000 / 10,050,000] mean_return=2.7683
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  196 | frames   394,000 / 10,050,000] mean_return=2.4568
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  197 | frames   396,000 / 10,050,000] mean_return=2.8812
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  198 | frames   398,000 / 10,050,000] mean_return=3.3894
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  199 | frames   400,000 / 10,050,000] mean_return=2.5659
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  200 | frames   402,000 / 10,050,000] mean_return=2.9206
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  201 | frames   404,000 / 10,050,000] mean_return=3.1337
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  202 | frames   406,000 / 10,050,000] mean_return=3.2240
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  203 | frames   408,000 / 10,050,000] mean_return=2.8427
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  204 | frames   410,000 / 10,050,000] mean_return=2.9748
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  205 | frames   412,000 / 10,050,000] mean_return=3.1691
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  206 | frames   414,000 / 10,050,000] mean_return=2.7243
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  207 | frames   416,000 / 10,050,000] mean_return=2.6502
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  208 | frames   418,000 / 10,050,000] mean_return=3.1050
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  209 | frames   420,000 / 10,050,000] mean_return=2.9014
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  210 | frames   422,000 / 10,050,000] mean_return=2.9761
+[2026-06-06 20:03:38,108][absl][INFO] - Shutdown gracefully.
+[2026-06-06 20:03:38,108][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 20:03:38,113][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 41317 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-7ngb95ou/
+[2026-06-06 20:03:38,115][absl][INFO] - Connecting to: ws://127.0.0.1:41317/sc2api, attempt: 0, running: True
+[2026-06-06 20:03:39,117][absl][INFO] - Connecting to: ws://127.0.0.1:41317/sc2api, attempt: 1, running: True
+[2026-06-06 20:03:40,118][absl][INFO] - Connecting to: ws://127.0.0.1:41317/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  211 | frames   424,000 / 10,050,000] mean_return=3.0669
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  212 | frames   426,000 / 10,050,000] mean_return=2.6781
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  213 | frames   428,000 / 10,050,000] mean_return=3.2588
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  214 | frames   430,000 / 10,050,000] mean_return=3.1833
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  215 | frames   432,000 / 10,050,000] mean_return=2.9033
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  216 | frames   434,000 / 10,050,000] mean_return=2.8640
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  217 | frames   436,000 / 10,050,000] mean_return=3.1302
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  218 | frames   438,000 / 10,050,000] mean_return=2.9776
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  219 | frames   440,000 / 10,050,000] mean_return=3.2404
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  220 | frames   442,000 / 10,050,000] mean_return=2.7798
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  221 | frames   444,000 / 10,050,000] mean_return=2.6693
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  222 | frames   446,000 / 10,050,000] mean_return=3.3466
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  223 | frames   448,000 / 10,050,000] mean_return=2.9827
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  224 | frames   450,000 / 10,050,000] mean_return=2.4789
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  225 | frames   452,000 / 10,050,000] mean_return=2.9665
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  226 | frames   454,000 / 10,050,000] mean_return=2.8878
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  227 | frames   456,000 / 10,050,000] mean_return=2.8989
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  228 | frames   458,000 / 10,050,000] mean_return=2.9657
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  229 | frames   460,000 / 10,050,000] mean_return=2.9773
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  230 | frames   462,000 / 10,050,000] mean_return=2.6510
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  231 | frames   464,000 / 10,050,000] mean_return=3.3186
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  232 | frames   466,000 / 10,050,000] mean_return=2.4932
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  233 | frames   468,000 / 10,050,000] mean_return=2.7043
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  234 | frames   470,000 / 10,050,000] mean_return=2.9365
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  235 | frames   472,000 / 10,050,000] mean_return=2.9315
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  236 | frames   474,000 / 10,050,000] mean_return=2.4777
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  237 | frames   476,000 / 10,050,000] mean_return=2.6330
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  238 | frames   478,000 / 10,050,000] mean_return=2.7234
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  239 | frames   480,000 / 10,050,000] mean_return=2.9508
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  240 | frames   482,000 / 10,050,000] mean_return=2.8872
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  241 | frames   484,000 / 10,050,000] mean_return=2.9007
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  242 | frames   486,000 / 10,050,000] mean_return=2.8453
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  243 | frames   488,000 / 10,050,000] mean_return=2.9886
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  244 | frames   490,000 / 10,050,000] mean_return=2.8852
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  245 | frames   492,000 / 10,050,000] mean_return=2.8596
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  246 | frames   494,000 / 10,050,000] mean_return=2.5713
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  247 | frames   496,000 / 10,050,000] mean_return=2.8008
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  248 | frames   498,000 / 10,050,000] mean_return=2.7148
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  249 | frames   500,000 / 10,050,000] mean_return=2.4781
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  250 | frames   502,000 / 10,050,000] mean_return=3.1919
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  251 | frames   504,000 / 10,050,000] mean_return=2.6480
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  252 | frames   506,000 / 10,050,000] mean_return=3.1597
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  253 | frames   508,000 / 10,050,000] mean_return=2.7078
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  254 | frames   510,000 / 10,050,000] mean_return=2.4883
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  255 | frames   512,000 / 10,050,000] mean_return=2.8420
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  256 | frames   514,000 / 10,050,000] mean_return=3.1364
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  257 | frames   516,000 / 10,050,000] mean_return=2.7581
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  258 | frames   518,000 / 10,050,000] mean_return=2.5865
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[2026-06-06 22:11:51,569][absl][INFO] - Shutdown gracefully.
+[2026-06-06 22:11:51,570][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 22:11:51,574][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 38339 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-bebl39p_/
+[2026-06-06 22:11:51,576][absl][INFO] - Connecting to: ws://127.0.0.1:38339/sc2api, attempt: 0, running: True
+[2026-06-06 22:11:52,577][absl][INFO] - Connecting to: ws://127.0.0.1:38339/sc2api, attempt: 1, running: True
+[2026-06-06 22:11:53,578][absl][INFO] - Connecting to: ws://127.0.0.1:38339/sc2api, attempt: 2, running: True
+[2026-06-06 22:11:57,759][absl][INFO] - Shutdown gracefully.
+[2026-06-06 22:11:57,759][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 22:11:57,761][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 34547 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-vv2t6mxt/
+[2026-06-06 22:11:57,762][absl][INFO] - Connecting to: ws://127.0.0.1:34547/sc2api, attempt: 0, running: True
+[2026-06-06 22:11:58,763][absl][INFO] - Connecting to: ws://127.0.0.1:34547/sc2api, attempt: 1, running: True
+[2026-06-06 22:11:59,765][absl][INFO] - Connecting to: ws://127.0.0.1:34547/sc2api, attempt: 2, running: True
+[2026-06-06 22:12:04,392][absl][INFO] - Shutdown gracefully.
+[2026-06-06 22:12:04,393][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 22:12:04,398][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 44853 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-g519uayt/
+[2026-06-06 22:12:04,399][absl][INFO] - Connecting to: ws://127.0.0.1:44853/sc2api, attempt: 0, running: True
+[2026-06-06 22:12:05,401][absl][INFO] - Connecting to: ws://127.0.0.1:44853/sc2api, attempt: 1, running: True
+[2026-06-06 22:12:06,402][absl][INFO] - Connecting to: ws://127.0.0.1:44853/sc2api, attempt: 2, running: True
+[2026-06-06 22:12:11,125][absl][INFO] - Shutdown gracefully.
+[2026-06-06 22:12:11,125][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 22:12:11,130][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43771 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-ck3eu1ct/
+[2026-06-06 22:12:11,131][absl][INFO] - Connecting to: ws://127.0.0.1:43771/sc2api, attempt: 0, running: True
+[2026-06-06 22:12:12,132][absl][INFO] - Connecting to: ws://127.0.0.1:43771/sc2api, attempt: 1, running: True
+[2026-06-06 22:12:13,134][absl][INFO] - Connecting to: ws://127.0.0.1:43771/sc2api, attempt: 2, running: True
+[iter  259 | frames   520,000 / 10,050,000] mean_return=2.8196
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  260 | frames   522,000 / 10,050,000] mean_return=2.5408
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  261 | frames   524,000 / 10,050,000] mean_return=2.6084
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  262 | frames   526,000 / 10,050,000] mean_return=3.3294
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  263 | frames   528,000 / 10,050,000] mean_return=2.9048
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  264 | frames   530,000 / 10,050,000] mean_return=2.8031
+[2026-06-06 22:27:47,816][absl][INFO] - Shutdown gracefully.
+[2026-06-06 22:27:47,817][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 22:27:47,821][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 41075 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-n_pluwqf/
+[2026-06-06 22:27:47,823][absl][INFO] - Connecting to: ws://127.0.0.1:41075/sc2api, attempt: 0, running: True
+[2026-06-06 22:27:48,824][absl][INFO] - Connecting to: ws://127.0.0.1:41075/sc2api, attempt: 1, running: True
+[2026-06-06 22:27:49,825][absl][INFO] - Connecting to: ws://127.0.0.1:41075/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  265 | frames   532,000 / 10,050,000] mean_return=3.1084
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  266 | frames   534,000 / 10,050,000] mean_return=2.6727
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  267 | frames   536,000 / 10,050,000] mean_return=3.0088
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  268 | frames   538,000 / 10,050,000] mean_return=2.9169
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  269 | frames   540,000 / 10,050,000] mean_return=2.8580
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  270 | frames   542,000 / 10,050,000] mean_return=3.3864
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  271 | frames   544,000 / 10,050,000] mean_return=3.0917
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  272 | frames   546,000 / 10,050,000] mean_return=2.9990
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  273 | frames   548,000 / 10,050,000] mean_return=2.8417
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  274 | frames   550,000 / 10,050,000] mean_return=3.3077
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  275 | frames   552,000 / 10,050,000] mean_return=3.1878
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  276 | frames   554,000 / 10,050,000] mean_return=3.1122
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  277 | frames   556,000 / 10,050,000] mean_return=2.6715
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  278 | frames   558,000 / 10,050,000] mean_return=2.7772
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  279 | frames   560,000 / 10,050,000] mean_return=3.3859
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  280 | frames   562,000 / 10,050,000] mean_return=2.8032
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  281 | frames   564,000 / 10,050,000] mean_return=2.5321
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  282 | frames   566,000 / 10,050,000] mean_return=2.8956
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  283 | frames   568,000 / 10,050,000] mean_return=2.6585
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  284 | frames   570,000 / 10,050,000] mean_return=2.8669
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  285 | frames   572,000 / 10,050,000] mean_return=3.2608
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  286 | frames   574,000 / 10,050,000] mean_return=2.7597
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  287 | frames   576,000 / 10,050,000] mean_return=2.7893
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  288 | frames   578,000 / 10,050,000] mean_return=2.5208
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  289 | frames   580,000 / 10,050,000] mean_return=2.7148
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  290 | frames   582,000 / 10,050,000] mean_return=2.8231
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  291 | frames   584,000 / 10,050,000] mean_return=2.3820
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  292 | frames   586,000 / 10,050,000] mean_return=3.1042
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  293 | frames   588,000 / 10,050,000] mean_return=2.8904
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  294 | frames   590,000 / 10,050,000] mean_return=3.2463
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  295 | frames   592,000 / 10,050,000] mean_return=3.3058
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  296 | frames   594,000 / 10,050,000] mean_return=3.1145
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  297 | frames   596,000 / 10,050,000] mean_return=3.0454
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  298 | frames   598,000 / 10,050,000] mean_return=2.8305
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  299 | frames   600,000 / 10,050,000] mean_return=3.0584
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  300 | frames   602,000 / 10,050,000] mean_return=2.9843
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  301 | frames   604,000 / 10,050,000] mean_return=3.1014
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  302 | frames   606,000 / 10,050,000] mean_return=2.5663
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  303 | frames   608,000 / 10,050,000] mean_return=2.8530
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  304 | frames   610,000 / 10,050,000] mean_return=3.4093
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  305 | frames   612,000 / 10,050,000] mean_return=3.0397
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  306 | frames   614,000 / 10,050,000] mean_return=3.0751
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  307 | frames   616,000 / 10,050,000] mean_return=2.8737
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  308 | frames   618,000 / 10,050,000] mean_return=3.3170
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  309 | frames   620,000 / 10,050,000] mean_return=2.7202
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  310 | frames   622,000 / 10,050,000] mean_return=2.7636
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  311 | frames   624,000 / 10,050,000] mean_return=2.6615
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  312 | frames   626,000 / 10,050,000] mean_return=2.7923
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  313 | frames   628,000 / 10,050,000] mean_return=3.0457
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  314 | frames   630,000 / 10,050,000] mean_return=2.7914
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  315 | frames   632,000 / 10,050,000] mean_return=2.8019
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  316 | frames   634,000 / 10,050,000] mean_return=3.3522
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  317 | frames   636,000 / 10,050,000] mean_return=3.1839
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  318 | frames   638,000 / 10,050,000] mean_return=2.6796
+[2026-06-07 00:51:10,861][absl][INFO] - Shutdown gracefully.
+[2026-06-07 00:51:10,861][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 00:51:10,866][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 41585 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-wxhrhtxn/
+[2026-06-07 00:51:10,867][absl][INFO] - Connecting to: ws://127.0.0.1:41585/sc2api, attempt: 0, running: True
+[2026-06-07 00:51:11,868][absl][INFO] - Connecting to: ws://127.0.0.1:41585/sc2api, attempt: 1, running: True
+[2026-06-07 00:51:12,870][absl][INFO] - Connecting to: ws://127.0.0.1:41585/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  319 | frames   640,000 / 10,050,000] mean_return=2.9885
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  320 | frames   642,000 / 10,050,000] mean_return=3.0324
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  321 | frames   644,000 / 10,050,000] mean_return=2.9266
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  322 | frames   646,000 / 10,050,000] mean_return=3.1033
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  323 | frames   648,000 / 10,050,000] mean_return=3.1756
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  324 | frames   650,000 / 10,050,000] mean_return=3.0221
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  325 | frames   652,000 / 10,050,000] mean_return=2.9823
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  326 | frames   654,000 / 10,050,000] mean_return=2.8810
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  327 | frames   656,000 / 10,050,000] mean_return=3.3775
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  328 | frames   658,000 / 10,050,000] mean_return=2.8273
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  329 | frames   660,000 / 10,050,000] mean_return=2.8337
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  330 | frames   662,000 / 10,050,000] mean_return=2.8693
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  331 | frames   664,000 / 10,050,000] mean_return=3.2926
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  332 | frames   666,000 / 10,050,000] mean_return=2.7462
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  333 | frames   668,000 / 10,050,000] mean_return=2.9153
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  334 | frames   670,000 / 10,050,000] mean_return=2.4257
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  335 | frames   672,000 / 10,050,000] mean_return=2.4934
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  336 | frames   674,000 / 10,050,000] mean_return=2.4653
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  337 | frames   676,000 / 10,050,000] mean_return=2.5339
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  338 | frames   678,000 / 10,050,000] mean_return=3.0929
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  339 | frames   680,000 / 10,050,000] mean_return=2.9026
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  340 | frames   682,000 / 10,050,000] mean_return=3.0031
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  341 | frames   684,000 / 10,050,000] mean_return=2.4583
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  342 | frames   686,000 / 10,050,000] mean_return=3.0508
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  343 | frames   688,000 / 10,050,000] mean_return=2.5317
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  344 | frames   690,000 / 10,050,000] mean_return=2.9502
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  345 | frames   692,000 / 10,050,000] mean_return=3.0302
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  346 | frames   694,000 / 10,050,000] mean_return=2.8242
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  347 | frames   696,000 / 10,050,000] mean_return=2.6259
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  348 | frames   698,000 / 10,050,000] mean_return=3.0447
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  349 | frames   700,000 / 10,050,000] mean_return=2.8820
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  350 | frames   702,000 / 10,050,000] mean_return=2.9325
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  351 | frames   704,000 / 10,050,000] mean_return=2.7507
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  352 | frames   706,000 / 10,050,000] mean_return=2.9241
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  353 | frames   708,000 / 10,050,000] mean_return=2.6609
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  354 | frames   710,000 / 10,050,000] mean_return=3.3371
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  355 | frames   712,000 / 10,050,000] mean_return=3.1372
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  356 | frames   714,000 / 10,050,000] mean_return=2.9706
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  357 | frames   716,000 / 10,050,000] mean_return=2.3265
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  358 | frames   718,000 / 10,050,000] mean_return=2.9090
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  359 | frames   720,000 / 10,050,000] mean_return=2.4549
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  360 | frames   722,000 / 10,050,000] mean_return=2.8540
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  361 | frames   724,000 / 10,050,000] mean_return=3.0093
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  362 | frames   726,000 / 10,050,000] mean_return=3.0770
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  363 | frames   728,000 / 10,050,000] mean_return=2.6925
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  364 | frames   730,000 / 10,050,000] mean_return=2.6668
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  365 | frames   732,000 / 10,050,000] mean_return=2.7714
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  366 | frames   734,000 / 10,050,000] mean_return=2.7647
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  367 | frames   736,000 / 10,050,000] mean_return=2.7646
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  368 | frames   738,000 / 10,050,000] mean_return=2.6413
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  369 | frames   740,000 / 10,050,000] mean_return=3.0702
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  370 | frames   742,000 / 10,050,000] mean_return=2.7133
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  371 | frames   744,000 / 10,050,000] mean_return=2.2739
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  372 | frames   746,000 / 10,050,000] mean_return=3.3593
+[2026-06-07 03:14:48,407][absl][INFO] - Shutdown gracefully.
+[2026-06-07 03:14:48,408][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 03:14:48,413][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 45139 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-5kkb3649/
+[2026-06-07 03:14:48,415][absl][INFO] - Connecting to: ws://127.0.0.1:45139/sc2api, attempt: 0, running: True
+[2026-06-07 03:14:49,415][absl][INFO] - Connecting to: ws://127.0.0.1:45139/sc2api, attempt: 1, running: True
+[2026-06-07 03:14:50,417][absl][INFO] - Connecting to: ws://127.0.0.1:45139/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  373 | frames   748,000 / 10,050,000] mean_return=3.1366
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  374 | frames   750,000 / 10,050,000] mean_return=2.9013
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  375 | frames   752,000 / 10,050,000] mean_return=2.8446
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  376 | frames   754,000 / 10,050,000] mean_return=2.5998
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  377 | frames   756,000 / 10,050,000] mean_return=2.9669
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  378 | frames   758,000 / 10,050,000] mean_return=2.9333
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  379 | frames   760,000 / 10,050,000] mean_return=2.6088
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  380 | frames   762,000 / 10,050,000] mean_return=2.3950
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  381 | frames   764,000 / 10,050,000] mean_return=2.9019
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  382 | frames   766,000 / 10,050,000] mean_return=3.2400
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  383 | frames   768,000 / 10,050,000] mean_return=2.4312
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  384 | frames   770,000 / 10,050,000] mean_return=2.7566
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  385 | frames   772,000 / 10,050,000] mean_return=2.9348
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  386 | frames   774,000 / 10,050,000] mean_return=3.3558
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  387 | frames   776,000 / 10,050,000] mean_return=3.0475
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  388 | frames   778,000 / 10,050,000] mean_return=2.9480
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[2026-06-07 03:57:44,494][absl][INFO] - Shutdown gracefully.
+[2026-06-07 03:57:44,495][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 03:57:44,499][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 46245 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-yalv2bmq/
+[2026-06-07 03:57:44,500][absl][INFO] - Connecting to: ws://127.0.0.1:46245/sc2api, attempt: 0, running: True
+[2026-06-07 03:57:45,501][absl][INFO] - Connecting to: ws://127.0.0.1:46245/sc2api, attempt: 1, running: True
+[2026-06-07 03:57:46,503][absl][INFO] - Connecting to: ws://127.0.0.1:46245/sc2api, attempt: 2, running: True
+[2026-06-07 03:57:50,664][absl][INFO] - Shutdown gracefully.
+[2026-06-07 03:57:50,665][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 03:57:50,669][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43733 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-yokwawl0/
+[2026-06-07 03:57:50,671][absl][INFO] - Connecting to: ws://127.0.0.1:43733/sc2api, attempt: 0, running: True
+[2026-06-07 03:57:51,672][absl][INFO] - Connecting to: ws://127.0.0.1:43733/sc2api, attempt: 1, running: True
+[2026-06-07 03:57:52,673][absl][INFO] - Connecting to: ws://127.0.0.1:43733/sc2api, attempt: 2, running: True
+[2026-06-07 03:57:56,994][absl][INFO] - Shutdown gracefully.
+[2026-06-07 03:57:56,994][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 03:57:56,996][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 39723 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-u1rzv70v/
+[2026-06-07 03:57:56,998][absl][INFO] - Connecting to: ws://127.0.0.1:39723/sc2api, attempt: 0, running: True
+[2026-06-07 03:57:57,999][absl][INFO] - Connecting to: ws://127.0.0.1:39723/sc2api, attempt: 1, running: True
+[2026-06-07 03:57:59,000][absl][INFO] - Connecting to: ws://127.0.0.1:39723/sc2api, attempt: 2, running: True
+[2026-06-07 03:58:03,756][absl][INFO] - Shutdown gracefully.
+[2026-06-07 03:58:03,757][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 03:58:03,762][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 45479 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-7u1v_u3k/
+[2026-06-07 03:58:03,764][absl][INFO] - Connecting to: ws://127.0.0.1:45479/sc2api, attempt: 0, running: True
+[2026-06-07 03:58:04,765][absl][INFO] - Connecting to: ws://127.0.0.1:45479/sc2api, attempt: 1, running: True
+[2026-06-07 03:58:05,766][absl][INFO] - Connecting to: ws://127.0.0.1:45479/sc2api, attempt: 2, running: True
+[iter  389 | frames   780,000 / 10,050,000] mean_return=2.8450
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  390 | frames   782,000 / 10,050,000] mean_return=2.9086
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  391 | frames   784,000 / 10,050,000] mean_return=2.6813
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  392 | frames   786,000 / 10,050,000] mean_return=3.1356
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  393 | frames   788,000 / 10,050,000] mean_return=3.0164
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  394 | frames   790,000 / 10,050,000] mean_return=2.8049
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  395 | frames   792,000 / 10,050,000] mean_return=2.6393
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  396 | frames   794,000 / 10,050,000] mean_return=2.9980
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  397 | frames   796,000 / 10,050,000] mean_return=3.1906
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  398 | frames   798,000 / 10,050,000] mean_return=2.8158
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  399 | frames   800,000 / 10,050,000] mean_return=3.1939
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  400 | frames   802,000 / 10,050,000] mean_return=3.3036
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  401 | frames   804,000 / 10,050,000] mean_return=2.7292
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  402 | frames   806,000 / 10,050,000] mean_return=2.6553
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  403 | frames   808,000 / 10,050,000] mean_return=2.5178
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  404 | frames   810,000 / 10,050,000] mean_return=2.4992
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  405 | frames   812,000 / 10,050,000] mean_return=2.9665
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  406 | frames   814,000 / 10,050,000] mean_return=3.1124
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  407 | frames   816,000 / 10,050,000] mean_return=2.7109
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  408 | frames   818,000 / 10,050,000] mean_return=3.2061
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  409 | frames   820,000 / 10,050,000] mean_return=3.1030
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  410 | frames   822,000 / 10,050,000] mean_return=3.5718
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  411 | frames   824,000 / 10,050,000] mean_return=2.8132
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  412 | frames   826,000 / 10,050,000] mean_return=2.9561
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  413 | frames   828,000 / 10,050,000] mean_return=3.5586
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  414 | frames   830,000 / 10,050,000] mean_return=2.9568
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  415 | frames   832,000 / 10,050,000] mean_return=3.1396
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  416 | frames   834,000 / 10,050,000] mean_return=3.2872
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  417 | frames   836,000 / 10,050,000] mean_return=2.5856
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  418 | frames   838,000 / 10,050,000] mean_return=3.3613
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  419 | frames   840,000 / 10,050,000] mean_return=2.8400
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  420 | frames   842,000 / 10,050,000] mean_return=2.4376
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  421 | frames   844,000 / 10,050,000] mean_return=3.6125
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  422 | frames   846,000 / 10,050,000] mean_return=2.8442
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  423 | frames   848,000 / 10,050,000] mean_return=3.1521
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  424 | frames   850,000 / 10,050,000] mean_return=2.6421
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  425 | frames   852,000 / 10,050,000] mean_return=2.7755
+[2026-06-07 05:36:29,481][absl][INFO] - Shutdown gracefully.
+[2026-06-07 05:36:29,481][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 05:36:29,486][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43459 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-52koxdi2/
+[2026-06-07 05:36:29,487][absl][INFO] - Connecting to: ws://127.0.0.1:43459/sc2api, attempt: 0, running: True
+[2026-06-07 05:36:30,488][absl][INFO] - Connecting to: ws://127.0.0.1:43459/sc2api, attempt: 1, running: True
+[2026-06-07 05:36:31,489][absl][INFO] - Connecting to: ws://127.0.0.1:43459/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  426 | frames   854,000 / 10,050,000] mean_return=2.7026
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  427 | frames   856,000 / 10,050,000] mean_return=2.7591
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  428 | frames   858,000 / 10,050,000] mean_return=3.1941
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  429 | frames   860,000 / 10,050,000] mean_return=3.0874
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  430 | frames   862,000 / 10,050,000] mean_return=3.1854
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  431 | frames   864,000 / 10,050,000] mean_return=2.6159
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  432 | frames   866,000 / 10,050,000] mean_return=3.3717
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  433 | frames   868,000 / 10,050,000] mean_return=2.6774
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  434 | frames   870,000 / 10,050,000] mean_return=3.1327
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  435 | frames   872,000 / 10,050,000] mean_return=3.2518
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  436 | frames   874,000 / 10,050,000] mean_return=2.6964
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  437 | frames   876,000 / 10,050,000] mean_return=2.9274
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  438 | frames   878,000 / 10,050,000] mean_return=3.3801
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  439 | frames   880,000 / 10,050,000] mean_return=2.8412
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  440 | frames   882,000 / 10,050,000] mean_return=3.0248
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  441 | frames   884,000 / 10,050,000] mean_return=2.4199
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  442 | frames   886,000 / 10,050,000] mean_return=2.7923
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  443 | frames   888,000 / 10,050,000] mean_return=3.0048
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  444 | frames   890,000 / 10,050,000] mean_return=3.2584
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  445 | frames   892,000 / 10,050,000] mean_return=2.7066
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  446 | frames   894,000 / 10,050,000] mean_return=2.6582
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  447 | frames   896,000 / 10,050,000] mean_return=2.7768
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  448 | frames   898,000 / 10,050,000] mean_return=2.6047
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  449 | frames   900,000 / 10,050,000] mean_return=2.8661
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  450 | frames   902,000 / 10,050,000] mean_return=2.9095
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  451 | frames   904,000 / 10,050,000] mean_return=3.1841
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  452 | frames   906,000 / 10,050,000] mean_return=2.9160
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  453 | frames   908,000 / 10,050,000] mean_return=3.2085
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  454 | frames   910,000 / 10,050,000] mean_return=2.7729
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  455 | frames   912,000 / 10,050,000] mean_return=2.8007
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  456 | frames   914,000 / 10,050,000] mean_return=3.0776
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  457 | frames   916,000 / 10,050,000] mean_return=2.7976
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  458 | frames   918,000 / 10,050,000] mean_return=2.6684
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  459 | frames   920,000 / 10,050,000] mean_return=2.9650
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  460 | frames   922,000 / 10,050,000] mean_return=2.6652
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  461 | frames   924,000 / 10,050,000] mean_return=2.6045
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  462 | frames   926,000 / 10,050,000] mean_return=2.4727
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  463 | frames   928,000 / 10,050,000] mean_return=3.1079
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  464 | frames   930,000 / 10,050,000] mean_return=2.9491
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  465 | frames   932,000 / 10,050,000] mean_return=3.0740
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  466 | frames   934,000 / 10,050,000] mean_return=2.8662
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  467 | frames   936,000 / 10,050,000] mean_return=2.6831
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  468 | frames   938,000 / 10,050,000] mean_return=2.4527
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  469 | frames   940,000 / 10,050,000] mean_return=2.5199
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  470 | frames   942,000 / 10,050,000] mean_return=3.2327
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  471 | frames   944,000 / 10,050,000] mean_return=2.9178
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  472 | frames   946,000 / 10,050,000] mean_return=3.2748
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  473 | frames   948,000 / 10,050,000] mean_return=2.8721
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  474 | frames   950,000 / 10,050,000] mean_return=3.1726
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  475 | frames   952,000 / 10,050,000] mean_return=3.3791
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  476 | frames   954,000 / 10,050,000] mean_return=3.1276
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  477 | frames   956,000 / 10,050,000] mean_return=3.0418
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  478 | frames   958,000 / 10,050,000] mean_return=2.5097
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  479 | frames   960,000 / 10,050,000] mean_return=2.8848
+[2026-06-07 08:00:04,246][absl][INFO] - Shutdown gracefully.
+[2026-06-07 08:00:04,247][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 08:00:04,252][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 46711 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-52mqyujx/
+[2026-06-07 08:00:04,253][absl][INFO] - Connecting to: ws://127.0.0.1:46711/sc2api, attempt: 0, running: True
+[2026-06-07 08:00:05,254][absl][INFO] - Connecting to: ws://127.0.0.1:46711/sc2api, attempt: 1, running: True
+[2026-06-07 08:00:06,256][absl][INFO] - Connecting to: ws://127.0.0.1:46711/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  480 | frames   962,000 / 10,050,000] mean_return=2.9103
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  481 | frames   964,000 / 10,050,000] mean_return=2.9433
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  482 | frames   966,000 / 10,050,000] mean_return=3.0263
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  483 | frames   968,000 / 10,050,000] mean_return=2.9671
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  484 | frames   970,000 / 10,050,000] mean_return=2.6777
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  485 | frames   972,000 / 10,050,000] mean_return=2.8260
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  486 | frames   974,000 / 10,050,000] mean_return=2.5352
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  487 | frames   976,000 / 10,050,000] mean_return=3.1059
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  488 | frames   978,000 / 10,050,000] mean_return=2.4896
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  489 | frames   980,000 / 10,050,000] mean_return=2.7736
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  490 | frames   982,000 / 10,050,000] mean_return=2.7092
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  491 | frames   984,000 / 10,050,000] mean_return=2.5624
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  492 | frames   986,000 / 10,050,000] mean_return=3.0957
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  493 | frames   988,000 / 10,050,000] mean_return=2.9167
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  494 | frames   990,000 / 10,050,000] mean_return=2.8442
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  495 | frames   992,000 / 10,050,000] mean_return=3.5065
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  496 | frames   994,000 / 10,050,000] mean_return=3.0105
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  497 | frames   996,000 / 10,050,000] mean_return=2.7152
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  498 | frames   998,000 / 10,050,000] mean_return=2.8803
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  499 | frames 1,000,000 / 10,050,000] mean_return=2.5777
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  500 | frames 1,002,000 / 10,050,000] mean_return=3.0800
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  501 | frames 1,004,000 / 10,050,000] mean_return=3.0123
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  502 | frames 1,006,000 / 10,050,000] mean_return=2.6568
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  503 | frames 1,008,000 / 10,050,000] mean_return=3.2013
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  504 | frames 1,010,000 / 10,050,000] mean_return=3.2315
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  505 | frames 1,012,000 / 10,050,000] mean_return=2.7214
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  506 | frames 1,014,000 / 10,050,000] mean_return=2.8821
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  507 | frames 1,016,000 / 10,050,000] mean_return=3.1473
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  508 | frames 1,018,000 / 10,050,000] mean_return=2.9522
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  509 | frames 1,020,000 / 10,050,000] mean_return=2.7377
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  510 | frames 1,022,000 / 10,050,000] mean_return=2.8718
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  511 | frames 1,024,000 / 10,050,000] mean_return=2.9140
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  512 | frames 1,026,000 / 10,050,000] mean_return=3.2729
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  513 | frames 1,028,000 / 10,050,000] mean_return=3.2083
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  514 | frames 1,030,000 / 10,050,000] mean_return=3.1772
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  515 | frames 1,032,000 / 10,050,000] mean_return=2.9620
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  516 | frames 1,034,000 / 10,050,000] mean_return=2.7148
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  517 | frames 1,036,000 / 10,050,000] mean_return=3.3182
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  518 | frames 1,038,000 / 10,050,000] mean_return=2.9382
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[2026-06-07 09:44:09,060][absl][INFO] - Shutdown gracefully.
+[2026-06-07 09:44:09,061][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 09:44:09,066][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 37163 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-5a6mg_3e/
+[2026-06-07 09:44:09,068][absl][INFO] - Connecting to: ws://127.0.0.1:37163/sc2api, attempt: 0, running: True
+[2026-06-07 09:44:10,069][absl][INFO] - Connecting to: ws://127.0.0.1:37163/sc2api, attempt: 1, running: True
+[2026-06-07 09:44:11,070][absl][INFO] - Connecting to: ws://127.0.0.1:37163/sc2api, attempt: 2, running: True
+[2026-06-07 09:44:15,483][absl][INFO] - Shutdown gracefully.
+[2026-06-07 09:44:15,484][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 09:44:15,490][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 41421 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-3x_i0cxd/
+[2026-06-07 09:44:15,491][absl][INFO] - Connecting to: ws://127.0.0.1:41421/sc2api, attempt: 0, running: True
+[2026-06-07 09:44:16,492][absl][INFO] - Connecting to: ws://127.0.0.1:41421/sc2api, attempt: 1, running: True
+[2026-06-07 09:44:17,493][absl][INFO] - Connecting to: ws://127.0.0.1:41421/sc2api, attempt: 2, running: True
+[2026-06-07 09:44:22,091][absl][INFO] - Shutdown gracefully.
+[2026-06-07 09:44:22,092][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 09:44:22,096][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 45253 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-_fi4vw7k/
+[2026-06-07 09:44:22,097][absl][INFO] - Connecting to: ws://127.0.0.1:45253/sc2api, attempt: 0, running: True
+[2026-06-07 09:44:23,099][absl][INFO] - Connecting to: ws://127.0.0.1:45253/sc2api, attempt: 1, running: True
+[2026-06-07 09:44:24,100][absl][INFO] - Connecting to: ws://127.0.0.1:45253/sc2api, attempt: 2, running: True
+[2026-06-07 09:44:28,209][absl][INFO] - Shutdown gracefully.
+[2026-06-07 09:44:28,210][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 09:44:28,212][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 39495 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-emmzarez/
+[2026-06-07 09:44:28,213][absl][INFO] - Connecting to: ws://127.0.0.1:39495/sc2api, attempt: 0, running: True
+[2026-06-07 09:44:29,214][absl][INFO] - Connecting to: ws://127.0.0.1:39495/sc2api, attempt: 1, running: True
+[2026-06-07 09:44:30,216][absl][INFO] - Connecting to: ws://127.0.0.1:39495/sc2api, attempt: 2, running: True
+[iter  519 | frames 1,040,000 / 10,050,000] mean_return=2.8789
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  520 | frames 1,042,000 / 10,050,000] mean_return=2.9197
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  521 | frames 1,044,000 / 10,050,000] mean_return=3.0618
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  522 | frames 1,046,000 / 10,050,000] mean_return=2.8023
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  523 | frames 1,048,000 / 10,050,000] mean_return=2.6767
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  524 | frames 1,050,000 / 10,050,000] mean_return=3.0205
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  525 | frames 1,052,000 / 10,050,000] mean_return=3.0468
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  526 | frames 1,054,000 / 10,050,000] mean_return=2.9551
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  527 | frames 1,056,000 / 10,050,000] mean_return=2.4826
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  528 | frames 1,058,000 / 10,050,000] mean_return=3.5824
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  529 | frames 1,060,000 / 10,050,000] mean_return=3.3077
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  530 | frames 1,062,000 / 10,050,000] mean_return=2.9063
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  531 | frames 1,064,000 / 10,050,000] mean_return=2.7514
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  532 | frames 1,066,000 / 10,050,000] mean_return=2.9566
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  533 | frames 1,068,000 / 10,050,000] mean_return=2.9562
+[2026-06-07 10:24:09,238][absl][INFO] - Shutdown gracefully.
+[2026-06-07 10:24:09,239][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 10:24:09,243][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 42797 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-g__myg9a/
+[2026-06-07 10:24:09,245][absl][INFO] - Connecting to: ws://127.0.0.1:42797/sc2api, attempt: 0, running: True
+[2026-06-07 10:24:10,246][absl][INFO] - Connecting to: ws://127.0.0.1:42797/sc2api, attempt: 1, running: True
+[2026-06-07 10:24:11,247][absl][INFO] - Connecting to: ws://127.0.0.1:42797/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  534 | frames 1,070,000 / 10,050,000] mean_return=3.1053
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  535 | frames 1,072,000 / 10,050,000] mean_return=2.7938
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  536 | frames 1,074,000 / 10,050,000] mean_return=2.8282
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  537 | frames 1,076,000 / 10,050,000] mean_return=2.7551
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  538 | frames 1,078,000 / 10,050,000] mean_return=3.2491
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  539 | frames 1,080,000 / 10,050,000] mean_return=2.4337
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  540 | frames 1,082,000 / 10,050,000] mean_return=3.2175
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  541 | frames 1,084,000 / 10,050,000] mean_return=3.3918
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  542 | frames 1,086,000 / 10,050,000] mean_return=2.6837
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  543 | frames 1,088,000 / 10,050,000] mean_return=3.0056
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  544 | frames 1,090,000 / 10,050,000] mean_return=2.7416
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  545 | frames 1,092,000 / 10,050,000] mean_return=2.9466
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  546 | frames 1,094,000 / 10,050,000] mean_return=2.6131
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  547 | frames 1,096,000 / 10,050,000] mean_return=2.8874
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  548 | frames 1,098,000 / 10,050,000] mean_return=3.2314
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  549 | frames 1,100,000 / 10,050,000] mean_return=3.1764
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  550 | frames 1,102,000 / 10,050,000] mean_return=2.5791
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  551 | frames 1,104,000 / 10,050,000] mean_return=3.0535
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  552 | frames 1,106,000 / 10,050,000] mean_return=2.8898
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  553 | frames 1,108,000 / 10,050,000] mean_return=2.6601
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  554 | frames 1,110,000 / 10,050,000] mean_return=3.0007
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  555 | frames 1,112,000 / 10,050,000] mean_return=2.9266
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  556 | frames 1,114,000 / 10,050,000] mean_return=2.9910
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  557 | frames 1,116,000 / 10,050,000] mean_return=3.9347
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  558 | frames 1,118,000 / 10,050,000] mean_return=2.5499
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  559 | frames 1,120,000 / 10,050,000] mean_return=3.4975
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  560 | frames 1,122,000 / 10,050,000] mean_return=2.7533
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  561 | frames 1,124,000 / 10,050,000] mean_return=3.0141
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  562 | frames 1,126,000 / 10,050,000] mean_return=3.0331
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  563 | frames 1,128,000 / 10,050,000] mean_return=2.7559
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  564 | frames 1,130,000 / 10,050,000] mean_return=3.1358
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  565 | frames 1,132,000 / 10,050,000] mean_return=2.7702
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  566 | frames 1,134,000 / 10,050,000] mean_return=3.4751
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  567 | frames 1,136,000 / 10,050,000] mean_return=3.0773
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  568 | frames 1,138,000 / 10,050,000] mean_return=3.0930
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  569 | frames 1,140,000 / 10,050,000] mean_return=2.9999
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  570 | frames 1,142,000 / 10,050,000] mean_return=3.0965
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  571 | frames 1,144,000 / 10,050,000] mean_return=3.2983
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  572 | frames 1,146,000 / 10,050,000] mean_return=2.7075
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  573 | frames 1,148,000 / 10,050,000] mean_return=2.8339
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  574 | frames 1,150,000 / 10,050,000] mean_return=2.9383
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  575 | frames 1,152,000 / 10,050,000] mean_return=2.8862
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  576 | frames 1,154,000 / 10,050,000] mean_return=2.6598
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  577 | frames 1,156,000 / 10,050,000] mean_return=2.7522
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  578 | frames 1,158,000 / 10,050,000] mean_return=3.0103
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  579 | frames 1,160,000 / 10,050,000] mean_return=3.1729
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  580 | frames 1,162,000 / 10,050,000] mean_return=2.6449
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  581 | frames 1,164,000 / 10,050,000] mean_return=2.8762
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  582 | frames 1,166,000 / 10,050,000] mean_return=3.0772
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  583 | frames 1,168,000 / 10,050,000] mean_return=3.1653
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  584 | frames 1,170,000 / 10,050,000] mean_return=2.5490
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  585 | frames 1,172,000 / 10,050,000] mean_return=3.3746
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  586 | frames 1,174,000 / 10,050,000] mean_return=2.9136
+[2026-06-07 12:45:08,683][absl][INFO] - Shutdown gracefully.
+[2026-06-07 12:45:08,684][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 12:45:08,689][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 46533 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-f8s0auby/
+[2026-06-07 12:45:08,690][absl][INFO] - Connecting to: ws://127.0.0.1:46533/sc2api, attempt: 0, running: True
+[2026-06-07 12:45:09,691][absl][INFO] - Connecting to: ws://127.0.0.1:46533/sc2api, attempt: 1, running: True
+[2026-06-07 12:45:10,692][absl][INFO] - Connecting to: ws://127.0.0.1:46533/sc2api, attempt: 2, running: True
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  587 | frames 1,176,000 / 10,050,000] mean_return=2.9296
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  588 | frames 1,178,000 / 10,050,000] mean_return=2.9346
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  589 | frames 1,180,000 / 10,050,000] mean_return=2.7694
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  590 | frames 1,182,000 / 10,050,000] mean_return=2.8849
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  591 | frames 1,184,000 / 10,050,000] mean_return=3.0976
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  592 | frames 1,186,000 / 10,050,000] mean_return=2.7020
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  593 | frames 1,188,000 / 10,050,000] mean_return=3.0025
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  594 | frames 1,190,000 / 10,050,000] mean_return=3.0605
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  595 | frames 1,192,000 / 10,050,000] mean_return=3.0928
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  596 | frames 1,194,000 / 10,050,000] mean_return=3.3432
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter  597 | frames 1,196,000 / 10,050,000] mean_return=2.7023

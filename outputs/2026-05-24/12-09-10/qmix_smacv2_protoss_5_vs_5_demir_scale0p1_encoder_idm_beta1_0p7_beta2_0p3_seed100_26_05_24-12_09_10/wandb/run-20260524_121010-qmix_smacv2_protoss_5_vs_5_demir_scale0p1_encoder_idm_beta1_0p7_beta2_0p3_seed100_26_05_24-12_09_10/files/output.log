@@ -1,0 +1,18 @@
+  0%|          | 0/5025 [00:00<?, ?it/s]wandb: WARNING Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+[iter    0 | frames     2,000 / 10,050,000] mean_return=3.1306
+[2026-05-24 12:11:49,696][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 44853 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-zktwqaq0/
+[2026-05-24 12:11:49,697][absl][INFO] - Connecting to: ws://127.0.0.1:44853/sc2api, attempt: 0, running: True
+[2026-05-24 12:11:50,698][absl][INFO] - Connecting to: ws://127.0.0.1:44853/sc2api, attempt: 1, running: True
+[2026-05-24 12:11:51,700][absl][INFO] - Connecting to: ws://127.0.0.1:44853/sc2api, attempt: 2, running: True
+[2026-05-24 12:11:51,805][absl][INFO] - Shutdown gracefully.
+[2026-05-24 12:11:51,806][absl][INFO] - Shutdown with return code: -15
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0005321502685547:   0%|          | 5/5025 [09:21<156:12:51, 112.03s/it]
+[iter    1 | frames     4,000 / 10,050,000] mean_return=2.8721
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    2 | frames     6,000 / 10,050,000] mean_return=2.8579
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    3 | frames     8,000 / 10,050,000] mean_return=2.9520
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+[iter    4 | frames    10,000 / 10,050,000] mean_return=3.0005
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20

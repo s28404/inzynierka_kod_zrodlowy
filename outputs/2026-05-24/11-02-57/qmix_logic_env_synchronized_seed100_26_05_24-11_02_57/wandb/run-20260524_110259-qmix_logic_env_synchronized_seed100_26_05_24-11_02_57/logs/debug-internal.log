@@ -1,0 +1,6 @@
+{"time":"2026-05-24T11:02:59.413967997+02:00","level":"INFO","msg":"stream: starting","core version":"0.25.0"}
+{"time":"2026-05-24T11:02:59.734783685+02:00","level":"INFO","msg":"stream: created new stream","id":"qmix_logic_env_synchronized_seed100_26_05_24-11_02_57"}
+{"time":"2026-05-24T11:02:59.734934434+02:00","level":"INFO","msg":"handler: started","stream_id":"qmix_logic_env_synchronized_seed100_26_05_24-11_02_57"}
+{"time":"2026-05-24T11:02:59.735087776+02:00","level":"INFO","msg":"stream: started","id":"qmix_logic_env_synchronized_seed100_26_05_24-11_02_57"}
+{"time":"2026-05-24T11:02:59.7351353+02:00","level":"INFO","msg":"writer: started","stream_id":"qmix_logic_env_synchronized_seed100_26_05_24-11_02_57"}
+{"time":"2026-05-24T11:02:59.735157153+02:00","level":"INFO","msg":"sender: started","stream_id":"qmix_logic_env_synchronized_seed100_26_05_24-11_02_57"}

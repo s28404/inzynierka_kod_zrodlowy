@@ -1,0 +1,6 @@
+{"time":"2026-05-24T10:59:14.102447325+02:00","level":"INFO","msg":"stream: starting","core version":"0.25.0"}
+{"time":"2026-05-24T10:59:14.414973213+02:00","level":"INFO","msg":"stream: created new stream","id":"qmix_smacv2_protoss_5_vs_5_demir_scale0p1_encoder_idm_beta1_0p0_beta2_1p0_seed100_26_05_24-10_58_12"}
+{"time":"2026-05-24T10:59:14.415101172+02:00","level":"INFO","msg":"handler: started","stream_id":"qmix_smacv2_protoss_5_vs_5_demir_scale0p1_encoder_idm_beta1_0p0_beta2_1p0_seed100_26_05_24-10_58_12"}
+{"time":"2026-05-24T10:59:14.41529288+02:00","level":"INFO","msg":"stream: started","id":"qmix_smacv2_protoss_5_vs_5_demir_scale0p1_encoder_idm_beta1_0p0_beta2_1p0_seed100_26_05_24-10_58_12"}
+{"time":"2026-05-24T10:59:14.415342102+02:00","level":"INFO","msg":"writer: started","stream_id":"qmix_smacv2_protoss_5_vs_5_demir_scale0p1_encoder_idm_beta1_0p0_beta2_1p0_seed100_26_05_24-10_58_12"}
+{"time":"2026-05-24T10:59:14.415369102+02:00","level":"INFO","msg":"sender: started","stream_id":"qmix_smacv2_protoss_5_vs_5_demir_scale0p1_encoder_idm_beta1_0p0_beta2_1p0_seed100_26_05_24-10_58_12"}

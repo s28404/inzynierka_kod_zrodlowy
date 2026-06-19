@@ -1,0 +1,220 @@
+[2026-06-06 10:22:23,084][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43373 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-g2vq_eol/
+[2026-06-06 10:22:23,085][absl][INFO] - Connecting to: ws://127.0.0.1:43373/sc2api, attempt: 0, running: True
+[2026-06-06 10:22:24,086][absl][INFO] - Connecting to: ws://127.0.0.1:43373/sc2api, attempt: 1, running: True
+[2026-06-06 10:22:25,087][absl][INFO] - Connecting to: ws://127.0.0.1:43373/sc2api, attempt: 2, running: True
+[2026-06-06 10:22:29,014][faiss.loader][INFO] - Loading faiss with AVX2 support.
+[2026-06-06 10:22:29,031][faiss.loader][INFO] - Successfully loaded faiss with AVX2 support.
+[2026-06-06 10:22:29,842][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 35005 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-aq3hb7ax/
+[2026-06-06 10:22:29,843][absl][INFO] - Connecting to: ws://127.0.0.1:35005/sc2api, attempt: 0, running: True
+[2026-06-06 10:22:30,843][absl][INFO] - Connecting to: ws://127.0.0.1:35005/sc2api, attempt: 1, running: True
+[2026-06-06 10:22:31,844][absl][INFO] - Connecting to: ws://127.0.0.1:35005/sc2api, attempt: 2, running: True
+[2026-06-06 10:22:35,887][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:22:35,887][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 10:22:35,904][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 42065 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-il97hwau/
+[2026-06-06 10:22:35,905][absl][INFO] - Connecting to: ws://127.0.0.1:42065/sc2api, attempt: 0, running: True
+[2026-06-06 10:22:36,905][absl][INFO] - Connecting to: ws://127.0.0.1:42065/sc2api, attempt: 1, running: True
+[2026-06-06 10:22:37,906][absl][INFO] - Connecting to: ws://127.0.0.1:42065/sc2api, attempt: 2, running: True
+[2026-06-06 10:22:41,753][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 46465 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-j9m7dn0j/
+[2026-06-06 10:22:41,753][absl][INFO] - Connecting to: ws://127.0.0.1:46465/sc2api, attempt: 0, running: True
+[2026-06-06 10:22:42,754][absl][INFO] - Connecting to: ws://127.0.0.1:46465/sc2api, attempt: 1, running: True
+[2026-06-06 10:22:43,755][absl][INFO] - Connecting to: ws://127.0.0.1:46465/sc2api, attempt: 2, running: True
+[2026-06-06 10:22:47,632][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43097 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-8t_tz3lq/
+[2026-06-06 10:22:47,633][absl][INFO] - Connecting to: ws://127.0.0.1:43097/sc2api, attempt: 0, running: True
+[2026-06-06 10:22:48,633][absl][INFO] - Connecting to: ws://127.0.0.1:43097/sc2api, attempt: 1, running: True
+[2026-06-06 10:22:49,634][absl][INFO] - Connecting to: ws://127.0.0.1:43097/sc2api, attempt: 2, running: True
+[2026-06-06 10:22:53,609][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 34847 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-zub7fhll/
+[2026-06-06 10:22:53,610][absl][INFO] - Connecting to: ws://127.0.0.1:34847/sc2api, attempt: 0, running: True
+[2026-06-06 10:22:54,611][absl][INFO] - Connecting to: ws://127.0.0.1:34847/sc2api, attempt: 1, running: True
+[2026-06-06 10:22:55,611][absl][INFO] - Connecting to: ws://127.0.0.1:34847/sc2api, attempt: 2, running: True
+[2026-06-06 10:22:59,691][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 42955 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-bj5mdg3o/
+[2026-06-06 10:22:59,691][absl][INFO] - Connecting to: ws://127.0.0.1:42955/sc2api, attempt: 0, running: True
+[2026-06-06 10:23:00,692][absl][INFO] - Connecting to: ws://127.0.0.1:42955/sc2api, attempt: 1, running: True
+[2026-06-06 10:23:01,693][absl][INFO] - Connecting to: ws://127.0.0.1:42955/sc2api, attempt: 2, running: True
+[2026-06-06 10:23:01,799][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:23:01,799][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 10:23:05,636][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 41659 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-lv701zrt/
+[2026-06-06 10:23:05,637][absl][INFO] - Connecting to: ws://127.0.0.1:41659/sc2api, attempt: 0, running: True
+[2026-06-06 10:23:06,638][absl][INFO] - Connecting to: ws://127.0.0.1:41659/sc2api, attempt: 1, running: True
+[2026-06-06 10:23:07,638][absl][INFO] - Connecting to: ws://127.0.0.1:41659/sc2api, attempt: 2, running: True
+[2026-06-06 10:23:07,744][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:23:07,744][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 10:23:11,430][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 46285 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-_awgrun7/
+[2026-06-06 10:23:11,431][absl][INFO] - Connecting to: ws://127.0.0.1:46285/sc2api, attempt: 0, running: True
+[2026-06-06 10:23:12,431][absl][INFO] - Connecting to: ws://127.0.0.1:46285/sc2api, attempt: 1, running: True
+[2026-06-06 10:23:13,432][absl][INFO] - Connecting to: ws://127.0.0.1:46285/sc2api, attempt: 2, running: True
+[2026-06-06 10:23:13,537][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:23:13,538][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 10:23:17,405][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 40105 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-2sd7mp_7/
+[2026-06-06 10:23:17,406][absl][INFO] - Connecting to: ws://127.0.0.1:40105/sc2api, attempt: 0, running: True
+[2026-06-06 10:23:18,406][absl][INFO] - Connecting to: ws://127.0.0.1:40105/sc2api, attempt: 1, running: True
+[2026-06-06 10:23:19,407][absl][INFO] - Connecting to: ws://127.0.0.1:40105/sc2api, attempt: 2, running: True
+[2026-06-06 10:23:19,512][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:23:19,512][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 10:25:17,168][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 37363 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-ei_ijuvq/
+[2026-06-06 10:25:17,170][absl][INFO] - Connecting to: ws://127.0.0.1:37363/sc2api, attempt: 0, running: True
+[2026-06-06 10:25:18,171][absl][INFO] - Connecting to: ws://127.0.0.1:37363/sc2api, attempt: 1, running: True
+[2026-06-06 10:25:19,173][absl][INFO] - Connecting to: ws://127.0.0.1:37363/sc2api, attempt: 2, running: True
+[2026-06-06 10:25:19,278][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:25:19,279][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 13:01:49,316][absl][INFO] - Shutdown gracefully.
+[2026-06-06 13:01:49,317][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 13:01:49,322][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43063 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-btroiejc/
+[2026-06-06 13:01:49,324][absl][INFO] - Connecting to: ws://127.0.0.1:43063/sc2api, attempt: 0, running: True
+[2026-06-06 13:01:50,325][absl][INFO] - Connecting to: ws://127.0.0.1:43063/sc2api, attempt: 1, running: True
+[2026-06-06 13:01:51,326][absl][INFO] - Connecting to: ws://127.0.0.1:43063/sc2api, attempt: 2, running: True
+[2026-06-06 15:18:05,930][absl][INFO] - Shutdown gracefully.
+[2026-06-06 15:18:05,931][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 15:18:05,935][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 46555 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-igpfzqee/
+[2026-06-06 15:18:05,937][absl][INFO] - Connecting to: ws://127.0.0.1:46555/sc2api, attempt: 0, running: True
+[2026-06-06 15:18:06,938][absl][INFO] - Connecting to: ws://127.0.0.1:46555/sc2api, attempt: 1, running: True
+[2026-06-06 15:18:07,940][absl][INFO] - Connecting to: ws://127.0.0.1:46555/sc2api, attempt: 2, running: True
+[2026-06-06 16:25:01,065][absl][INFO] - Shutdown gracefully.
+[2026-06-06 16:25:01,066][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 16:25:01,071][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 38249 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-wkx74yta/
+[2026-06-06 16:25:01,072][absl][INFO] - Connecting to: ws://127.0.0.1:38249/sc2api, attempt: 0, running: True
+[2026-06-06 16:25:02,073][absl][INFO] - Connecting to: ws://127.0.0.1:38249/sc2api, attempt: 1, running: True
+[2026-06-06 16:25:03,075][absl][INFO] - Connecting to: ws://127.0.0.1:38249/sc2api, attempt: 2, running: True
+[2026-06-06 16:25:08,115][absl][INFO] - Shutdown gracefully.
+[2026-06-06 16:25:08,116][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 16:25:08,121][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 34703 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-0h7jb5ic/
+[2026-06-06 16:25:08,123][absl][INFO] - Connecting to: ws://127.0.0.1:34703/sc2api, attempt: 0, running: True
+[2026-06-06 16:25:09,124][absl][INFO] - Connecting to: ws://127.0.0.1:34703/sc2api, attempt: 1, running: True
+[2026-06-06 16:25:10,125][absl][INFO] - Connecting to: ws://127.0.0.1:34703/sc2api, attempt: 2, running: True
+[2026-06-06 16:25:14,865][absl][INFO] - Shutdown gracefully.
+[2026-06-06 16:25:14,866][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 16:25:14,868][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 36089 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-yar4s3b_/
+[2026-06-06 16:25:14,869][absl][INFO] - Connecting to: ws://127.0.0.1:36089/sc2api, attempt: 0, running: True
+[2026-06-06 16:25:15,870][absl][INFO] - Connecting to: ws://127.0.0.1:36089/sc2api, attempt: 1, running: True
+[2026-06-06 16:25:16,872][absl][INFO] - Connecting to: ws://127.0.0.1:36089/sc2api, attempt: 2, running: True
+[2026-06-06 16:25:21,449][absl][INFO] - Shutdown gracefully.
+[2026-06-06 16:25:21,449][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 16:25:21,455][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 46687 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-00sxm_z8/
+[2026-06-06 16:25:21,456][absl][INFO] - Connecting to: ws://127.0.0.1:46687/sc2api, attempt: 0, running: True
+[2026-06-06 16:25:22,457][absl][INFO] - Connecting to: ws://127.0.0.1:46687/sc2api, attempt: 1, running: True
+[2026-06-06 16:25:23,459][absl][INFO] - Connecting to: ws://127.0.0.1:46687/sc2api, attempt: 2, running: True
+[2026-06-06 17:39:39,624][absl][INFO] - Shutdown gracefully.
+[2026-06-06 17:39:39,625][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 17:39:39,629][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 35497 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-z2clpty0/
+[2026-06-06 17:39:39,631][absl][INFO] - Connecting to: ws://127.0.0.1:35497/sc2api, attempt: 0, running: True
+[2026-06-06 17:39:40,632][absl][INFO] - Connecting to: ws://127.0.0.1:35497/sc2api, attempt: 1, running: True
+[2026-06-06 17:39:41,633][absl][INFO] - Connecting to: ws://127.0.0.1:35497/sc2api, attempt: 2, running: True
+[2026-06-06 20:05:48,527][absl][INFO] - Shutdown gracefully.
+[2026-06-06 20:05:48,528][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 20:05:48,532][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 40821 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-j9siyh67/
+[2026-06-06 20:05:48,533][absl][INFO] - Connecting to: ws://127.0.0.1:40821/sc2api, attempt: 0, running: True
+[2026-06-06 20:05:49,535][absl][INFO] - Connecting to: ws://127.0.0.1:40821/sc2api, attempt: 1, running: True
+[2026-06-06 20:05:50,536][absl][INFO] - Connecting to: ws://127.0.0.1:40821/sc2api, attempt: 2, running: True
+[2026-06-06 22:11:15,577][absl][INFO] - Shutdown gracefully.
+[2026-06-06 22:11:15,578][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 22:11:15,583][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 42903 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-imz3safe/
+[2026-06-06 22:11:15,584][absl][INFO] - Connecting to: ws://127.0.0.1:42903/sc2api, attempt: 0, running: True
+[2026-06-06 22:11:16,585][absl][INFO] - Connecting to: ws://127.0.0.1:42903/sc2api, attempt: 1, running: True
+[2026-06-06 22:11:17,587][absl][INFO] - Connecting to: ws://127.0.0.1:42903/sc2api, attempt: 2, running: True
+[2026-06-06 22:11:22,052][absl][INFO] - Shutdown gracefully.
+[2026-06-06 22:11:22,053][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 22:11:22,058][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 40599 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-kna1kcl3/
+[2026-06-06 22:11:22,059][absl][INFO] - Connecting to: ws://127.0.0.1:40599/sc2api, attempt: 0, running: True
+[2026-06-06 22:11:23,060][absl][INFO] - Connecting to: ws://127.0.0.1:40599/sc2api, attempt: 1, running: True
+[2026-06-06 22:11:24,062][absl][INFO] - Connecting to: ws://127.0.0.1:40599/sc2api, attempt: 2, running: True
+[2026-06-06 22:11:28,008][absl][INFO] - Shutdown gracefully.
+[2026-06-06 22:11:28,008][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 22:11:28,013][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 37851 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-a5npnn64/
+[2026-06-06 22:11:28,015][absl][INFO] - Connecting to: ws://127.0.0.1:37851/sc2api, attempt: 0, running: True
+[2026-06-06 22:11:29,016][absl][INFO] - Connecting to: ws://127.0.0.1:37851/sc2api, attempt: 1, running: True
+[2026-06-06 22:11:30,017][absl][INFO] - Connecting to: ws://127.0.0.1:37851/sc2api, attempt: 2, running: True
+[2026-06-06 22:11:34,304][absl][INFO] - Shutdown gracefully.
+[2026-06-06 22:11:34,304][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 22:11:34,310][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 45263 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-rm68gif3/
+[2026-06-06 22:11:34,312][absl][INFO] - Connecting to: ws://127.0.0.1:45263/sc2api, attempt: 0, running: True
+[2026-06-06 22:11:35,314][absl][INFO] - Connecting to: ws://127.0.0.1:45263/sc2api, attempt: 1, running: True
+[2026-06-06 22:11:36,320][absl][INFO] - Connecting to: ws://127.0.0.1:45263/sc2api, attempt: 2, running: True
+[2026-06-06 22:32:25,164][absl][INFO] - Shutdown gracefully.
+[2026-06-06 22:32:25,165][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 22:32:25,170][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43485 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-p1_wbxdn/
+[2026-06-06 22:32:25,171][absl][INFO] - Connecting to: ws://127.0.0.1:43485/sc2api, attempt: 0, running: True
+[2026-06-06 22:32:26,172][absl][INFO] - Connecting to: ws://127.0.0.1:43485/sc2api, attempt: 1, running: True
+[2026-06-06 22:32:27,173][absl][INFO] - Connecting to: ws://127.0.0.1:43485/sc2api, attempt: 2, running: True
+[2026-06-07 00:55:56,875][absl][INFO] - Shutdown gracefully.
+[2026-06-07 00:55:56,876][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 00:55:56,880][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 37343 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-64thahb5/
+[2026-06-07 00:55:56,882][absl][INFO] - Connecting to: ws://127.0.0.1:37343/sc2api, attempt: 0, running: True
+[2026-06-07 00:55:57,883][absl][INFO] - Connecting to: ws://127.0.0.1:37343/sc2api, attempt: 1, running: True
+[2026-06-07 00:55:58,884][absl][INFO] - Connecting to: ws://127.0.0.1:37343/sc2api, attempt: 2, running: True
+[2026-06-07 03:17:00,074][absl][INFO] - Shutdown gracefully.
+[2026-06-07 03:17:00,074][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 03:17:00,079][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 34527 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-x6b92wnp/
+[2026-06-07 03:17:00,081][absl][INFO] - Connecting to: ws://127.0.0.1:34527/sc2api, attempt: 0, running: True
+[2026-06-07 03:17:01,082][absl][INFO] - Connecting to: ws://127.0.0.1:34527/sc2api, attempt: 1, running: True
+[2026-06-07 03:17:02,084][absl][INFO] - Connecting to: ws://127.0.0.1:34527/sc2api, attempt: 2, running: True
+[2026-06-07 03:57:04,544][absl][INFO] - Shutdown gracefully.
+[2026-06-07 03:57:04,545][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 03:57:04,549][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 36171 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-xf82cl07/
+[2026-06-07 03:57:04,551][absl][INFO] - Connecting to: ws://127.0.0.1:36171/sc2api, attempt: 0, running: True
+[2026-06-07 03:57:05,552][absl][INFO] - Connecting to: ws://127.0.0.1:36171/sc2api, attempt: 1, running: True
+[2026-06-07 03:57:06,553][absl][INFO] - Connecting to: ws://127.0.0.1:36171/sc2api, attempt: 2, running: True
+[2026-06-07 03:57:11,061][absl][INFO] - Shutdown gracefully.
+[2026-06-07 03:57:11,062][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 03:57:11,066][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 42363 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-bc7sxek5/
+[2026-06-07 03:57:11,067][absl][INFO] - Connecting to: ws://127.0.0.1:42363/sc2api, attempt: 0, running: True
+[2026-06-07 03:57:12,069][absl][INFO] - Connecting to: ws://127.0.0.1:42363/sc2api, attempt: 1, running: True
+[2026-06-07 03:57:13,070][absl][INFO] - Connecting to: ws://127.0.0.1:42363/sc2api, attempt: 2, running: True
+[2026-06-07 03:57:17,038][absl][INFO] - Shutdown gracefully.
+[2026-06-07 03:57:17,039][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 03:57:17,040][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 35015 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-dfyb8yjn/
+[2026-06-07 03:57:17,042][absl][INFO] - Connecting to: ws://127.0.0.1:35015/sc2api, attempt: 0, running: True
+[2026-06-07 03:57:18,043][absl][INFO] - Connecting to: ws://127.0.0.1:35015/sc2api, attempt: 1, running: True
+[2026-06-07 03:57:19,044][absl][INFO] - Connecting to: ws://127.0.0.1:35015/sc2api, attempt: 2, running: True
+[2026-06-07 03:57:22,933][absl][INFO] - Shutdown gracefully.
+[2026-06-07 03:57:22,934][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 03:57:22,936][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 45147 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-wtzukbav/
+[2026-06-07 03:57:22,937][absl][INFO] - Connecting to: ws://127.0.0.1:45147/sc2api, attempt: 0, running: True
+[2026-06-07 03:57:23,938][absl][INFO] - Connecting to: ws://127.0.0.1:45147/sc2api, attempt: 1, running: True
+[2026-06-07 03:57:24,940][absl][INFO] - Connecting to: ws://127.0.0.1:45147/sc2api, attempt: 2, running: True
+[2026-06-07 05:38:28,116][absl][INFO] - Shutdown gracefully.
+[2026-06-07 05:38:28,117][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 05:38:28,121][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 34025 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-3292pi1x/
+[2026-06-07 05:38:28,123][absl][INFO] - Connecting to: ws://127.0.0.1:34025/sc2api, attempt: 0, running: True
+[2026-06-07 05:38:29,124][absl][INFO] - Connecting to: ws://127.0.0.1:34025/sc2api, attempt: 1, running: True
+[2026-06-07 05:38:30,125][absl][INFO] - Connecting to: ws://127.0.0.1:34025/sc2api, attempt: 2, running: True
+[2026-06-07 08:01:48,977][absl][INFO] - Shutdown gracefully.
+[2026-06-07 08:01:48,978][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 08:01:48,984][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43587 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-u5_ms4wc/
+[2026-06-07 08:01:48,985][absl][INFO] - Connecting to: ws://127.0.0.1:43587/sc2api, attempt: 0, running: True
+[2026-06-07 08:01:49,986][absl][INFO] - Connecting to: ws://127.0.0.1:43587/sc2api, attempt: 1, running: True
+[2026-06-07 08:01:50,987][absl][INFO] - Connecting to: ws://127.0.0.1:43587/sc2api, attempt: 2, running: True
+[2026-06-07 09:43:35,294][absl][INFO] - Shutdown gracefully.
+[2026-06-07 09:43:35,295][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 09:43:35,300][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 33773 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-02jklr4z/
+[2026-06-07 09:43:35,301][absl][INFO] - Connecting to: ws://127.0.0.1:33773/sc2api, attempt: 0, running: True
+[2026-06-07 09:43:36,302][absl][INFO] - Connecting to: ws://127.0.0.1:33773/sc2api, attempt: 1, running: True
+[2026-06-07 09:43:37,304][absl][INFO] - Connecting to: ws://127.0.0.1:33773/sc2api, attempt: 2, running: True
+[2026-06-07 09:43:41,773][absl][INFO] - Shutdown gracefully.
+[2026-06-07 09:43:41,774][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 09:43:41,778][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 45567 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-u8b2qm6z/
+[2026-06-07 09:43:41,780][absl][INFO] - Connecting to: ws://127.0.0.1:45567/sc2api, attempt: 0, running: True
+[2026-06-07 09:43:42,781][absl][INFO] - Connecting to: ws://127.0.0.1:45567/sc2api, attempt: 1, running: True
+[2026-06-07 09:43:43,782][absl][INFO] - Connecting to: ws://127.0.0.1:45567/sc2api, attempt: 2, running: True
+[2026-06-07 09:43:47,654][absl][INFO] - Shutdown gracefully.
+[2026-06-07 09:43:47,655][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 09:43:47,657][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 36129 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-1d7t0dvc/
+[2026-06-07 09:43:47,658][absl][INFO] - Connecting to: ws://127.0.0.1:36129/sc2api, attempt: 0, running: True
+[2026-06-07 09:43:48,660][absl][INFO] - Connecting to: ws://127.0.0.1:36129/sc2api, attempt: 1, running: True
+[2026-06-07 09:43:49,661][absl][INFO] - Connecting to: ws://127.0.0.1:36129/sc2api, attempt: 2, running: True
+[2026-06-07 09:43:53,503][absl][INFO] - Shutdown gracefully.
+[2026-06-07 09:43:53,504][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 09:43:53,506][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43499 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-56yvh0co/
+[2026-06-07 09:43:53,508][absl][INFO] - Connecting to: ws://127.0.0.1:43499/sc2api, attempt: 0, running: True
+[2026-06-07 09:43:54,509][absl][INFO] - Connecting to: ws://127.0.0.1:43499/sc2api, attempt: 1, running: True
+[2026-06-07 09:43:55,510][absl][INFO] - Connecting to: ws://127.0.0.1:43499/sc2api, attempt: 2, running: True
+[2026-06-07 10:23:19,715][absl][INFO] - Shutdown gracefully.
+[2026-06-07 10:23:19,715][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 10:23:19,720][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 34137 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-_w45kdzn/
+[2026-06-07 10:23:19,722][absl][INFO] - Connecting to: ws://127.0.0.1:34137/sc2api, attempt: 0, running: True
+[2026-06-07 10:23:20,723][absl][INFO] - Connecting to: ws://127.0.0.1:34137/sc2api, attempt: 1, running: True
+[2026-06-07 10:23:21,725][absl][INFO] - Connecting to: ws://127.0.0.1:34137/sc2api, attempt: 2, running: True
+[2026-06-07 12:44:23,298][absl][INFO] - Shutdown gracefully.
+[2026-06-07 12:44:23,299][absl][INFO] - Shutdown with return code: -15
+[2026-06-07 12:44:23,304][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 39049 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-zt04tt7a/
+[2026-06-07 12:44:23,306][absl][INFO] - Connecting to: ws://127.0.0.1:39049/sc2api, attempt: 0, running: True
+[2026-06-07 12:44:24,307][absl][INFO] - Connecting to: ws://127.0.0.1:39049/sc2api, attempt: 1, running: True
+[2026-06-07 12:44:25,308][absl][INFO] - Connecting to: ws://127.0.0.1:39049/sc2api, attempt: 2, running: True

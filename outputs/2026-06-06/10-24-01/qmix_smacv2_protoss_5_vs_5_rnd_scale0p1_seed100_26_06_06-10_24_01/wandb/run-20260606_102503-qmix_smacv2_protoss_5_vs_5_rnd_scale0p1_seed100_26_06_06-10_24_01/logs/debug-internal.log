@@ -1,0 +1,8 @@
+{"time":"2026-06-06T10:25:04.12675524+02:00","level":"INFO","msg":"stream: starting","core version":"0.25.0"}
+{"time":"2026-06-06T10:25:04.446305194+02:00","level":"INFO","msg":"stream: created new stream","id":"qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed100_26_06_06-10_24_01"}
+{"time":"2026-06-06T10:25:04.446451725+02:00","level":"INFO","msg":"handler: started","stream_id":"qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed100_26_06_06-10_24_01"}
+{"time":"2026-06-06T10:25:04.446551616+02:00","level":"INFO","msg":"stream: started","id":"qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed100_26_06_06-10_24_01"}
+{"time":"2026-06-06T10:25:04.446607484+02:00","level":"INFO","msg":"writer: started","stream_id":"qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed100_26_06_06-10_24_01"}
+{"time":"2026-06-06T10:25:04.446632392+02:00","level":"INFO","msg":"sender: started","stream_id":"qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed100_26_06_06-10_24_01"}
+{"time":"2026-06-06T16:05:40.365425833+02:00","level":"INFO","msg":"api: retrying HTTP error","status":500,"url":"https://api.wandb.ai/files/frackowiak_kajetan/kod_zrodlowy_demir/qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed100_26_06_06-10_24_01/file_stream","body":"{\"error\":\"context deadline exceeded\"}"}
+{"time":"2026-06-06T17:59:20.013824596+02:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/frackowiak_kajetan/kod_zrodlowy_demir/qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed100_26_06_06-10_24_01/file_stream\": read tcp 172.20.101.51:43568->34.8.250.101:443: read: connection reset by peer"}
