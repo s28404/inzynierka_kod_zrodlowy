@@ -1,0 +1,202 @@
+
+Algorithm: qmix, Task: logic_env/synchronized
+
+Loaded config:
+
+experiment:
+  sampling_device: cpu
+  train_device: cuda
+  buffer_device: cpu
+  share_policy_params: true
+  prefer_continuous_actions: true
+  collect_with_grad: false
+  parallel_collection: false
+  gamma: 0.99
+  lr: 5.0e-05
+  adam_eps: 1.0e-06
+  adam_extra_kwargs: {}
+  clip_grad_norm: true
+  clip_grad_val: 5.0
+  soft_target_update: true
+  polyak_tau: 0.005
+  hard_target_update_frequency: 5
+  exploration_eps_init: 0.8
+  exploration_eps_end: 0.01
+  exploration_anneal_frames: 1000000
+  max_n_iters: null
+  max_n_frames: 20000000
+  on_policy_collected_frames_per_batch: 6000
+  on_policy_n_envs_per_worker: 10
+  on_policy_n_minibatch_iters: 45
+  on_policy_minibatch_size: 400
+  off_policy_collected_frames_per_batch: 6000
+  off_policy_n_envs_per_worker: 10
+  off_policy_n_optimizer_steps: 100
+  off_policy_train_batch_size: 100
+  off_policy_memory_size: 1000000
+  off_policy_init_random_frames: 0
+  off_policy_use_prioritized_replay_buffer: false
+  off_policy_prb_alpha: 0.6
+  off_policy_prb_beta: 0.4
+  evaluation: true
+  render: true
+  evaluation_interval: 300000
+  evaluation_episodes: 20
+  evaluation_deterministic_actions: true
+  evaluation_static: false
+  loggers:
+  - wandb
+  project_name: kod_zrodlowy_demir
+  wandb_extra_kwargs: {}
+  create_json: true
+  save_folder: null
+  restore_file: null
+  restore_map_location: null
+  checkpoint_interval: 0
+  checkpoint_at_end: true
+  keep_checkpoints_num: 3
+  exclude_buffer_from_checkpoint: false
+algorithm:
+  mixing_embed_dim: 32
+  delay_value: true
+  loss_function: l2
+  td_lambda: 0.4
+  use_intrinsic_rewards: false
+  emb_dim_state: 64
+  emb_dim_action: 16
+  emb_dim_reward: 8
+  alpha: 0.5
+  beta1: 1.0
+  beta2: 0.5
+  k: 10
+  sigma: 0.1
+  n_efm: 10000
+  n_edm: 5000
+  demir_scale: 0.0
+  encoder_type: idm
+  rnd_scale: 0.0
+  rnd_embed_dim: 64
+  rnd_hidden_dim: 256
+  rnd_lr: 0.0001
+  ngu_scale: 0.0
+  ngu_embed_dim: 64
+  ngu_hidden_dim: 256
+  ngu_k: 10
+  ngu_L: 5.0
+  ngu_epsilon: 0.001
+  ngu_n_episodic: 10000
+  ngu_lr: 0.0001
+task:
+  name: synchronized
+  max_steps: 200
+  grid_size: 10
+  n_agents: 3
+  observation_dimension: 8
+  action_dimension: 5
+  state_dimension: 24
+  supports_vmas: false
+  supports_smac: false
+  supports_logic_env: true
+model:
+  name: mlp
+  num_cells:
+  - 256
+  - 256
+  layer_class: torch.nn.Linear
+  activation_class: torch.nn.Tanh
+  activation_kwargs: null
+  norm_class: null
+  norm_kwargs: null
+  num_feature_dims: 1
+critic_model:
+  name: mlp
+  num_cells:
+  - 256
+  - 256
+  layer_class: torch.nn.Linear
+  activation_class: torch.nn.Tanh
+  activation_kwargs: null
+  norm_class: null
+  norm_kwargs: null
+  num_feature_dims: 1
+seed: 100
+
+/home/s28404/inzynierka_kod_zrodlowy/benchmarl/environments/common.py:41: UserWarning: TaskConfig python dataclass not found, task is being loaded without type checks
+  warnings.warn(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/torchrl/envs/libs/pettingzoo.py:270: UserWarning: PettingZoo in TorchRL is tested using version == 1.24.3 , If you are using a different version and are experiencing compatibility issues,please raise an issue in the TorchRL github.
+  warnings.warn(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/pettingzoo/utils/env.py:370: UserWarning: Your environment should override the action_space function. Attempting to use the action_spaces dict attribute.
+  warnings.warn(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/pettingzoo/utils/env.py:358: UserWarning: Your environment should override the observation_space function. Attempting to use the observation_spaces dict attribute.
+  warnings.warn(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/torchrl/collectors/collectors.py:693: UserWarning: total_frames (20000000) is not exactly divisible by frames_per_batch (6000).This means 4000 additional frames will be collected.To silence this message, set the environment variable RL_WARNINGS to False.
+  warnings.warn(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/google/protobuf/internal/well_known_types.py:91: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).
+  _EPOCH_DATETIME_NAIVE = datetime.datetime.utcfromtimestamp(0)
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/s28404/.netrc.
+wandb: Currently logged in as: frackowiak (frackowiak_kajetan) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:279: DeprecationWarning: The `Scope.user` setter is deprecated in favor of `Scope.set_user()`.
+  self.scope.user = {"email": email}
+wandb: setting up run qmix_logic_env_synchronized_seed100_26_05_24-11_02_57
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:279: DeprecationWarning: The `Scope.user` setter is deprecated in favor of `Scope.set_user()`.
+  self.scope.user = {"email": email}
+wandb: Tracking run with wandb version 0.25.0
+wandb: Run data is saved locally in /home/s28404/inzynierka_kod_zrodlowy/outputs/2026-05-24/11-02-57/qmix_logic_env_synchronized_seed100_26_05_24-11_02_57/wandb/run-20260524_110259-qmix_logic_env_synchronized_seed100_26_05_24-11_02_57
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run qmix_logic_env_synchronized_seed100_26_05_24-11_02_57
+wandb: ⭐️ View project at https://wandb.ai/frackowiak_kajetan/kod_zrodlowy_demir
+wandb: 🚀 View run at https://wandb.ai/frackowiak_kajetan/kod_zrodlowy_demir/runs/qmix_logic_env_synchronized_seed100_26_05_24-11_02_57
+  0%|          | 0/3334 [00:00<?, ?it/s]/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/google/protobuf/internal/well_known_types.py:195: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  self.FromDatetime(datetime.datetime.utcnow())
+[iter    0 | frames     6,000 / 20,000,000] mean_return=-0.2667
+mean return = -0.2666652500629425:   0%|          | 1/3334 [00:20<19:10:33, 20.71s/it][iter    1 | frames    12,000 / 20,000,000] mean_return=-0.9333
+mean return = -0.9333318471908569:   0%|          | 2/3334 [00:39<18:18:14, 19.78s/it][iter    2 | frames    18,000 / 20,000,000] mean_return=-1.2000
+mean return = -1.1999986171722412:   0%|          | 3/3334 [00:59<18:20:34, 19.82s/it][iter    3 | frames    24,000 / 20,000,000] mean_return=-0.1333
+mean return = -0.13333189487457275:   0%|          | 4/3334 [01:18<17:56:38, 19.40s/it][iter    4 | frames    30,000 / 20,000,000] mean_return=-0.2000
+mean return = -0.19999851286411285:   0%|          | 5/3334 [01:39<18:24:50, 19.91s/it][iter    5 | frames    36,000 / 20,000,000] mean_return=-0.4000
+mean return = -0.39999839663505554:   0%|          | 6/3334 [02:02<19:35:28, 21.19s/it][iter    6 | frames    42,000 / 20,000,000] mean_return=-0.6000
+mean return = -0.5999984741210938:   0%|          | 7/3334 [02:25<19:51:16, 21.48s/it] [iter    7 | frames    48,000 / 20,000,000] mean_return=-0.4667
+mean return = -0.4666651785373688:   0%|          | 8/3334 [02:48<20:18:42, 21.99s/it][iter    8 | frames    54,000 / 20,000,000] mean_return=-0.7333
+mean return = -0.7333317995071411:   0%|          | 9/3334 [03:08<19:57:29, 21.61s/it][iter    9 | frames    60,000 / 20,000,000] mean_return=-0.0667
+mean return = -0.0666651725769043:   0%|          | 10/3334 [03:27<19:05:39, 20.68s/it][iter   10 | frames    66,000 / 20,000,000] mean_return=-0.2667
+mean return = -0.2666652202606201:   0%|          | 11/3334 [03:46<18:39:21, 20.21s/it][iter   11 | frames    72,000 / 20,000,000] mean_return=-0.5333
+mean return = -0.5333318710327148:   0%|          | 12/3334 [04:08<19:06:53, 20.71s/it][iter   12 | frames    78,000 / 20,000,000] mean_return=-0.4000
+mean return = -0.3999984860420227:   0%|          | 13/3334 [04:28<18:49:42, 20.41s/it][iter   13 | frames    84,000 / 20,000,000] mean_return=-0.2000
+mean return = -0.19999855756759644:   0%|          | 14/3334 [04:49<19:02:39, 20.65s/it][iter   14 | frames    90,000 / 20,000,000] mean_return=-0.1333
+mean return = -0.13333186507225037:   0%|          | 15/3334 [05:12<19:43:55, 21.40s/it][iter   15 | frames    96,000 / 20,000,000] mean_return=-0.4667
+mean return = -0.4666651785373688:   0%|          | 16/3334 [05:34<19:58:22, 21.67s/it] [iter   16 | frames   102,000 / 20,000,000] mean_return=-0.4000
+mean return = -0.3999985456466675:   1%|          | 17/3334 [05:55<19:35:09, 21.26s/it][iter   17 | frames   108,000 / 20,000,000] mean_return=-0.4000
+mean return = -0.3999984562397003:   1%|          | 18/3334 [06:16<19:32:21, 21.21s/it][iter   18 | frames   114,000 / 20,000,000] mean_return=-0.5333
+mean return = -0.5333318710327148:   1%|          | 19/3334 [06:36<19:14:43, 20.90s/it][iter   19 | frames   120,000 / 20,000,000] mean_return=-0.8000
+mean return = -0.7999984622001648:   1%|          | 20/3334 [06:55<18:49:25, 20.45s/it][iter   20 | frames   126,000 / 20,000,000] mean_return=-0.5333
+mean return = -0.5333317518234253:   1%|          | 21/3334 [07:17<19:04:40, 20.73s/it][iter   21 | frames   132,000 / 20,000,000] mean_return=-0.3333
+mean return = -0.3333318829536438:   1%|          | 22/3334 [07:37<18:54:53, 20.56s/it][iter   22 | frames   138,000 / 20,000,000] mean_return=0.0000
+mean return = 1.473228167014895e-06:   1%|          | 23/3334 [07:57<18:48:24, 20.45s/it][iter   23 | frames   144,000 / 20,000,000] mean_return=-0.5333
+mean return = -0.5333318114280701:   1%|          | 24/3334 [08:20<19:22:35, 21.07s/it]  [iter   24 | frames   150,000 / 20,000,000] mean_return=-0.3333
+mean return = -0.3333318531513214:   1%|          | 25/3334 [08:42<19:37:12, 21.35s/it][iter   25 | frames   156,000 / 20,000,000] mean_return=-0.8000
+mean return = -0.7999985814094543:   1%|          | 26/3334 [09:04<19:48:19, 21.55s/it][iter   26 | frames   162,000 / 20,000,000] mean_return=-0.5333
+mean return = -0.5333318710327148:   1%|          | 27/3334 [09:26<19:57:36, 21.73s/it][iter   27 | frames   168,000 / 20,000,000] mean_return=-0.4667
+mean return = -0.46666523814201355:   1%|          | 28/3334 [09:45<19:13:00, 20.93s/it][iter   28 | frames   174,000 / 20,000,000] mean_return=-0.5333
+mean return = -0.5333318114280701:   1%|          | 29/3334 [10:04<18:46:29, 20.45s/it] [iter   29 | frames   180,000 / 20,000,000] mean_return=-0.4000
+mean return = -0.3999985456466675:   1%|          | 30/3334 [10:26<19:12:24, 20.93s/it][iter   30 | frames   186,000 / 20,000,000] mean_return=-0.6000
+mean return = -0.5999984741210938:   1%|          | 31/3334 [10:47<19:13:11, 20.95s/it][iter   31 | frames   192,000 / 20,000,000] mean_return=-0.4000
+mean return = -0.3999985456466675:   1%|          | 32/3334 [11:08<19:10:53, 20.91s/it][iter   32 | frames   198,000 / 20,000,000] mean_return=-1.4000
+mean return = -1.3999985456466675:   1%|          | 33/3334 [11:31<19:39:02, 21.43s/it][iter   33 | frames   204,000 / 20,000,000] mean_return=-0.9333
+mean return = -0.9333319067955017:   1%|          | 34/3334 [11:52<19:39:31, 21.45s/it][iter   34 | frames   210,000 / 20,000,000] mean_return=-0.4667
+mean return = -0.46666520833969116:   1%|          | 35/3334 [12:13<19:34:22, 21.36s/it][iter   35 | frames   216,000 / 20,000,000] mean_return=-0.6667
+mean return = -0.6666651964187622:   1%|          | 36/3334 [12:34<19:26:07, 21.22s/it] [iter   36 | frames   222,000 / 20,000,000] mean_return=-0.5333
+mean return = -0.5333317518234253:   1%|          | 37/3334 [12:55<19:13:19, 20.99s/it][iter   37 | frames   228,000 / 20,000,000] mean_return=-0.7333
+mean return = -0.7333317995071411:   1%|          | 38/3334 [13:14<18:42:16, 20.43s/it][iter   38 | frames   234,000 / 20,000,000] mean_return=-0.1333
+mean return = -0.13333183526992798:   1%|          | 39/3334 [13:35<18:59:24, 20.75s/it][iter   39 | frames   240,000 / 20,000,000] mean_return=-0.4000
+mean return = -0.39999860525131226:   1%|          | 40/3334 [13:58<19:25:01, 21.22s/it][iter   40 | frames   246,000 / 20,000,000] mean_return=-0.2000
+mean return = -0.19999857246875763:   1%|          | 41/3334 [14:18<19:06:49, 20.90s/it][iter   41 | frames   252,000 / 20,000,000] mean_return=-0.7333
+mean return = -0.7333317995071411:   1%|▏         | 42/3334 [14:42<20:00:18, 21.88s/it] [iter   42 | frames   258,000 / 20,000,000] mean_return=-0.6667
+mean return = -0.6666651368141174:   1%|▏         | 43/3334 [15:04<19:58:07, 21.84s/it][iter   43 | frames   264,000 / 20,000,000] mean_return=-1.0000
+mean return = -0.9999984502792358:   1%|▏         | 44/3334 [15:27<20:22:02, 22.29s/it][iter   44 | frames   270,000 / 20,000,000] mean_return=-0.1333
+                                                                                                                                                           

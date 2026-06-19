@@ -1,0 +1,703 @@
+
+Algorithm: rnd, Task: smacv2/protoss_5_vs_5
+
+Loaded config:
+
+experiment:
+  sampling_device: cpu
+  train_device: cuda
+  buffer_device: cpu
+  share_policy_params: true
+  prefer_continuous_actions: true
+  collect_with_grad: false
+  parallel_collection: false
+  gamma: 0.99
+  lr: 0.001
+  adam_eps: 1.0e-06
+  adam_extra_kwargs: {}
+  clip_grad_norm: true
+  clip_grad_val: 5.0
+  soft_target_update: false
+  polyak_tau: 0.005
+  hard_target_update_frequency: 200
+  exploration_eps_init: 1.0
+  exploration_eps_end: 0.05
+  exploration_anneal_frames: 100000
+  max_n_iters: null
+  max_n_frames: 10050000
+  on_policy_collected_frames_per_batch: 6000
+  on_policy_n_envs_per_worker: 10
+  on_policy_n_minibatch_iters: 45
+  on_policy_minibatch_size: 400
+  off_policy_collected_frames_per_batch: 2000
+  off_policy_n_envs_per_worker: 4
+  off_policy_n_optimizer_steps: 100
+  off_policy_train_batch_size: 128
+  off_policy_memory_size: 5000
+  off_policy_init_random_frames: 0
+  off_policy_use_prioritized_replay_buffer: false
+  off_policy_prb_alpha: 0.6
+  off_policy_prb_beta: 0.4
+  evaluation: true
+  render: false
+  evaluation_interval: 2000
+  evaluation_episodes: 20
+  evaluation_deterministic_actions: true
+  evaluation_static: false
+  loggers:
+  - csv
+  - wandb
+  project_name: kod_zrodlowy_demir
+  wandb_extra_kwargs: {}
+  create_json: true
+  save_folder: null
+  restore_file: null
+  restore_map_location: null
+  checkpoint_interval: 60000
+  checkpoint_at_end: true
+  keep_checkpoints_num: 3
+  exclude_buffer_from_checkpoint: false
+algorithm:
+  mixing_embed_dim: 32
+  delay_value: true
+  loss_function: l2
+  td_lambda: 0.4
+  use_intrinsic_rewards: true
+  emb_dim_state: 64
+  emb_dim_action: 16
+  emb_dim_reward: 8
+  alpha: 0.5
+  beta1: 1.0
+  beta2: 0.5
+  k: 10
+  sigma: 0.1
+  n_efm: 10000
+  n_edm: 5000
+  demir_scale: 0.0
+  encoder_type: idm
+  rnd_scale: 0.1
+  rnd_embed_dim: 64
+  rnd_hidden_dim: 256
+  rnd_lr: 0.0001
+  ngu_scale: 0.0
+  ngu_embed_dim: 64
+  ngu_hidden_dim: 256
+  ngu_k: 10
+  ngu_L: 5.0
+  ngu_epsilon: 0.001
+  ngu_n_episodic: 10000
+  ngu_lr: 0.0001
+task:
+  continuing_episode: false
+  difficulty: '7'
+  game_version: null
+  map_name: 10gen_protoss
+  move_amount: 2
+  obs_all_health: true
+  obs_instead_of_state: false
+  obs_last_action: false
+  obs_own_health: true
+  obs_pathing_grid: false
+  obs_terrain_height: false
+  obs_timestep_number: false
+  reward_death_value: 10
+  reward_defeat: 0
+  reward_negative_scale: 0.5
+  reward_only_positive: true
+  reward_scale: true
+  reward_scale_rate: 20
+  reward_sparse: false
+  reward_win: 200
+  replay_dir: ''
+  replay_prefix: ''
+  conic_fov: false
+  use_unit_ranges: true
+  min_attack_range: 2
+  obs_own_pos: true
+  num_fov_actions: 12
+  capability_config:
+    n_units: 5
+    n_enemies: 5
+    team_gen:
+      dist_type: weighted_teams
+      unit_types:
+      - stalker
+      - zealot
+      - colossus
+      weights:
+      - 0.45
+      - 0.45
+      - 0.1
+      observe: true
+    start_positions:
+      dist_type: surrounded_and_reflect
+      p: 0.5
+      map_x: 32
+      map_y: 32
+  state_last_action: true
+  state_timestep_number: false
+  step_mul: 8
+  heuristic_ai: false
+  debug: false
+  prob_obs_enemy: 1.0
+  action_mask: true
+model:
+  name: gru
+  hidden_size: 128
+  n_layers: 1
+  bias: true
+  dropout: 0
+  compile: false
+  mlp_num_cells:
+  - 256
+  - 256
+  mlp_layer_class: torch.nn.Linear
+  mlp_activation_class: torch.nn.Tanh
+  mlp_activation_kwargs: null
+  mlp_norm_class: null
+  mlp_norm_kwargs: null
+critic_model:
+  name: gru
+  hidden_size: 128
+  n_layers: 1
+  bias: true
+  dropout: 0
+  compile: false
+  mlp_num_cells:
+  - 256
+  - 256
+  mlp_layer_class: torch.nn.Linear
+  mlp_activation_class: torch.nn.Tanh
+  mlp_activation_kwargs: null
+  mlp_norm_class: null
+  mlp_norm_kwargs: null
+seed: 102
+
+/home/s28404/inzynierka_kod_zrodlowy/benchmarl/environments/common.py:41: UserWarning: TaskConfig python dataclass not found, task is being loaded without type checks
+  warnings.warn(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/google/protobuf/internal/well_known_types.py:91: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).
+  _EPOCH_DATETIME_NAIVE = datetime.datetime.utcfromtimestamp(0)
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/common_pb2.py:19: DeprecationWarning: Call to deprecated create function FileDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  DESCRIPTOR = _descriptor.FileDescriptor(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/common_pb2.py:32: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _descriptor.EnumValueDescriptor(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/common_pb2.py:26: DeprecationWarning: Call to deprecated create function EnumDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _RACE = _descriptor.EnumDescriptor(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/common_pb2.py:76: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _descriptor.FieldDescriptor(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/common_pb2.py:69: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _AVAILABLEABILITY = _descriptor.Descriptor(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/data_pb2.py:20: DeprecationWarning: Call to deprecated create function FileDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  DESCRIPTOR = _descriptor.FileDescriptor(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/data_pb2.py:34: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _descriptor.EnumValueDescriptor(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/data_pb2.py:28: DeprecationWarning: Call to deprecated create function EnumDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _ATTRIBUTE = _descriptor.EnumDescriptor(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/data_pb2.py:168: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _descriptor.FieldDescriptor(
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/data_pb2.py:161: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _ABILITYDATA = _descriptor.Descriptor(
+[2026-06-06 10:26:44,269][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 40545 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-vtfxyt1x/
+[2026-06-06 10:26:44,270][absl][INFO] - Connecting to: ws://127.0.0.1:40545/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 40545 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-vtfxyt1x/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:26:45,272][absl][INFO] - Connecting to: ws://127.0.0.1:40545/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:40545
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:26:46,272][absl][INFO] - Connecting to: ws://127.0.0.1:40545/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:56340 accepted
+ReadyHandler: 127.0.0.1:56340 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 10:26:51,666][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 37643 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-nyt8ibeb/
+[2026-06-06 10:26:51,666][absl][INFO] - Connecting to: ws://127.0.0.1:37643/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 37643 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-nyt8ibeb/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:26:52,667][absl][INFO] - Connecting to: ws://127.0.0.1:37643/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:37643
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:26:53,668][absl][INFO] - Connecting to: ws://127.0.0.1:37643/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:52642 accepted
+ReadyHandler: 127.0.0.1:52642 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+RequestQuit command received.
+DataHandler: unable to parse websocket frame.
+Closing Application...
+CloseHandler: 127.0.0.1:52642 disconnected
+[2026-06-06 10:26:57,831][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:26:57,831][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 10:26:57,848][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 33871 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-cpadmduu/
+[2026-06-06 10:26:57,849][absl][INFO] - Connecting to: ws://127.0.0.1:33871/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 33871 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-cpadmduu/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:26:58,850][absl][INFO] - Connecting to: ws://127.0.0.1:33871/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:33871
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:26:59,850][absl][INFO] - Connecting to: ws://127.0.0.1:33871/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:48594 accepted
+ReadyHandler: 127.0.0.1:48594 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 10:27:03,688][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 39155 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-yi4usmib/
+[2026-06-06 10:27:03,689][absl][INFO] - Connecting to: ws://127.0.0.1:39155/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 39155 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-yi4usmib/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:27:04,690][absl][INFO] - Connecting to: ws://127.0.0.1:39155/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:39155
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:27:05,691][absl][INFO] - Connecting to: ws://127.0.0.1:39155/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:37306 accepted
+ReadyHandler: 127.0.0.1:37306 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 10:27:09,583][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 44393 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-tqlgqwqk/
+[2026-06-06 10:27:09,584][absl][INFO] - Connecting to: ws://127.0.0.1:44393/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 44393 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-tqlgqwqk/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:27:10,585][absl][INFO] - Connecting to: ws://127.0.0.1:44393/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:44393
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:27:11,585][absl][INFO] - Connecting to: ws://127.0.0.1:44393/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:52732 accepted
+ReadyHandler: 127.0.0.1:52732 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 10:27:15,581][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 38551 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-teoyvbnv/
+[2026-06-06 10:27:15,582][absl][INFO] - Connecting to: ws://127.0.0.1:38551/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 38551 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-teoyvbnv/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:27:16,582][absl][INFO] - Connecting to: ws://127.0.0.1:38551/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:38551
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:27:17,583][absl][INFO] - Connecting to: ws://127.0.0.1:38551/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:57368 accepted
+ReadyHandler: 127.0.0.1:57368 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 10:27:21,996][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 32949 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-3adfplw7/
+[2026-06-06 10:27:21,997][absl][INFO] - Connecting to: ws://127.0.0.1:32949/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 32949 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-3adfplw7/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:27:22,998][absl][INFO] - Connecting to: ws://127.0.0.1:32949/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:32949
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:27:23,998][absl][INFO] - Connecting to: ws://127.0.0.1:32949/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:60606 accepted
+ReadyHandler: 127.0.0.1:60606 ready
+DataHandler: unable to parse websocket frame.
+RequestQuit command received.
+CloseHandler: 127.0.0.1:48594 disconnected
+Closing Application...
+ResponseThread: No connection, dropping the response.
+[2026-06-06 10:27:24,104][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:27:24,104][absl][INFO] - Shutdown with return code: -15
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/torchrl/envs/libs/smacv2.py:329: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:278.)
+  return torch.tensor(value, device=self.device, dtype=torch.float32)
+[2026-06-06 10:27:28,088][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 39065 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-e9z5w9jo/
+[2026-06-06 10:27:28,089][absl][INFO] - Connecting to: ws://127.0.0.1:39065/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 39065 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-e9z5w9jo/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:27:29,089][absl][INFO] - Connecting to: ws://127.0.0.1:39065/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:39065
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:27:30,090][absl][INFO] - Connecting to: ws://127.0.0.1:39065/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:52012 accepted
+ReadyHandler: 127.0.0.1:52012 ready
+RequestQuit command received.
+DataHandler: unable to parse websocket frame.
+Closing Application...
+CloseHandler: 127.0.0.1:37306 disconnected
+[2026-06-06 10:27:30,200][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:27:30,200][absl][INFO] - Shutdown with return code: -15
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 10:27:34,276][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 34387 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-holyv5b2/
+[2026-06-06 10:27:34,277][absl][INFO] - Connecting to: ws://127.0.0.1:34387/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 34387 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-holyv5b2/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:27:35,278][absl][INFO] - Connecting to: ws://127.0.0.1:34387/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:34387
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:27:36,278][absl][INFO] - Connecting to: ws://127.0.0.1:34387/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:35974 accepted
+ReadyHandler: 127.0.0.1:35974 ready
+DataHandler: unable to parse websocket frame.
+RequestQuit command received.
+CloseHandler: 127.0.0.1:52732 disconnected
+Closing Application...
+ResponseThread: No connection, dropping the response.
+[2026-06-06 10:27:36,384][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:27:36,384][absl][INFO] - Shutdown with return code: -15
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 10:27:40,215][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 46495 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-_vit_2nw/
+[2026-06-06 10:27:40,216][absl][INFO] - Connecting to: ws://127.0.0.1:46495/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 46495 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-_vit_2nw/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:27:41,216][absl][INFO] - Connecting to: ws://127.0.0.1:46495/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:46495
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:27:42,217][absl][INFO] - Connecting to: ws://127.0.0.1:46495/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:34362 accepted
+ReadyHandler: 127.0.0.1:34362 ready
+DataHandler: unable to parse websocket frame.
+RequestQuit command received.
+CloseHandler: 127.0.0.1:57368 disconnected
+Closing Application...
+ResponseThread: No connection, dropping the response.
+[2026-06-06 10:27:42,322][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:27:42,323][absl][INFO] - Shutdown with return code: -15
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/s28404/.netrc.
+wandb: Currently logged in as: frackowiak (frackowiak_kajetan) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:279: DeprecationWarning: The `Scope.user` setter is deprecated in favor of `Scope.set_user()`.
+  self.scope.user = {"email": email}
+wandb: setting up run qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed102_26_06_06-10_26_44
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:279: DeprecationWarning: The `Scope.user` setter is deprecated in favor of `Scope.set_user()`.
+  self.scope.user = {"email": email}
+wandb: Tracking run with wandb version 0.25.0
+wandb: Run data is saved locally in /home/s28404/inzynierka_kod_zrodlowy/outputs/2026-06-06/10-26-44/qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed102_26_06_06-10_26_44/wandb/run-20260606_102746-qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed102_26_06_06-10_26_44
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed102_26_06_06-10_26_44
+wandb: ⭐️ View project at https://wandb.ai/frackowiak_kajetan/kod_zrodlowy_demir
+wandb: 🚀 View run at https://wandb.ai/frackowiak_kajetan/kod_zrodlowy_demir/runs/qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed102_26_06_06-10_26_44
+  0%|          | 0/5025 [00:00<?, ?it/s]/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/google/protobuf/internal/well_known_types.py:195: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  self.FromDatetime(datetime.datetime.utcnow())
+[iter    0 | frames     2,000 / 10,050,000] mean_return=2.4243
+[2026-06-06 10:30:45,977][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 44147 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-erdjuy70/
+[2026-06-06 10:30:45,979][absl][INFO] - Connecting to: ws://127.0.0.1:44147/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 44147 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-erdjuy70/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 10:30:46,980][absl][INFO] - Connecting to: ws://127.0.0.1:44147/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:44147
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 10:30:47,982][absl][INFO] - Connecting to: ws://127.0.0.1:44147/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:52688 accepted
+ReadyHandler: 127.0.0.1:52688 ready
+DataHandler: unable to parse websocket frame.
+RequestQuit command received.
+CloseHandler: 127.0.0.1:56340 disconnected
+Closing Application...
+ResponseThread: No connection, dropping the response.
+[2026-06-06 10:30:48,087][absl][INFO] - Shutdown gracefully.
+[2026-06-06 10:30:48,088][absl][INFO] - Shutdown with return code: -15
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+wandb: WARNING Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.424250841140747:   0%|          | 1/5025 [03:20<279:15:36, 200.11s/it][iter    1 | frames     4,000 / 10,050,000] mean_return=3.0538
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0538482666015625:   0%|          | 2/5025 [06:36<276:12:37, 197.96s/it][iter    2 | frames     6,000 / 10,050,000] mean_return=2.7998
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.799787759780884:   0%|          | 3/5025 [09:51<274:09:39, 196.53s/it] [iter    3 | frames     8,000 / 10,050,000] mean_return=2.4662
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.466196298599243:   0%|          | 4/5025 [13:02<270:55:05, 194.25s/it][iter    4 | frames    10,000 / 10,050,000] mean_return=2.7133
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7133235931396484:   0%|          | 5/5025 [16:11<268:23:50, 192.48s/it][iter    5 | frames    12,000 / 10,050,000] mean_return=2.7560
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7560479640960693:   0%|          | 6/5025 [19:14<263:52:40, 189.27s/it][iter    6 | frames    14,000 / 10,050,000] mean_return=3.2271
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.227146863937378:   0%|          | 7/5025 [22:16<260:39:44, 187.00s/it] [iter    7 | frames    16,000 / 10,050,000] mean_return=2.8392
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8392109870910645:   0%|          | 8/5025 [25:19<258:32:46, 185.52s/it][iter    8 | frames    18,000 / 10,050,000] mean_return=3.0867
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.086684226989746:   0%|          | 9/5025 [28:18<255:45:23, 183.56s/it] [iter    9 | frames    20,000 / 10,050,000] mean_return=3.0059
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0058672428131104:   0%|          | 10/5025 [31:20<255:15:14, 183.23s/it][iter   10 | frames    22,000 / 10,050,000] mean_return=2.7623
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7623472213745117:   0%|          | 11/5025 [34:24<255:09:10, 183.20s/it][iter   11 | frames    24,000 / 10,050,000] mean_return=3.1577
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1576642990112305:   0%|          | 12/5025 [37:28<255:44:06, 183.65s/it][iter   12 | frames    26,000 / 10,050,000] mean_return=2.8519
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.851916551589966:   0%|          | 13/5025 [40:34<256:41:45, 184.38s/it] [iter   13 | frames    28,000 / 10,050,000] mean_return=3.1913
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.191267728805542:   0%|          | 14/5025 [43:42<258:00:51, 185.36s/it][iter   14 | frames    30,000 / 10,050,000] mean_return=2.9809
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.980858325958252:   0%|          | 15/5025 [46:52<259:47:31, 186.68s/it][iter   15 | frames    32,000 / 10,050,000] mean_return=2.9544
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9543561935424805:   0%|          | 16/5025 [50:03<261:29:37, 187.94s/it][iter   16 | frames    34,000 / 10,050,000] mean_return=2.9628
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.962775230407715:   0%|          | 17/5025 [53:14<262:46:21, 188.89s/it] [iter   17 | frames    36,000 / 10,050,000] mean_return=2.8456
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8456320762634277:   0%|          | 18/5025 [56:27<264:26:09, 190.13s/it][iter   18 | frames    38,000 / 10,050,000] mean_return=2.9758
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.975764513015747:   0%|          | 19/5025 [59:37<264:30:57, 190.22s/it] [iter   19 | frames    40,000 / 10,050,000] mean_return=3.2757
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.2757158279418945:   0%|          | 20/5025 [1:02:42<262:24:51, 188.75s/it][iter   20 | frames    42,000 / 10,050,000] mean_return=3.2237
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.2237162590026855:   0%|          | 21/5025 [1:05:45<259:53:40, 186.97s/it][iter   21 | frames    44,000 / 10,050,000] mean_return=2.9959
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.995943307876587:   0%|          | 22/5025 [1:08:50<258:46:28, 186.21s/it] [iter   22 | frames    46,000 / 10,050,000] mean_return=2.8099
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8099496364593506:   0%|          | 23/5025 [1:11:55<258:23:57, 185.97s/it][iter   23 | frames    48,000 / 10,050,000] mean_return=2.9915
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9915337562561035:   0%|          | 24/5025 [1:14:59<257:34:32, 185.42s/it][iter   24 | frames    50,000 / 10,050,000] mean_return=3.1263
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1263108253479004:   0%|          | 25/5025 [1:18:06<258:04:22, 185.81s/it][iter   25 | frames    52,000 / 10,050,000] mean_return=2.8775
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8774921894073486:   1%|          | 26/5025 [1:21:13<258:29:58, 186.16s/it][iter   26 | frames    54,000 / 10,050,000] mean_return=3.1329
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1328914165496826:   1%|          | 27/5025 [1:24:22<259:46:34, 187.11s/it][iter   27 | frames    56,000 / 10,050,000] mean_return=2.8327
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.83271861076355:   1%|          | 28/5025 [1:27:29<259:37:58, 187.05s/it]  [iter   28 | frames    58,000 / 10,050,000] mean_return=3.4706
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.4706244468688965:   1%|          | 29/5025 [1:30:38<260:22:39, 187.62s/it][iter   29 | frames    60,000 / 10,050,000] mean_return=3.2695
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.269542932510376:   1%|          | 30/5025 [1:33:46<260:26:21, 187.70s/it] [iter   30 | frames    62,000 / 10,050,000] mean_return=3.4968
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.4968061447143555:   1%|          | 31/5025 [1:36:54<260:22:37, 187.70s/it][iter   31 | frames    64,000 / 10,050,000] mean_return=2.5064
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.50642466545105:   1%|          | 32/5025 [1:40:02<260:29:50, 187.82s/it]  [iter   32 | frames    66,000 / 10,050,000] mean_return=3.3249
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.3248777389526367:   1%|          | 33/5025 [1:43:10<260:28:54, 187.85s/it][iter   33 | frames    68,000 / 10,050,000] mean_return=3.0963
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0962777137756348:   1%|          | 34/5025 [1:46:17<260:07:06, 187.62s/it][iter   34 | frames    70,000 / 10,050,000] mean_return=2.8128
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8128085136413574:   1%|          | 35/5025 [1:49:22<259:03:13, 186.89s/it][iter   35 | frames    72,000 / 10,050,000] mean_return=2.6647
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6646854877471924:   1%|          | 36/5025 [1:52:28<258:39:14, 186.64s/it][iter   36 | frames    74,000 / 10,050,000] mean_return=3.1214
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1213676929473877:   1%|          | 37/5025 [1:55:34<258:18:02, 186.42s/it][iter   37 | frames    76,000 / 10,050,000] mean_return=2.8348
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.83482027053833:   1%|          | 38/5025 [1:58:42<258:54:31, 186.90s/it]  [iter   38 | frames    78,000 / 10,050,000] mean_return=2.8268

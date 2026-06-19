@@ -1,0 +1,2 @@
+frame,step,timestamp,eval_return_mean,eval_return_std,eval_return_min,eval_return_max,algorithm,environment,task,seed,eval_success_rate,eval_bottleneck_reached_rate,eval_rm_state_0_ratio,eval_rm_state_1_ratio,eval_rm_state_2_ratio
+6000,0,2026-06-07T16:01:32.781556,-2.0,0.0,-2.0,-2.0,qmix,logic_env,synchronized,2,0.0,0.0,1.0,0.0,0.0

@@ -1,0 +1,210 @@
+<frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:488: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/s28404/.netrc.
+wandb: Currently logged in as: frackowiak (frackowiak_kajetan) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:279: DeprecationWarning: The `Scope.user` setter is deprecated in favor of `Scope.set_user()`.
+  self.scope.user = {"email": email}
+wandb: setting up run wl8xpqko
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:279: DeprecationWarning: The `Scope.user` setter is deprecated in favor of `Scope.set_user()`.
+  self.scope.user = {"email": email}
+wandb: Tracking run with wandb version 0.25.0
+wandb: Run data is saved locally in logs_thesis/minigrid/wandb/run-20260524_110119-wl8xpqko
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run r2d2_BabyAI_GoToObj_v0_seed100_26_05_24-11_01_19
+wandb: ⭐️ View project at https://wandb.ai/frackowiak_kajetan/kod_zrodlowy_demir
+wandb: 🚀 View run at https://wandb.ai/frackowiak_kajetan/kod_zrodlowy_demir/runs/wl8xpqko
+========================================================================/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/google/protobuf/internal/well_known_types.py:195: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  self.FromDatetime(datetime.datetime.utcnow())
+
+Run: r2d2_BabyAI_GoToObj_v0_seed100_26_05_24-11_01_19
+Variant: r2d2 | Intrinsic kind: none | Scale: 0.0
+Env: BabyAI-GoToObj-v0 | Device: cuda | Threads: 4
+========================================================================
+[train] 00:03<5:20:28, 0.002s/step step=    2000 episodes=   35 eps=0.998 replay=     0 loss=nan ext100=0.122 total100=0.122
+[train] 00:07<5:12:04, 0.002s/step step=    4000 episodes=   70 eps=0.996 replay=     0 loss=nan ext100=0.124 total100=0.124
+[train] 00:11<5:09:06, 0.002s/step step=    6000 episodes=  104 eps=0.994 replay=     0 loss=nan ext100=0.114 total100=0.114
+[train] 00:14<5:05:37, 0.002s/step step=    8000 episodes=  138 eps=0.992 replay=     0 loss=nan ext100=0.098 total100=0.098
+[train] 00:18<5:03:46, 0.002s/step step=   10000 episodes=  175 eps=0.991 replay=     0 loss=nan ext100=0.116 total100=0.116
+[train] 00:21<5:03:04, 0.002s/step step=   12000 episodes=  211 eps=0.989 replay=     0 loss=nan ext100=0.133 total100=0.133
+[train] 00:25<5:01:51, 0.002s/step step=   14000 episodes=  246 eps=0.987 replay=     0 loss=nan ext100=0.127 total100=0.127
+[train] 00:29<5:04:03, 0.002s/step step=   16000 episodes=  281 eps=0.985 replay=     0 loss=nan ext100=0.120 total100=0.120
+[train] 00:33<5:13:17, 0.002s/step step=   18000 episodes=  314 eps=0.983 replay=     0 loss=nan ext100=0.102 total100=0.102
+[eval] step=20000 episodes=353 mean_ext_return=0.000
+[train] 00:39<5:28:56, 0.002s/step step=   20000 episodes=  353 eps=0.981 replay=     0 loss=nan ext100=0.145 total100=0.145
+[train] 00:44<5:36:01, 0.002s/step step=   22000 episodes=  389 eps=0.979 replay=     0 loss=nan ext100=0.146 total100=0.146
+[train] 00:49<5:43:39, 0.002s/step step=   24000 episodes=  423 eps=0.977 replay=     0 loss=nan ext100=0.161 total100=0.161
+[train] 00:55<5:53:48, 0.002s/step step=   26000 episodes=  460 eps=0.975 replay=     0 loss=nan ext100=0.137 total100=0.137
+[train] 01:01<6:02:13, 0.002s/step step=   28000 episodes=  499 eps=0.973 replay=     0 loss=nan ext100=0.174 total100=0.174
+[train] 01:06<6:09:32, 0.002s/step step=   30000 episodes=  533 eps=0.972 replay=     0 loss=nan ext100=0.164 total100=0.164
+[train] 01:12<6:16:29, 0.002s/step step=   32000 episodes=  567 eps=0.970 replay=     0 loss=nan ext100=0.135 total100=0.135
+[train] 01:18<6:22:27, 0.002s/step step=   34000 episodes=  605 eps=0.968 replay=     0 loss=nan ext100=0.133 total100=0.133
+[train] 01:24<6:27:38, 0.002s/step step=   36000 episodes=  640 eps=0.966 replay=     0 loss=nan ext100=0.125 total100=0.125
+[train] 01:29<6:31:50, 0.002s/step step=   38000 episodes=  678 eps=0.964 replay=     0 loss=nan ext100=0.167 total100=0.167
+[eval] step=40000 episodes=715 mean_ext_return=0.000
+[train] 01:36<6:42:27, 0.002s/step step=   40000 episodes=  715 eps=0.962 replay=     0 loss=nan ext100=0.175 total100=0.175
+[train] 01:43<6:47:50, 0.002s/step step=   42000 episodes=  753 eps=0.960 replay=     0 loss=nan ext100=0.159 total100=0.159
+[train] 01:48<6:50:19, 0.002s/step step=   44000 episodes=  789 eps=0.958 replay=     0 loss=nan ext100=0.144 total100=0.144
+[train] 01:54<6:54:02, 0.002s/step step=   46000 episodes=  823 eps=0.956 replay=     0 loss=nan ext100=0.129 total100=0.129
+[train] 02:00<6:57:35, 0.003s/step step=   48000 episodes=  857 eps=0.954 replay=     0 loss=nan ext100=0.100 total100=0.100
+[train] 02:05<6:57:03, 0.003s/step step=   50000 episodes=  889 eps=0.953 replay=     0 loss=nan ext100=0.073 total100=0.073
+[train] 02:10<6:55:48, 0.003s/step step=   52000 episodes=  924 eps=0.951 replay=     0 loss=nan ext100=0.078 total100=0.078
+[train] 02:16<6:57:41, 0.003s/step step=   54000 episodes=  961 eps=0.949 replay=     0 loss=nan ext100=0.109 total100=0.109
+[train] 02:21<6:57:59, 0.003s/step step=   56000 episodes=  994 eps=0.947 replay=     0 loss=nan ext100=0.115 total100=0.115
+[train] 02:25<6:56:07, 0.003s/step step=   58000 episodes= 1030 eps=0.945 replay=     0 loss=nan ext100=0.117 total100=0.117
+[eval] step=60000 episodes=1064 mean_ext_return=0.000
+[train] 02:31<6:57:03, 0.003s/step step=   60000 episodes= 1064 eps=0.943 replay=     0 loss=nan ext100=0.097 total100=0.097
+[train] 02:36<6:58:18, 0.003s/step step=   62000 episodes= 1100 eps=0.941 replay=     0 loss=nan ext100=0.122 total100=0.122
+[train] 02:41<6:58:28, 0.003s/step step=   64000 episodes= 1139 eps=0.939 replay=     0 loss=nan ext100=0.150 total100=0.150
+[train] 02:46<6:57:49, 0.003s/step step=   66000 episodes= 1174 eps=0.937 replay=     0 loss=nan ext100=0.158 total100=0.158
+[train] 02:52<6:58:45, 0.003s/step step=   68000 episodes= 1210 eps=0.935 replay=     0 loss=nan ext100=0.133 total100=0.133
+[train] 02:57<7:00:12, 0.003s/step step=   70000 episodes= 1243 eps=0.933 replay=     0 loss=nan ext100=0.118 total100=0.118
+[train] 03:02<6:59:11, 0.003s/step step=   72000 episodes= 1279 eps=0.932 replay=     0 loss=nan ext100=0.104 total100=0.104
+[train] 03:06<6:57:55, 0.003s/step step=   74000 episodes= 1316 eps=0.930 replay=     0 loss=nan ext100=0.140 total100=0.140
+[train] 03:12<6:58:41, 0.003s/step step=   76000 episodes= 1353 eps=0.928 replay=     0 loss=nan ext100=0.159 total100=0.159
+[train] 03:18<7:00:52, 0.003s/step step=   78000 episodes= 1390 eps=0.926 replay=     0 loss=nan ext100=0.153 total100=0.153
+[eval] step=80000 episodes=1428 mean_ext_return=0.000
+[train] 03:24<7:03:06, 0.003s/step step=   80000 episodes= 1428 eps=0.924 replay=     0 loss=nan ext100=0.193 total100=0.193
+[train] 03:30<7:04:03, 0.003s/step step=   82000 episodes= 1463 eps=0.922 replay=     0 loss=nan ext100=0.169 total100=0.169
+[train] 03:37<7:08:39, 0.003s/step step=   84000 episodes= 1499 eps=0.920 replay=     0 loss=nan ext100=0.139 total100=0.139
+[train] 03:45<7:12:43, 0.003s/step step=   86000 episodes= 1533 eps=0.918 replay=     0 loss=nan ext100=0.114 total100=0.114
+[train] 03:51<7:14:49, 0.003s/step step=   88000 episodes= 1566 eps=0.916 replay=     0 loss=nan ext100=0.089 total100=0.089
+[train] 03:59<7:19:16, 0.003s/step step=   90000 episodes= 1598 eps=0.914 replay=     0 loss=nan ext100=0.060 total100=0.060
+[train] 04:07<7:23:37, 0.003s/step step=   92000 episodes= 1632 eps=0.913 replay=     0 loss=nan ext100=0.062 total100=0.062
+[train] 04:14<7:27:13, 0.003s/step step=   94000 episodes= 1668 eps=0.911 replay=     0 loss=nan ext100=0.088 total100=0.088
+[train] 04:22<7:31:38, 0.003s/step step=   96000 episodes= 1706 eps=0.909 replay=     0 loss=nan ext100=0.147 total100=0.147
+[train] 04:30<7:35:12, 0.003s/step step=   98000 episodes= 1744 eps=0.907 replay=     0 loss=nan ext100=0.171 total100=0.171
+[eval] step=100000 episodes=1777 mean_ext_return=0.000
+[train] 04:38<7:39:42, 0.003s/step step=  100000 episodes= 1777 eps=0.905 replay=     0 loss=nan ext100=0.141 total100=0.141
+[train] 04:46<7:42:37, 0.003s/step step=  102000 episodes= 1819 eps=0.903 replay=     0 loss=nan ext100=0.165 total100=0.165
+[train] 04:53<7:44:57, 0.003s/step step=  104000 episodes= 1855 eps=0.901 replay=     0 loss=nan ext100=0.181 total100=0.181
+[train] 04:59<7:45:57, 0.003s/step step=  106000 episodes= 1892 eps=0.899 replay=     0 loss=nan ext100=0.187 total100=0.187
+[train] 05:05<7:46:28, 0.003s/step step=  108000 episodes= 1927 eps=0.897 replay=     0 loss=nan ext100=0.151 total100=0.151
+[train] 05:11<7:46:30, 0.003s/step step=  110000 episodes= 1963 eps=0.895 replay=     0 loss=nan ext100=0.149 total100=0.149
+[train] 05:16<7:46:12, 0.003s/step step=  112000 episodes= 1996 eps=0.894 replay=     0 loss=nan ext100=0.107 total100=0.107
+[train] 05:23<7:47:00, 0.003s/step step=  114000 episodes= 2033 eps=0.892 replay=     0 loss=nan ext100=0.124 total100=0.124
+[train] 05:28<7:46:57, 0.003s/step step=  116000 episodes= 2071 eps=0.890 replay=     0 loss=nan ext100=0.154 total100=0.154
+[train] 05:33<7:46:09, 0.003s/step step=  118000 episodes= 2104 eps=0.888 replay=     0 loss=nan ext100=0.145 total100=0.145
+[eval] step=120000 episodes=2142 mean_ext_return=0.000
+[train] 05:40<7:47:52, 0.003s/step step=  120000 episodes= 2142 eps=0.886 replay=     0 loss=nan ext100=0.140 total100=0.140
+[train] 05:47<7:48:26, 0.003s/step step=  122000 episodes= 2177 eps=0.884 replay=     0 loss=nan ext100=0.136 total100=0.136
+[train] 05:52<7:48:28, 0.003s/step step=  124000 episodes= 2214 eps=0.882 replay=     0 loss=nan ext100=0.160 total100=0.160
+[train] 05:58<7:48:12, 0.003s/step step=  126000 episodes= 2248 eps=0.880 replay=     0 loss=nan ext100=0.139 total100=0.139
+[train] 06:05<7:49:21, 0.003s/step step=  128000 episodes= 2282 eps=0.878 replay=     0 loss=nan ext100=0.110 total100=0.110
+[train] 06:11<7:49:38, 0.003s/step step=  130000 episodes= 2318 eps=0.877 replay=     0 loss=nan ext100=0.104 total100=0.104
+[train] 06:16<7:48:44, 0.003s/step step=  132000 episodes= 2355 eps=0.875 replay=     0 loss=nan ext100=0.133 total100=0.133
+[train] 06:21<7:48:38, 0.003s/step step=  134000 episodes= 2392 eps=0.873 replay=     0 loss=nan ext100=0.148 total100=0.148
+[train] 06:28<7:49:40, 0.003s/step step=  136000 episodes= 2425 eps=0.871 replay=     0 loss=nan ext100=0.146 total100=0.146
+[train] 06:33<7:49:09, 0.003s/step step=  138000 episodes= 2461 eps=0.869 replay=     0 loss=nan ext100=0.125 total100=0.125
+[eval] step=140000 episodes=2496 mean_ext_return=0.000
+[train] 06:39<7:49:24, 0.003s/step step=  140000 episodes= 2496 eps=0.867 replay=     0 loss=nan ext100=0.114 total100=0.114
+[train] 06:46<7:50:35, 0.003s/step step=  142000 episodes= 2532 eps=0.865 replay=     0 loss=nan ext100=0.139 total100=0.139
+[train] 06:54<7:52:32, 0.003s/step step=  144000 episodes= 2567 eps=0.863 replay=     0 loss=nan ext100=0.126 total100=0.126
+[train] 07:00<7:53:34, 0.003s/step step=  146000 episodes= 2604 eps=0.861 replay=     0 loss=nan ext100=0.137 total100=0.137
+[train] 07:09<7:56:02, 0.003s/step step=  148000 episodes= 2637 eps=0.859 replay=     0 loss=nan ext100=0.116 total100=0.116
+[train] 07:16<7:57:50, 0.003s/step step=  150000 episodes= 2671 eps=0.858 replay=     0 loss=nan ext100=0.103 total100=0.103
+[train] 07:23<7:59:01, 0.003s/step step=  152000 episodes= 2708 eps=0.856 replay=     0 loss=nan ext100=0.111 total100=0.111
+[train] 07:31<8:00:40, 0.003s/step step=  154000 episodes= 2745 eps=0.854 replay=     0 loss=nan ext100=0.147 total100=0.147
+[train] 07:38<8:02:12, 0.003s/step step=  156000 episodes= 2780 eps=0.852 replay=     0 loss=nan ext100=0.168 total100=0.168
+[train] 07:45<8:03:04, 0.003s/step step=  158000 episodes= 2813 eps=0.850 replay=     0 loss=nan ext100=0.128 total100=0.128
+[eval] step=160000 episodes=2848 mean_ext_return=0.000
+[train] 07:54<8:06:11, 0.003s/step step=  160000 episodes= 2848 eps=0.848 replay=     0 loss=nan ext100=0.102 total100=0.102
+[train] 08:01<8:07:39, 0.003s/step step=  162000 episodes= 2885 eps=0.846 replay=     0 loss=nan ext100=0.126 total100=0.126
+[train] 08:08<8:08:28, 0.003s/step step=  164000 episodes= 2917 eps=0.844 replay=     0 loss=nan ext100=0.099 total100=0.099
+[train] 08:15<8:09:28, 0.003s/step step=  166000 episodes= 2951 eps=0.842 replay=     0 loss=nan ext100=0.098 total100=0.098
+[train] 08:21<8:09:01, 0.003s/step step=  168000 episodes= 2987 eps=0.840 replay=     0 loss=nan ext100=0.100 total100=0.100
+[train] 08:27<8:08:54, 0.003s/step step=  170000 episodes= 3020 eps=0.839 replay=     0 loss=nan ext100=0.108 total100=0.108
+[train] 08:33<8:09:26, 0.003s/step step=  172000 episodes= 3057 eps=0.837 replay=     0 loss=nan ext100=0.131 total100=0.131
+[train] 08:39<8:08:43, 0.003s/step step=  174000 episodes= 3090 eps=0.835 replay=     0 loss=nan ext100=0.102 total100=0.102
+[train] 08:44<8:07:47, 0.003s/step step=  176000 episodes= 3126 eps=0.833 replay=     0 loss=nan ext100=0.107 total100=0.107
+[train] 08:49<8:07:09, 0.003s/step step=  178000 episodes= 3161 eps=0.831 replay=     0 loss=nan ext100=0.101 total100=0.101
+[eval] step=180000 episodes=3195 mean_ext_return=0.000
+[train] 08:57<8:08:27, 0.003s/step step=  180000 episodes= 3195 eps=0.829 replay=     0 loss=nan ext100=0.101 total100=0.101
+[train] 09:02<8:08:10, 0.003s/step step=  182000 episodes= 3229 eps=0.827 replay=     0 loss=nan ext100=0.098 total100=0.098
+[train] 09:08<8:08:03, 0.003s/step step=  184000 episodes= 3265 eps=0.825 replay=     0 loss=nan ext100=0.115 total100=0.115
+[train] 09:15<8:08:44, 0.003s/step step=  186000 episodes= 3302 eps=0.823 replay=     0 loss=nan ext100=0.131 total100=0.131
+[train] 09:21<8:08:38, 0.003s/step step=  188000 episodes= 3335 eps=0.821 replay=     0 loss=nan ext100=0.120 total100=0.120
+[train] 09:26<8:07:52, 0.003s/step step=  190000 episodes= 3373 eps=0.820 replay=     0 loss=nan ext100=0.140 total100=0.140
+[train] 09:33<8:07:59, 0.003s/step step=  192000 episodes= 3409 eps=0.818 replay=     0 loss=nan ext100=0.148 total100=0.148
+[train] 09:39<8:07:49, 0.003s/step step=  194000 episodes= 3445 eps=0.816 replay=     0 loss=nan ext100=0.174 total100=0.174
+[train] 09:44<8:07:00, 0.003s/step step=  196000 episodes= 3484 eps=0.814 replay=     0 loss=nan ext100=0.165 total100=0.165
+[train] 09:49<8:06:20, 0.003s/step step=  198000 episodes= 3518 eps=0.812 replay=     0 loss=nan ext100=0.146 total100=0.146
+[eval] step=200000 episodes=3554 mean_ext_return=0.000
+[train] 09:58<8:08:30, 0.003s/step step=  200000 episodes= 3554 eps=0.810 replay=     0 loss=nan ext100=0.152 total100=0.152
+[train] 10:05<8:09:14, 0.003s/step step=  202000 episodes= 3589 eps=0.808 replay=     0 loss=nan ext100=0.117 total100=0.117
+[train] 10:12<8:10:06, 0.003s/step step=  204000 episodes= 3625 eps=0.806 replay=     0 loss=nan ext100=0.114 total100=0.114
+[train] 10:20<8:11:27, 0.003s/step step=  206000 episodes= 3659 eps=0.804 replay=     0 loss=nan ext100=0.123 total100=0.123
+[train] 10:28<8:12:46, 0.003s/step step=  208000 episodes= 3695 eps=0.802 replay=     0 loss=nan ext100=0.117 total100=0.117
+[train] 10:35<8:13:45, 0.003s/step step=  210000 episodes= 3729 eps=0.800 replay=     0 loss=nan ext100=0.116 total100=0.116
+[train] 10:43<8:15:24, 0.003s/step step=  212000 episodes= 3763 eps=0.799 replay=     0 loss=nan ext100=0.100 total100=0.100
+[train] 10:51<8:16:25, 0.003s/step step=  214000 episodes= 3797 eps=0.797 replay=     0 loss=nan ext100=0.097 total100=0.097
+[train] 10:59<8:17:42, 0.003s/step step=  216000 episodes= 3831 eps=0.795 replay=     0 loss=nan ext100=0.084 total100=0.084
+[train] 11:07<8:18:57, 0.003s/step step=  218000 episodes= 3869 eps=0.793 replay=     0 loss=nan ext100=0.132 total100=0.132
+[eval] step=220000 episodes=3904 mean_ext_return=0.000
+[train] 11:15<8:20:27, 0.003s/step step=  220000 episodes= 3904 eps=0.791 replay=     0 loss=nan ext100=0.141 total100=0.141
+[train] 11:22<8:20:51, 0.003s/step step=  222000 episodes= 3938 eps=0.789 replay=     0 loss=nan ext100=0.138 total100=0.138
+[train] 11:28<8:20:32, 0.003s/step step=  224000 episodes= 3971 eps=0.787 replay=     0 loss=nan ext100=0.093 total100=0.093
+[train] 11:33<8:20:09, 0.003s/step step=  226000 episodes= 4005 eps=0.785 replay=     0 loss=nan ext100=0.078 total100=0.078
+[train] 11:40<8:20:27, 0.003s/step step=  228000 episodes= 4039 eps=0.783 replay=     0 loss=nan ext100=0.082 total100=0.082
+[train] 11:46<8:20:11, 0.003s/step step=  230000 episodes= 4074 eps=0.781 replay=     0 loss=nan ext100=0.103 total100=0.103
+[train] 11:51<8:19:25, 0.003s/step step=  232000 episodes= 4110 eps=0.780 replay=     0 loss=nan ext100=0.118 total100=0.118
+[train] 11:57<8:18:50, 0.003s/step step=  234000 episodes= 4145 eps=0.778 replay=     0 loss=nan ext100=0.130 total100=0.130
+[train] 12:03<8:19:05, 0.003s/step step=  236000 episodes= 4180 eps=0.776 replay=     0 loss=nan ext100=0.129 total100=0.129
+[train] 12:09<8:18:37, 0.003s/step step=  238000 episodes= 4216 eps=0.774 replay=     0 loss=nan ext100=0.136 total100=0.136
+[eval] step=240000 episodes=4250 mean_ext_return=0.000
+[train] 12:15<8:18:44, 0.003s/step step=  240000 episodes= 4250 eps=0.772 replay=     0 loss=nan ext100=0.123 total100=0.123
+[train] 12:22<8:19:02, 0.003s/step step=  242000 episodes= 4285 eps=0.770 replay=     0 loss=nan ext100=0.108 total100=0.108
+[train] 12:29<8:19:17, 0.003s/step step=  244000 episodes= 4321 eps=0.768 replay=     0 loss=nan ext100=0.120 total100=0.120
+[train] 12:34<8:18:34, 0.003s/step step=  246000 episodes= 4356 eps=0.766 replay=     0 loss=nan ext100=0.121 total100=0.121
+[train] 12:39<8:18:04, 0.003s/step step=  248000 episodes= 4390 eps=0.764 replay=     0 loss=nan ext100=0.112 total100=0.112
+[train] 12:46<8:18:14, 0.003s/step step=  250000 episodes= 4424 eps=0.762 replay=     0 loss=nan ext100=0.099 total100=0.099
+[train] 12:52<8:17:43, 0.003s/step step=  252000 episodes= 4460 eps=0.761 replay=     0 loss=nan ext100=0.111 total100=0.111
+[train] 12:57<8:17:01, 0.003s/step step=  254000 episodes= 4495 eps=0.759 replay=     0 loss=nan ext100=0.123 total100=0.123
+[train] 13:03<8:16:48, 0.003s/step step=  256000 episodes= 4530 eps=0.757 replay=     0 loss=nan ext100=0.129 total100=0.129
+[train] 13:10<8:17:41, 0.003s/step step=  258000 episodes= 4565 eps=0.755 replay=     0 loss=nan ext100=0.111 total100=0.111
+[eval] step=260000 episodes=4599 mean_ext_return=0.000
+[train] 13:19<8:19:25, 0.003s/step step=  260000 episodes= 4599 eps=0.753 replay=     0 loss=nan ext100=0.105 total100=0.105
+[train] 13:27<8:20:22, 0.003s/step step=  262000 episodes= 4632 eps=0.751 replay=     0 loss=nan ext100=0.093 total100=0.093
+[train] 13:35<8:21:19, 0.003s/step step=  264000 episodes= 4665 eps=0.749 replay=     0 loss=nan ext100=0.062 total100=0.062
+[train] 13:43<8:21:57, 0.003s/step step=  266000 episodes= 4702 eps=0.747 replay=     0 loss=nan ext100=0.088 total100=0.088
+[train] 13:50<8:22:41, 0.003s/step step=  268000 episodes= 4736 eps=0.745 replay=     0 loss=nan ext100=0.111 total100=0.111
+[train] 13:58<8:23:26, 0.003s/step step=  270000 episodes= 4772 eps=0.744 replay=     0 loss=nan ext100=0.138 total100=0.138
+[train] 14:05<8:23:58, 0.003s/step step=  272000 episodes= 4805 eps=0.742 replay=     0 loss=nan ext100=0.104 total100=0.104
+[train] 14:13<8:24:52, 0.003s/step step=  274000 episodes= 4842 eps=0.740 replay=     0 loss=nan ext100=0.123 total100=0.123
+[train] 14:20<8:25:32, 0.003s/step step=  276000 episodes= 4876 eps=0.738 replay=     0 loss=nan ext100=0.122 total100=0.122
+[train] 14:28<8:26:17, 0.003s/step step=  278000 episodes= 4913 eps=0.736 replay=     0 loss=nan ext100=0.133 total100=0.133
+[eval] step=280000 episodes=4946 mean_ext_return=0.000
+[train] 14:36<8:27:17, 0.003s/step step=  280000 episodes= 4946 eps=0.734 replay=     0 loss=nan ext100=0.111 total100=0.111
+[train] 14:42<8:27:08, 0.003s/step step=  282000 episodes= 4981 eps=0.732 replay=     0 loss=nan ext100=0.112 total100=0.112
+[train] 14:49<8:27:21, 0.003s/step step=  284000 episodes= 5013 eps=0.730 replay=     0 loss=nan ext100=0.080 total100=0.080
+[train] 14:56<8:27:18, 0.003s/step step=  286000 episodes= 5047 eps=0.728 replay=     0 loss=nan ext100=0.073 total100=0.073
+[train] 15:01<8:26:55, 0.003s/step step=  288000 episodes= 5083 eps=0.726 replay=     0 loss=nan ext100=0.088 total100=0.088
+[train] 15:07<8:26:36, 0.003s/step step=  290000 episodes= 5115 eps=0.725 replay=     0 loss=nan ext100=0.089 total100=0.089
+[train] 15:14<8:26:43, 0.003s/step step=  292000 episodes= 5151 eps=0.723 replay=     0 loss=nan ext100=0.111 total100=0.111
+[train] 15:20<8:26:19, 0.003s/step step=  294000 episodes= 5184 eps=0.721 replay=     0 loss=nan ext100=0.087 total100=0.087
+[train] 15:25<8:25:52, 0.003s/step step=  296000 episodes= 5218 eps=0.719 replay=     0 loss=nan ext100=0.098 total100=0.098
+[train] 15:33<8:26:17, 0.003s/step step=  298000 episodes= 5251 eps=0.717 replay=     0 loss=nan ext100=0.067 total100=0.067
+[eval] step=300000 episodes=5285 mean_ext_return=0.000
+[train] 15:40<8:27:04, 0.003s/step step=  300000 episodes= 5285 eps=0.715 replay=     0 loss=nan ext100=0.069 total100=0.069
+[train] 15:47<8:26:55, 0.003s/step step=  302000 episodes= 5317 eps=0.713 replay=     0 loss=nan ext100=0.055 total100=0.055
+[train] 15:54<8:27:13, 0.003s/step step=  304000 episodes= 5351 eps=0.711 replay=     0 loss=nan ext100=0.078 total100=0.078
+[train] 16:00<8:27:07, 0.003s/step step=  306000 episodes= 5384 eps=0.709 replay=     0 loss=nan ext100=0.062 total100=0.062
+[train] 16:06<8:26:37, 0.003s/step step=  308000 episodes= 5420 eps=0.707 replay=     0 loss=nan ext100=0.098 total100=0.098
+[train] 16:12<8:26:29, 0.003s/step step=  310000 episodes= 5454 eps=0.706 replay=     0 loss=nan ext100=0.085 total100=0.085
+[train] 16:20<8:27:16, 0.003s/step step=  312000 episodes= 5488 eps=0.704 replay=     0 loss=nan ext100=0.102 total100=0.102
+[train] 16:28<8:28:00, 0.003s/step step=  314000 episodes= 5524 eps=0.702 replay=     0 loss=nan ext100=0.108 total100=0.108
+[train] 16:35<8:28:39, 0.003s/step step=  316000 episodes= 5560 eps=0.700 replay=     0 loss=nan ext100=0.117 total100=0.117
+[train] 16:44<8:29:33, 0.003s/step step=  318000 episodes= 5593 eps=0.698 replay=     0 loss=nan ext100=0.116 total100=0.116
+[eval] step=320000 episodes=5629 mean_ext_return=0.000
+[train] 16:53<8:30:55, 0.003s/step step=  320000 episodes= 5629 eps=0.696 replay=     0 loss=nan ext100=0.122 total100=0.122
+[train] 17:02<8:32:02, 0.003s/step step=  322000 episodes= 5665 eps=0.694 replay=     0 loss=nan ext100=0.126 total100=0.126
+[train] 17:11<8:33:12, 0.003s/step step=  324000 episodes= 5699 eps=0.692 replay=     0 loss=nan ext100=0.113 total100=0.113
+[train] 17:19<8:34:07, 0.003s/step step=  326000 episodes= 5733 eps=0.690 replay=     0 loss=nan ext100=0.105 total100=0.105
+[train] 17:28<8:35:07, 0.003s/step step=  328000 episodes= 5767 eps=0.688 replay=     0 loss=nan ext100=0.090 total100=0.090
+[train] 17:35<8:35:40, 0.003s/step step=  330000 episodes= 5801 eps=0.686 replay=     0 loss=nan ext100=0.087 total100=0.087

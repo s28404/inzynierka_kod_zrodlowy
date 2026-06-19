@@ -54,6 +54,15 @@ class NGUModule(nn.Module):
         lr = self._param("ngu_lr", 1e-4)
         self.rebuild_interval = self._param("ngu_rebuild_interval", 50)
 
+        # [FIX] NGU kernel parameters from Badia et al., 2020
+        self.kernel_epsilon = self._param("ngu_kernel_epsilon", 0.0001)  # eps in K(x,y) = eps / (d^2/d_m^2 + eps)
+        self.pseudo_counts = self._param("ngu_pseudo_counts", 0.001)      # c in denominator
+
+        # [FIX] Running average of squared distances of k-th nearest neighbor (d_m^2)
+        # This normalizes the kernel across different density regions.
+        self._running_d_m_sq = 1.0  # Initialize to 1.0 to avoid division by zero
+        self._d_m_update_rate = 0.01  # Exponential moving average rate
+
         # Embedding network (trained via IDM)
         self.phi = nn.Sequential(
             nn.Linear(obs_dim, hidden),
@@ -69,19 +78,21 @@ class NGUModule(nn.Module):
         )
 
         # RND for lifelong curiosity
+        # [FIX] Use ReLU instead of LeakyReLU (Badia et al., 2020 uses ReLU)
         self.rnd_target = nn.Sequential(
             nn.Linear(obs_dim, hidden),
-            nn.LeakyReLU(),
+            nn.ReLU(),
             nn.Linear(hidden, d),
         )
         for p in self.rnd_target.parameters():
             p.requires_grad = False
             
+        # [FIX] Use ReLU instead of LeakyReLU (Badia et al., 2020 uses ReLU)
         self.rnd_predictor = nn.Sequential(
             nn.Linear(obs_dim, hidden),
-            nn.LeakyReLU(),
+            nn.ReLU(),
             nn.Linear(hidden, hidden),
-            nn.LeakyReLU(),
+            nn.ReLU(),
             nn.Linear(hidden, d),
         )
 
@@ -103,9 +114,33 @@ class NGUModule(nn.Module):
         self.rnd_rms = RunningMeanStd()
         self.ep_rms = RunningMeanStd()
 
+        # [FIX] UVFA with multiple beta values (Badia et al., 2020, Sec. 2.3)
+        # NGU trains N policies in parallel, each with a different beta (mixing coefficient)
+        # that balances intrinsic vs extrinsic reward. The betas are logarithmically spaced
+        # from beta_min to beta_max so that some policies explore heavily while others exploit.
+        self.n_policies = self._param("ngu_n_policies", 32)
+        self.beta_min = self._param("ngu_beta_min", 0.0)  # pure extrinsic
+        self.beta_max = self._param("ngu_beta_max", 1.0)  # max intrinsic scaling
+        # Logarithmically spaced betas: more policies near 0 (exploit), fewer near 1 (explore)
+        if self.n_policies > 1:
+            log_betas = np.linspace(0, 1, self.n_policies)
+            self.betas = torch.tensor(
+                self.beta_min + (self.beta_max - self.beta_min) * log_betas,
+                dtype=torch.float32,
+            )
+        else:
+            self.betas = torch.tensor([self.beta_max], dtype=torch.float32)
+
+        # Per-policy episodic memories (each policy has its own episodic buffer)
+        self.policy_epi_buffers = [np.zeros((self.n_episodic, d), dtype=np.float32) for _ in range(self.n_policies)]
+        self.policy_epi_ptrs = [0] * self.n_policies
+        self.policy_epi_counts = [0] * self.n_policies
+        self.policy_faiss_indices = [faiss.IndexFlatL2(d) if faiss is not None else None for _ in range(self.n_policies)]
+
     def reset_episodic_memory(self):
         """
         Resets the episodic buffer and FAISS index at the start of a new episode.
+        Also resets per-policy episodic memories for UVFA.
         """
         d = self._param("ngu_embed_dim", 64)
         self.epi_buffer = np.zeros((self.n_episodic, d), dtype=np.float32)
@@ -113,6 +148,12 @@ class NGUModule(nn.Module):
         self.epi_count = 0
         self.faiss_index = faiss.IndexFlatL2(d) if faiss is not None else None
         self._update_counter = 0
+        # [FIX] Reset per-policy episodic memories for UVFA
+        for i in range(self.n_policies):
+            self.policy_epi_buffers[i] = np.zeros((self.n_episodic, d), dtype=np.float32)
+            self.policy_epi_ptrs[i] = 0
+            self.policy_epi_counts[i] = 0
+            self.policy_faiss_indices[i] = faiss.IndexFlatL2(d) if faiss is not None else None
 
     def _param(self, name, default):
         if self.config is None:
@@ -160,13 +201,13 @@ class NGUModule(nn.Module):
             self.faiss_index.add(self.epi_buffer[:filled])
 
     def _episodic_reward_from_knn(self, query_embeddings: np.ndarray) -> np.ndarray:
-        # query_embeddings is the e_s_next that we use to calculate the reward
+        # [FIX] Implements the full NGU kernel density estimation from Badia et al., 2020:
+        #   r_episodic = 1 / (sum_{f_i in N_k} K(f(x_t), f_i) + c)
+        #   K(x, y) = eps / (d^2(x, y) / d_m^2 + eps)
+        # where d_m^2 is the running average of squared distances of k-th nearest neighbors.
         filled = min(self.epi_count, self.n_episodic)
         if filled < self.k:
-            # query_embeddings.shape = [batch_size*n_agents, embed_dim]
-            # If we have less neighbors in filled than is set k we cannot calculate 
-            # the similarity to k neighbors, so we return a maximum value 1 for all queries to encourage exploration 
-            # until we have enough samples in the buffer.
+            # Not enough neighbors yet — return max reward to encourage exploration
             return np.ones(query_embeddings.shape[0], dtype=np.float32)
 
         if (
@@ -176,27 +217,33 @@ class NGUModule(nn.Module):
         ):
             distances, _ = self.faiss_index.search(query_embeddings, self.k)
         else:
-            # ref.shape = [filled, embed_dim]
             ref = self.epi_buffer[:filled]
-            # If query_embeddings.shape = [128, 64], filled = 500
-            # then query_embeddings[:, None, :].shape = [128, 1, 64]
-            # and ref[None, :, :].shape = [1, 500, 64]
-            # subtraction will broadcast:
-            # query_embedding.shape [128, 1, 64] -> [128, 500, 64]
-            # ref.shape [1, 500, 64] -> [128, 500, 64]
-            # np.sum(query_embeddings[:, None, :] - ref[None, :, :])**2, axis=-1) 
-            # from [128, 500, 64] -> [128, 500] = [batch_size*n_agents, filled]
             sq_dist = np.sum(
                 (query_embeddings[:, None, :] - ref[None, :, :]) ** 2,
                 axis=-1,
             )
-            # We want only the k smallest distances for each query, so we use np.partition which is more efficient than sorting the whole array
             distances = np.partition(sq_dist, kth=self.k - 1, axis=1)[:, : self.k]
 
-        # distances.shape = [batch_size*n_agents, k]
-        # mean(distance, axis=1).shape = [batch_size*n_agents]
-        # Instead of calculating the kernel density estimate, we use the distance to the k-th nearest neighbor as a proxy for novelty.
-        return 1.0 / (np.sqrt(np.mean(distances, axis=1) + 1e-8) + self.eps)
+        # distances.shape = [batch_size*n_agents, k]  — these are L2 squared distances from FAISS
+        # [FIX] Update running d_m^2: exponential moving average of the k-th NN squared distance
+        # The k-th nearest neighbor is the last column (distances are sorted by FAISS)
+        kth_sq_dist = distances[:, -1]  # shape: [batch_size*n_agents]
+        batch_d_m_sq = float(np.mean(kth_sq_dist))
+        self._running_d_m_sq = (
+            (1.0 - self._d_m_update_rate) * self._running_d_m_sq
+            + self._d_m_update_rate * max(batch_d_m_sq, 1e-8)
+        )
+
+        # [FIX] Compute kernel K(x, y) = eps / (d^2 / d_m^2 + eps) for each neighbor
+        # distances = d^2 (squared L2 from FAISS IndexFlatL2)
+        d_m_sq = self._running_d_m_sq
+        kernel_vals = self.kernel_epsilon / (distances / (d_m_sq + 1e-8) + self.kernel_epsilon)
+        # kernel_vals.shape = [batch_size*n_agents, k]
+
+        # [FIX] r_episodic = 1 / (sum of kernel values + pseudo-counts c)
+        r_episodic = 1.0 / (np.sum(kernel_vals, axis=1) + self.pseudo_counts)
+
+        return r_episodic
 
     def compute_intrinsic_reward(
         self,
@@ -311,3 +358,117 @@ class NGUModule(nn.Module):
         # r_int_norm: [batch_size*n_agents] -> r_t: [batch_size*n_agents, 1] -> result: [batch_size, n_agents, 1]
         r_t = torch.from_numpy(r_int_norm.astype(np.float32)).to(obs.device)
         return r_t.reshape(*original_shape[:-1], 1)
+
+    def compute_intrinsic_reward_uvfa(
+        self,
+        obs: torch.Tensor,
+        next_obs: torch.Tensor,
+        action: torch.Tensor,
+        group: str,
+    ) -> torch.Tensor:
+        """
+        [FIX] UVFA variant: compute intrinsic rewards for all N beta policies.
+        
+        Returns intrinsic rewards shaped as [batch_size, n_agents, n_policies]
+        where each slice along the last dim corresponds to a different beta policy.
+        This implements the NGU paper's UVFA with N=32 beta policies.
+        
+        Each policy i gets: r_int_i = r_episodic * alpha_i, where alpha_i is scaled
+        by beta_i. Higher beta = more intrinsic exploration reward.
+        """
+        original_shape = obs.shape
+
+        obs_flat = obs.reshape(-1, obs.shape[-1]).float()
+        next_obs_flat = next_obs.reshape(-1, next_obs.shape[-1]).float()
+        n = obs_flat.shape[0]
+
+        if not action.is_floating_point():
+            action_idx = action.reshape(-1).long()
+        else:
+            action_idx = action.reshape(-1, action.shape[-1]).argmax(dim=-1)
+
+        self.optimizer.zero_grad()
+
+        e_s = self.phi(obs_flat)
+        e_s_next = self.phi(next_obs_flat)
+
+        pred_action_logits = self.idm(torch.cat([e_s, e_s_next], dim=-1))
+        idm_loss = nn.functional.cross_entropy(pred_action_logits, action_idx)
+
+        with torch.no_grad():
+            rnd_target_feat = self.rnd_target(next_obs_flat)
+        rnd_pred_feat = self.rnd_predictor(next_obs_flat)
+        rnd_loss = nn.functional.mse_loss(rnd_pred_feat, rnd_target_feat)
+
+        (idm_loss + rnd_loss).backward()
+        self.optimizer.step()
+
+        with torch.no_grad():
+            e_query_np = e_s_next.detach().cpu().numpy().astype(np.float32)
+            rnd_r_np = (
+                ((rnd_pred_feat.detach() - rnd_target_feat) ** 2)
+                .mean(dim=-1)
+                .cpu()
+                .numpy()
+            )
+
+        # Compute base episodic reward (shared across all policies)
+        r_ep = self._episodic_reward_from_knn(e_query_np)
+
+        # Lifelong curiosity (RND-based alpha) - shared base
+        self.rnd_rms.update(rnd_r_np)
+        rnd_std = np.sqrt(self.rnd_rms.var) + 1e-8
+        rnd_scaled = np.clip(rnd_r_np / rnd_std, 0.0, self.L - 1.0)
+        alpha_base = np.clip(1.0 + rnd_scaled, 1.0, self.L)
+
+        # [FIX] Compute per-policy intrinsic rewards using UVFA betas
+        # r_int_i = r_episodic * alpha * beta_i
+        # Each beta_i controls how much intrinsic reward policy i receives
+        n_flat = r_ep.shape[0]  # batch_size * n_agents
+        n_pol = self.n_policies
+        betas_np = self.betas.cpu().numpy()  # [n_policies]
+
+        # r_ep: [n_flat], alpha_base: [n_flat], betas: [n_policies]
+        # Result: [n_flat, n_policies] where col i = r_ep * alpha_base * beta_i
+        r_int_all = np.outer(r_ep * alpha_base, betas_np)  # [n_flat, n_policies]
+
+        # Normalize per policy
+        self.ep_rms.update(r_int_all.ravel())
+        ep_std = np.sqrt(self.ep_rms.var) + 1e-8
+        r_int_norm_all = np.clip(r_int_all / ep_std, 0.0, self._param("ngu_reward_clip", 10.0))
+
+        # Update shared episodic memory
+        old_ptr = self.epi_ptr
+        old_count = self.epi_count
+        self.epi_ptr, self.epi_count = self._vec_write(
+            self.epi_buffer, self.epi_ptr, self.epi_count,
+            e_query_np, self.n_episodic,
+        )
+
+        if faiss is not None:
+            can_append_incrementally = (
+                self.faiss_index is not None
+                and old_count < self.n_episodic
+                and self.faiss_index.ntotal == old_count
+                and old_ptr + e_query_np.shape[0] <= self.n_episodic
+            )
+            if can_append_incrementally:
+                self.faiss_index.add(e_query_np)
+            else:
+                self._rebuild_faiss_index()
+
+        if _wandb is not None and _wandb.run is not None:
+            _wandb.log(
+                {
+                    f"ngu/{group}/r_episodic": float(r_ep.mean()),
+                    f"ngu/{group}/alpha": float(alpha_base.mean()),
+                    f"ngu/{group}/r_int_raw": float(r_int_all.mean()),
+                    f"ngu/{group}/r_int_norm": float(r_int_norm_all.mean()),
+                },
+                commit=False,
+            )
+
+        # Reshape: [n_flat, n_policies] -> [batch_size, n_agents, n_policies]
+        r_t = torch.from_numpy(r_int_norm_all.astype(np.float32)).to(obs.device)
+        n_agents = original_shape[1] if len(original_shape) > 2 else 1
+        return r_t.reshape(original_shape[0], n_agents, n_pol)

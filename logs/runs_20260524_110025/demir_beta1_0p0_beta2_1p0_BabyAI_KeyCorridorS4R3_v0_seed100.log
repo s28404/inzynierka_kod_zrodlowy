@@ -1,0 +1,56 @@
+<frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:488: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/s28404/.netrc.
+wandb: Currently logged in as: frackowiak (frackowiak_kajetan) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:279: DeprecationWarning: The `Scope.user` setter is deprecated in favor of `Scope.set_user()`.
+  self.scope.user = {"email": email}
+wandb: setting up run b85gjcye
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:279: DeprecationWarning: The `Scope.user` setter is deprecated in favor of `Scope.set_user()`.
+  self.scope.user = {"email": email}
+wandb: Tracking run with wandb version 0.25.0
+wandb: Run data is saved locally in logs_thesis/minigrid/wandb/run-20260524_110029-b85gjcye
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run r2d2_demir_BabyAI_KeyCorridorS4R3_v0_seed100_26_05_24-11_00_28
+wandb: ⭐️ View project at https://wandb.ai/frackowiak_kajetan/kod_zrodlowy_demir
+wandb: 🚀 View run at https://wandb.ai/frackowiak_kajetan/kod_zrodlowy_demir/runs/b85gjcye
+========================================================================/home/s28404/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/google/protobuf/internal/well_known_types.py:195: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  self.FromDatetime(datetime.datetime.utcnow())
+
+Run: r2d2_demir_BabyAI_KeyCorridorS4R3_v0_seed100_26_05_24-11_00_28
+Variant: r2d2_demir | Intrinsic kind: demir | Scale: 0.1
+Env: BabyAI-KeyCorridorS4R3-v0 | Device: cuda | Threads: 4
+========================================================================
+[train] 00:19<27:34:52, 0.010s/step step=    2000 episodes=    4 eps=0.998 replay=  1664 loss=nan ext100=0.000 total100=0.042
+[train] 00:43<30:01:02, 0.011s/step step=    4000 episodes=    8 eps=0.996 replay=  3328 loss=nan ext100=0.000 total100=0.055
+[train] 01:10<32:38:00, 0.012s/step step=    6000 episodes=   12 eps=0.994 replay=  4992 loss=nan ext100=0.000 total100=0.049
+[train] 01:42<35:34:25, 0.013s/step step=    8000 episodes=   16 eps=0.992 replay=  6656 loss=nan ext100=0.000 total100=0.045
+[train] 02:19<38:35:06, 0.014s/step step=   10000 episodes=   20 eps=0.991 replay=  8320 loss=nan ext100=0.000 total100=0.042
+[train] 03:00<41:39:41, 0.015s/step step=   12000 episodes=   25 eps=0.989 replay= 10400 loss=nan ext100=0.000 total100=0.054
+[train] 03:38<43:23:22, 0.016s/step step=   14000 episodes=   29 eps=0.987 replay= 12064 loss=nan ext100=0.000 total100=0.063
+[train] 04:20<45:08:23, 0.016s/step step=   16000 episodes=   33 eps=0.985 replay= 13728 loss=nan ext100=0.000 total100=0.063
+[train] 05:11<47:59:11, 0.017s/step step=   18000 episodes=   37 eps=0.983 replay= 15392 loss=nan ext100=0.000 total100=0.066
+[eval] step=20000 episodes=41 mean_ext_return=0.000
+[train] 06:06<50:49:55, 0.018s/step step=   20000 episodes=   41 eps=0.981 replay= 17056 loss=nan ext100=0.000 total100=0.069
+[train] 06:50<51:44:21, 0.019s/step step=   22000 episodes=   45 eps=0.979 replay= 18720 loss=nan ext100=0.000 total100=0.067
+[train] 07:33<52:24:19, 0.019s/step step=   24000 episodes=   50 eps=0.977 replay= 20800 loss=nan ext100=0.000 total100=0.067
+[train] 08:23<53:37:00, 0.019s/step step=   26000 episodes=   54 eps=0.975 replay= 22464 loss=nan ext100=0.000 total100=0.068
+[train] 09:10<54:27:51, 0.020s/step step=   28000 episodes=   58 eps=0.973 replay= 24128 loss=nan ext100=0.000 total100=0.069
+[train] 09:53<54:45:24, 0.020s/step step=   30000 episodes=   62 eps=0.972 replay= 25792 loss=nan ext100=0.000 total100=0.073
+[train] 10:35<55:00:48, 0.020s/step step=   32000 episodes=   66 eps=0.970 replay= 27456 loss=nan ext100=0.000 total100=0.073
+[train] 11:24<55:42:03, 0.020s/step step=   34000 episodes=   70 eps=0.968 replay= 29120 loss=nan ext100=0.000 total100=0.074
+[train] 12:13<56:23:19, 0.020s/step step=   36000 episodes=   75 eps=0.966 replay= 31200 loss=nan ext100=0.000 total100=0.076
+[train] 12:56<56:30:51, 0.020s/step step=   38000 episodes=   79 eps=0.964 replay= 32864 loss=nan ext100=0.000 total100=0.075
+[eval] step=40000 episodes=83 mean_ext_return=0.000
+[train] 13:46<57:10:14, 0.021s/step step=   40000 episodes=   83 eps=0.962 replay= 34528 loss=nan ext100=0.000 total100=0.077
+[train] 14:34<57:37:33, 0.021s/step step=   42000 episodes=   87 eps=0.960 replay= 36192 loss=nan ext100=0.000 total100=0.078
+[train] 15:23<58:03:17, 0.021s/step step=   44000 episodes=   91 eps=0.958 replay= 37856 loss=nan ext100=0.000 total100=0.078
+[train] 16:06<58:07:06, 0.021s/step step=   46000 episodes=   95 eps=0.956 replay= 39520 loss=nan ext100=0.000 total100=0.077
+[train] 16:51<58:16:52, 0.021s/step step=   48000 episodes=  100 eps=0.954 replay= 39936 loss=nan ext100=0.000 total100=0.078
+[train] 17:41<58:40:34, 0.021s/step step=   50000 episodes=  104 eps=0.953 replay= 39936 loss=0.00134 ext100=0.000 total100=0.080
