@@ -1,0 +1,1289 @@
+
+Algorithm: rnd, Task: smacv2/protoss_5_vs_5
+
+Loaded config:
+
+experiment:
+  sampling_device: cpu
+  train_device: cuda
+  buffer_device: cpu
+  share_policy_params: true
+  prefer_continuous_actions: true
+  collect_with_grad: false
+  parallel_collection: false
+  gamma: 0.99
+  lr: 0.001
+  adam_eps: 1.0e-06
+  adam_extra_kwargs: {}
+  clip_grad_norm: true
+  clip_grad_val: 5.0
+  soft_target_update: false
+  polyak_tau: 0.005
+  hard_target_update_frequency: 200
+  exploration_eps_init: 1.0
+  exploration_eps_end: 0.05
+  exploration_anneal_frames: 100000
+  max_n_iters: null
+  max_n_frames: 10050000
+  on_policy_collected_frames_per_batch: 6000
+  on_policy_n_envs_per_worker: 10
+  on_policy_n_minibatch_iters: 45
+  on_policy_minibatch_size: 400
+  off_policy_collected_frames_per_batch: 2000
+  off_policy_n_envs_per_worker: 4
+  off_policy_n_optimizer_steps: 100
+  off_policy_train_batch_size: 128
+  off_policy_memory_size: 5000
+  off_policy_init_random_frames: 0
+  off_policy_use_prioritized_replay_buffer: false
+  off_policy_prb_alpha: 0.6
+  off_policy_prb_beta: 0.4
+  evaluation: true
+  render: false
+  evaluation_interval: 2000
+  evaluation_episodes: 20
+  evaluation_deterministic_actions: true
+  evaluation_static: false
+  loggers:
+  - csv
+  - wandb
+  project_name: kod_zrodlowy_demir
+  wandb_extra_kwargs: {}
+  create_json: true
+  save_folder: null
+  restore_file: null
+  restore_map_location: null
+  checkpoint_interval: 60000
+  checkpoint_at_end: true
+  keep_checkpoints_num: 3
+  exclude_buffer_from_checkpoint: false
+algorithm:
+  mixing_embed_dim: 32
+  delay_value: true
+  loss_function: l2
+  td_lambda: 0.4
+  use_intrinsic_rewards: true
+  emb_dim_state: 64
+  emb_dim_action: 16
+  emb_dim_reward: 8
+  alpha: 0.5
+  beta1: 1.0
+  beta2: 0.5
+  k: 10
+  sigma: 0.1
+  n_efm: 10000
+  n_edm: 5000
+  demir_scale: 0.0
+  encoder_type: idm
+  rnd_scale: 0.1
+  rnd_embed_dim: 64
+  rnd_hidden_dim: 256
+  rnd_lr: 0.0001
+  ngu_scale: 0.0
+  ngu_embed_dim: 64
+  ngu_hidden_dim: 256
+  ngu_k: 10
+  ngu_L: 5.0
+  ngu_epsilon: 0.001
+  ngu_n_episodic: 10000
+  ngu_lr: 0.0001
+task:
+  continuing_episode: false
+  difficulty: '7'
+  game_version: null
+  map_name: 10gen_protoss
+  move_amount: 2
+  obs_all_health: true
+  obs_instead_of_state: false
+  obs_last_action: false
+  obs_own_health: true
+  obs_pathing_grid: false
+  obs_terrain_height: false
+  obs_timestep_number: false
+  reward_death_value: 10
+  reward_defeat: 0
+  reward_negative_scale: 0.5
+  reward_only_positive: true
+  reward_scale: true
+  reward_scale_rate: 20
+  reward_sparse: false
+  reward_win: 200
+  replay_dir: ''
+  replay_prefix: ''
+  conic_fov: false
+  use_unit_ranges: true
+  min_attack_range: 2
+  obs_own_pos: true
+  num_fov_actions: 12
+  capability_config:
+    n_units: 5
+    n_enemies: 5
+    team_gen:
+      dist_type: weighted_teams
+      unit_types:
+      - stalker
+      - zealot
+      - colossus
+      weights:
+      - 0.45
+      - 0.45
+      - 0.1
+      observe: true
+    start_positions:
+      dist_type: surrounded_and_reflect
+      p: 0.5
+      map_x: 32
+      map_y: 32
+  state_last_action: true
+  state_timestep_number: false
+  step_mul: 8
+  heuristic_ai: false
+  debug: false
+  prob_obs_enemy: 1.0
+  action_mask: true
+model:
+  name: gru
+  hidden_size: 128
+  n_layers: 1
+  bias: true
+  dropout: 0
+  compile: false
+  mlp_num_cells:
+  - 256
+  - 256
+  mlp_layer_class: torch.nn.Linear
+  mlp_activation_class: torch.nn.Tanh
+  mlp_activation_kwargs: null
+  mlp_norm_class: null
+  mlp_norm_kwargs: null
+critic_model:
+  name: gru
+  hidden_size: 128
+  n_layers: 1
+  bias: true
+  dropout: 0
+  compile: false
+  mlp_num_cells:
+  - 256
+  - 256
+  mlp_layer_class: torch.nn.Linear
+  mlp_activation_class: torch.nn.Tanh
+  mlp_activation_kwargs: null
+  mlp_norm_class: null
+  mlp_norm_kwargs: null
+seed: 102
+
+/home/s28404/projects/inzynierka_kod_zrodlowy/benchmarl/environments/common.py:41: UserWarning: TaskConfig python dataclass not found, task is being loaded without type checks
+  warnings.warn(
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/google/protobuf/internal/well_known_types.py:91: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).
+  _EPOCH_DATETIME_NAIVE = datetime.datetime.utcfromtimestamp(0)
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/common_pb2.py:19: DeprecationWarning: Call to deprecated create function FileDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  DESCRIPTOR = _descriptor.FileDescriptor(
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/common_pb2.py:32: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _descriptor.EnumValueDescriptor(
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/common_pb2.py:26: DeprecationWarning: Call to deprecated create function EnumDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _RACE = _descriptor.EnumDescriptor(
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/common_pb2.py:76: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _descriptor.FieldDescriptor(
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/common_pb2.py:69: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _AVAILABLEABILITY = _descriptor.Descriptor(
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/data_pb2.py:20: DeprecationWarning: Call to deprecated create function FileDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  DESCRIPTOR = _descriptor.FileDescriptor(
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/data_pb2.py:34: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _descriptor.EnumValueDescriptor(
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/data_pb2.py:28: DeprecationWarning: Call to deprecated create function EnumDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _ATTRIBUTE = _descriptor.EnumDescriptor(
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/data_pb2.py:168: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _descriptor.FieldDescriptor(
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/s2clientprotocol/data_pb2.py:161: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+  _ABILITYDATA = _descriptor.Descriptor(
+[2026-06-06 13:00:52,440][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 44557 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-vmi07pa7/
+[2026-06-06 13:00:52,441][absl][INFO] - Connecting to: ws://127.0.0.1:44557/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 44557 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-vmi07pa7/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:00:53,442][absl][INFO] - Connecting to: ws://127.0.0.1:44557/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:44557
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:00:54,443][absl][INFO] - Connecting to: ws://127.0.0.1:44557/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:46966 accepted
+ReadyHandler: 127.0.0.1:46966 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 13:00:59,200][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 32881 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-ak5q0azp/
+[2026-06-06 13:00:59,200][absl][INFO] - Connecting to: ws://127.0.0.1:32881/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 32881 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-ak5q0azp/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:01:00,201][absl][INFO] - Connecting to: ws://127.0.0.1:32881/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:32881
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:01:01,202][absl][INFO] - Connecting to: ws://127.0.0.1:32881/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:46406 accepted
+ReadyHandler: 127.0.0.1:46406 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+RequestQuit command received.
+DataHandler: unable to parse websocket frame.
+Closing Application...
+CloseHandler: 127.0.0.1:46406 disconnected
+[2026-06-06 13:01:05,287][absl][INFO] - Shutdown gracefully.
+[2026-06-06 13:01:05,288][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 13:01:05,329][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 32931 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-ya_ms80c/
+[2026-06-06 13:01:05,335][absl][INFO] - Connecting to: ws://127.0.0.1:32931/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 32931 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-ya_ms80c/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:01:06,335][absl][INFO] - Connecting to: ws://127.0.0.1:32931/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:32931
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:01:07,336][absl][INFO] - Connecting to: ws://127.0.0.1:32931/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:34474 accepted
+ReadyHandler: 127.0.0.1:34474 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 13:01:11,249][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 39949 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-6w8ve8j9/
+[2026-06-06 13:01:11,250][absl][INFO] - Connecting to: ws://127.0.0.1:39949/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 39949 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-6w8ve8j9/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:01:12,250][absl][INFO] - Connecting to: ws://127.0.0.1:39949/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:39949
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:01:13,251][absl][INFO] - Connecting to: ws://127.0.0.1:39949/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:48714 accepted
+ReadyHandler: 127.0.0.1:48714 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 13:01:16,979][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 35521 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-0v7_57gv/
+[2026-06-06 13:01:16,980][absl][INFO] - Connecting to: ws://127.0.0.1:35521/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 35521 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-0v7_57gv/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:01:17,980][absl][INFO] - Connecting to: ws://127.0.0.1:35521/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:35521
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:01:18,981][absl][INFO] - Connecting to: ws://127.0.0.1:35521/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:51196 accepted
+ReadyHandler: 127.0.0.1:51196 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 13:01:22,966][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 33491 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-wosz49d2/
+[2026-06-06 13:01:22,967][absl][INFO] - Connecting to: ws://127.0.0.1:33491/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 33491 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-wosz49d2/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:01:23,968][absl][INFO] - Connecting to: ws://127.0.0.1:33491/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:33491
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:01:24,968][absl][INFO] - Connecting to: ws://127.0.0.1:33491/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:50616 accepted
+ReadyHandler: 127.0.0.1:50616 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 13:01:28,899][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 33211 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-bi_mziy7/
+[2026-06-06 13:01:28,900][absl][INFO] - Connecting to: ws://127.0.0.1:33211/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 33211 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-bi_mziy7/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:01:29,901][absl][INFO] - Connecting to: ws://127.0.0.1:33211/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:33211
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:01:30,902][absl][INFO] - Connecting to: ws://127.0.0.1:33211/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:48666 accepted
+ReadyHandler: 127.0.0.1:48666 ready
+RequestQuit command received.
+DataHandler: unable to parse websocket frame.
+Closing Application...
+CloseHandler: 127.0.0.1:34474 disconnected
+ResponseThread: No connection, dropping the response.
+[2026-06-06 13:01:31,107][absl][INFO] - Shutdown gracefully.
+[2026-06-06 13:01:31,108][absl][INFO] - Shutdown with return code: -15
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/torchrl/envs/libs/smacv2.py:329: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:278.)
+  return torch.tensor(value, device=self.device, dtype=torch.float32)
+[2026-06-06 13:01:35,003][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 35489 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-0oy9peri/
+[2026-06-06 13:01:35,004][absl][INFO] - Connecting to: ws://127.0.0.1:35489/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 35489 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-0oy9peri/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:01:36,005][absl][INFO] - Connecting to: ws://127.0.0.1:35489/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:35489
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:01:37,005][absl][INFO] - Connecting to: ws://127.0.0.1:35489/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:35856 accepted
+ReadyHandler: 127.0.0.1:35856 ready
+DataHandler: unable to parse websocket frame.
+RequestQuit command received.
+CloseHandler: 127.0.0.1:48714 disconnected
+Closing Application...
+[2026-06-06 13:01:37,211][absl][INFO] - Shutdown gracefully.
+[2026-06-06 13:01:37,211][absl][INFO] - Shutdown with return code: -15
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 13:01:41,195][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 42895 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-ogqsc8fz/
+[2026-06-06 13:01:41,196][absl][INFO] - Connecting to: ws://127.0.0.1:42895/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 42895 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-ogqsc8fz/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:01:42,196][absl][INFO] - Connecting to: ws://127.0.0.1:42895/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:42895
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:01:43,197][absl][INFO] - Connecting to: ws://127.0.0.1:42895/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:41504 accepted
+ReadyHandler: 127.0.0.1:41504 ready
+RequestQuit command received.
+DataHandler: unable to parse websocket frame.
+Closing Application...
+CloseHandler: 127.0.0.1:51196 disconnected
+[2026-06-06 13:01:43,403][absl][INFO] - Shutdown gracefully.
+[2026-06-06 13:01:43,404][absl][INFO] - Shutdown with return code: -15
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[2026-06-06 13:01:47,305][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 41167 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-jhcwxr9w/
+[2026-06-06 13:01:47,305][absl][INFO] - Connecting to: ws://127.0.0.1:41167/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 41167 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-jhcwxr9w/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:01:48,306][absl][INFO] - Connecting to: ws://127.0.0.1:41167/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:41167
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:01:49,307][absl][INFO] - Connecting to: ws://127.0.0.1:41167/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:45242 accepted
+ReadyHandler: 127.0.0.1:45242 ready
+RequestQuit command received.
+DataHandler: unable to parse websocket frame.
+Closing Application...
+CloseHandler: 127.0.0.1:50616 disconnected
+[2026-06-06 13:01:49,512][absl][INFO] - Shutdown gracefully.
+[2026-06-06 13:01:49,512][absl][INFO] - Shutdown with return code: -15
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/s28404/.netrc.
+wandb: Currently logged in as: frackowiak (frackowiak_kajetan) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:279: DeprecationWarning: The `Scope.user` setter is deprecated in favor of `Scope.set_user()`.
+  self.scope.user = {"email": email}
+wandb: setting up run qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed102_26_06_06-13_00_52
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:268: DeprecationWarning: Read the `app_url` setting from the appropriate Settings object.
+  app_url = wandb.util.app_url(tags["base_url"])  # type: ignore[index]
+/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/wandb/analytics/sentry.py:279: DeprecationWarning: The `Scope.user` setter is deprecated in favor of `Scope.set_user()`.
+  self.scope.user = {"email": email}
+wandb: Tracking run with wandb version 0.25.0
+wandb: Run data is saved locally in /home/s28404/projects/inzynierka_kod_zrodlowy/outputs/2026-06-06/13-00-52/qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed102_26_06_06-13_00_52/wandb/run-20260606_130153-qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed102_26_06_06-13_00_52
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed102_26_06_06-13_00_52
+wandb: ⭐️ View project at https://wandb.ai/frackowiak_kajetan/kod_zrodlowy_demir
+wandb: 🚀 View run at https://wandb.ai/frackowiak_kajetan/kod_zrodlowy_demir/runs/qmix_smacv2_protoss_5_vs_5_rnd_scale0p1_seed102_26_06_06-13_00_52
+  0%|          | 0/5025 [00:00<?, ?it/s]/home/s28404/projects/inzynierka_kod_zrodlowy/.venv/lib/python3.12/site-packages/google/protobuf/internal/well_known_types.py:195: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  self.FromDatetime(datetime.datetime.utcnow())
+[iter    0 | frames     2,000 / 10,050,000] mean_return=2.6411
+[2026-06-06 13:04:38,887][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 44941 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-6sxzpdmu/
+[2026-06-06 13:04:38,888][absl][INFO] - Connecting to: ws://127.0.0.1:44941/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 44941 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-6sxzpdmu/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 13:04:39,890][absl][INFO] - Connecting to: ws://127.0.0.1:44941/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:44941
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 13:04:40,891][absl][INFO] - Connecting to: ws://127.0.0.1:44941/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:47146 accepted
+ReadyHandler: 127.0.0.1:47146 ready
+DataHandler: unable to parse websocket frame.
+RequestQuit command received.
+CloseHandler: 127.0.0.1:46966 disconnected
+Closing Application...
+ResponseThread: No connection, dropping the response.
+[2026-06-06 13:04:41,098][absl][INFO] - Shutdown gracefully.
+[2026-06-06 13:04:41,100][absl][INFO] - Shutdown with return code: -15
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+wandb: WARNING Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.641096830368042:   0%|          | 1/5025 [03:10<266:01:32, 190.62s/it][iter    1 | frames     4,000 / 10,050,000] mean_return=2.7070
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7069644927978516:   0%|          | 2/5025 [06:22<267:08:23, 191.46s/it][iter    2 | frames     6,000 / 10,050,000] mean_return=2.8308
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8307852745056152:   0%|          | 3/5025 [09:33<266:59:02, 191.39s/it][iter    3 | frames     8,000 / 10,050,000] mean_return=2.6779
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.677903413772583:   0%|          | 4/5025 [12:45<267:13:11, 191.59s/it] [iter    4 | frames    10,000 / 10,050,000] mean_return=2.5258
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.5257928371429443:   0%|          | 5/5025 [15:53<265:18:58, 190.27s/it][iter    5 | frames    12,000 / 10,050,000] mean_return=2.7424
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7423956394195557:   0%|          | 6/5025 [19:07<266:53:48, 191.44s/it][iter    6 | frames    14,000 / 10,050,000] mean_return=2.8202
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8201651573181152:   0%|          | 7/5025 [22:22<268:18:36, 192.49s/it][iter    7 | frames    16,000 / 10,050,000] mean_return=2.9634
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.96337890625:   0%|          | 8/5025 [25:36<268:59:17, 193.02s/it]     [iter    8 | frames    18,000 / 10,050,000] mean_return=2.6007
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.600705623626709:   0%|          | 9/5025 [28:51<269:56:48, 193.74s/it][iter    9 | frames    20,000 / 10,050,000] mean_return=2.9568
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9568119049072266:   0%|          | 10/5025 [32:08<271:26:00, 194.85s/it][iter   10 | frames    22,000 / 10,050,000] mean_return=2.4329
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.4328765869140625:   0%|          | 11/5025 [35:20<269:48:42, 193.72s/it][iter   11 | frames    24,000 / 10,050,000] mean_return=2.9611
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9610705375671387:   0%|          | 12/5025 [38:34<269:51:04, 193.79s/it][iter   12 | frames    26,000 / 10,050,000] mean_return=2.9862
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9862282276153564:   0%|          | 13/5025 [41:49<270:37:06, 194.38s/it][iter   13 | frames    28,000 / 10,050,000] mean_return=3.0270
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0269739627838135:   0%|          | 14/5025 [45:06<271:29:44, 195.05s/it][iter   14 | frames    30,000 / 10,050,000] mean_return=2.5683
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.568268299102783:   0%|          | 15/5025 [48:20<271:06:35, 194.81s/it] [iter   15 | frames    32,000 / 10,050,000] mean_return=2.7354
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7353785037994385:   0%|          | 16/5025 [51:34<270:47:13, 194.62s/it][iter   16 | frames    34,000 / 10,050,000] mean_return=3.0300
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.029974937438965:   0%|          | 17/5025 [54:46<269:34:58, 193.79s/it] [iter   17 | frames    36,000 / 10,050,000] mean_return=2.5494
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.5493900775909424:   0%|          | 18/5025 [58:06<271:55:34, 195.51s/it][iter   18 | frames    38,000 / 10,050,000] mean_return=2.8580
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.857957124710083:   0%|          | 19/5025 [1:01:21<271:41:07, 195.38s/it][iter   19 | frames    40,000 / 10,050,000] mean_return=2.7490
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7490339279174805:   0%|          | 20/5025 [1:04:35<271:02:37, 194.96s/it][iter   20 | frames    42,000 / 10,050,000] mean_return=3.1822
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1822307109832764:   0%|          | 21/5025 [1:07:46<269:25:09, 193.83s/it][iter   21 | frames    44,000 / 10,050,000] mean_return=2.8325
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8324804306030273:   0%|          | 22/5025 [1:10:56<267:38:33, 192.59s/it][iter   22 | frames    46,000 / 10,050,000] mean_return=2.8342
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8342368602752686:   0%|          | 23/5025 [1:14:08<267:30:26, 192.53s/it][iter   23 | frames    48,000 / 10,050,000] mean_return=3.0424
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.042416572570801:   0%|          | 24/5025 [1:17:23<268:35:47, 193.35s/it] [iter   24 | frames    50,000 / 10,050,000] mean_return=2.9187
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9186906814575195:   0%|          | 25/5025 [1:20:38<269:01:31, 193.70s/it][iter   25 | frames    52,000 / 10,050,000] mean_return=2.8741
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.874056577682495:   1%|          | 26/5025 [1:23:48<267:32:20, 192.67s/it] [iter   26 | frames    54,000 / 10,050,000] mean_return=2.8810
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8809707164764404:   1%|          | 27/5025 [1:27:04<268:43:44, 193.56s/it][iter   27 | frames    56,000 / 10,050,000] mean_return=3.0551
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0551276206970215:   1%|          | 28/5025 [1:30:12<266:27:19, 191.96s/it][iter   28 | frames    58,000 / 10,050,000] mean_return=3.3236
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.3236031532287598:   1%|          | 29/5025 [1:33:23<265:51:51, 191.58s/it][iter   29 | frames    60,000 / 10,050,000] mean_return=2.8514
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8514163494110107:   1%|          | 30/5025 [1:36:31<264:29:43, 190.63s/it][iter   30 | frames    62,000 / 10,050,000] mean_return=3.0848
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0847928524017334:   1%|          | 31/5025 [1:39:44<265:31:36, 191.41s/it][iter   31 | frames    64,000 / 10,050,000] mean_return=2.6126
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6126086711883545:   1%|          | 32/5025 [1:43:00<267:05:41, 192.58s/it][iter   32 | frames    66,000 / 10,050,000] mean_return=2.6319
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6319334506988525:   1%|          | 33/5025 [1:46:19<269:52:08, 194.62s/it][iter   33 | frames    68,000 / 10,050,000] mean_return=3.0624
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0624101161956787:   1%|          | 34/5025 [1:49:46<274:50:05, 198.24s/it][iter   34 | frames    70,000 / 10,050,000] mean_return=3.0693
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0693321228027344:   1%|          | 35/5025 [1:53:21<281:53:31, 203.37s/it][iter   35 | frames    72,000 / 10,050,000] mean_return=2.5276
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.5276334285736084:   1%|          | 36/5025 [1:57:09<292:07:24, 210.79s/it][iter   36 | frames    74,000 / 10,050,000] mean_return=3.0035
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0034537315368652:   1%|          | 37/5025 [2:00:39<291:40:37, 210.51s/it][iter   37 | frames    76,000 / 10,050,000] mean_return=2.8942
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8942229747772217:   1%|          | 38/5025 [2:04:15<293:53:43, 212.16s/it][iter   38 | frames    78,000 / 10,050,000] mean_return=2.6226
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.622561454772949:   1%|          | 39/5025 [2:07:43<292:15:22, 211.02s/it] [iter   39 | frames    80,000 / 10,050,000] mean_return=2.6803
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.680347442626953:   1%|          | 40/5025 [2:11:23<295:40:32, 213.53s/it][iter   40 | frames    82,000 / 10,050,000] mean_return=3.2156
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.2156364917755127:   1%|          | 41/5025 [2:14:59<296:40:18, 214.29s/it][iter   41 | frames    84,000 / 10,050,000] mean_return=2.8460
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8459551334381104:   1%|          | 42/5025 [2:18:28<294:28:39, 212.75s/it][iter   42 | frames    86,000 / 10,050,000] mean_return=3.0279
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.027944803237915:   1%|          | 43/5025 [2:21:48<289:19:33, 209.07s/it] [iter   43 | frames    88,000 / 10,050,000] mean_return=2.8538
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8537778854370117:   1%|          | 44/5025 [2:25:06<284:28:55, 205.61s/it][iter   44 | frames    90,000 / 10,050,000] mean_return=2.6850
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6850156784057617:   1%|          | 45/5025 [2:28:20<279:47:38, 202.26s/it][iter   45 | frames    92,000 / 10,050,000] mean_return=2.7365
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.736542224884033:   1%|          | 46/5025 [2:31:33<275:39:03, 199.31s/it] [iter   46 | frames    94,000 / 10,050,000] mean_return=2.9477
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9476828575134277:   1%|          | 47/5025 [2:34:39<270:04:37, 195.31s/it][iter   47 | frames    96,000 / 10,050,000] mean_return=2.6901
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6901321411132812:   1%|          | 48/5025 [2:37:51<268:40:07, 194.34s/it][iter   48 | frames    98,000 / 10,050,000] mean_return=2.8533
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.853292465209961:   1%|          | 49/5025 [2:41:04<268:17:06, 194.10s/it] [iter   49 | frames   100,000 / 10,050,000] mean_return=2.9000
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9000484943389893:   1%|          | 50/5025 [2:44:20<268:45:38, 194.48s/it][iter   50 | frames   102,000 / 10,050,000] mean_return=2.7608
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7607853412628174:   1%|          | 51/5025 [2:47:34<268:35:15, 194.39s/it][iter   51 | frames   104,000 / 10,050,000] mean_return=2.8494
+RequestQuit command received.
+DataHandler: unable to parse websocket frame.
+Closing Application...
+CloseHandler: 127.0.0.1:47146 disconnected
+[2026-06-06 15:52:33,423][absl][INFO] - Shutdown gracefully.
+[2026-06-06 15:52:33,424][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 15:52:33,432][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 46009 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-bebomr0h/
+[2026-06-06 15:52:33,435][absl][INFO] - Connecting to: ws://127.0.0.1:46009/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 46009 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-bebomr0h/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 15:52:34,436][absl][INFO] - Connecting to: ws://127.0.0.1:46009/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:46009
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 15:52:35,437][absl][INFO] - Connecting to: ws://127.0.0.1:46009/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:55140 accepted
+ReadyHandler: 127.0.0.1:55140 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8493783473968506:   1%|          | 52/5025 [2:50:55<271:12:32, 196.33s/it][iter   52 | frames   106,000 / 10,050,000] mean_return=2.4774
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.4774057865142822:   1%|          | 53/5025 [2:54:03<267:58:11, 194.02s/it][iter   53 | frames   108,000 / 10,050,000] mean_return=2.7467
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7466516494750977:   1%|          | 54/5025 [2:57:14<266:31:26, 193.02s/it][iter   54 | frames   110,000 / 10,050,000] mean_return=2.7190
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7189781665802:   1%|          | 55/5025 [3:00:23<264:43:10, 191.75s/it]   [iter   55 | frames   112,000 / 10,050,000] mean_return=2.9881
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9881062507629395:   1%|          | 56/5025 [3:03:37<265:43:59, 192.52s/it][iter   56 | frames   114,000 / 10,050,000] mean_return=3.4596
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.459632158279419:   1%|          | 57/5025 [3:06:53<267:05:39, 193.55s/it] [iter   57 | frames   116,000 / 10,050,000] mean_return=2.7072
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.707180976867676:   1%|          | 58/5025 [3:10:06<266:56:42, 193.48s/it][iter   58 | frames   118,000 / 10,050,000] mean_return=2.4975
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.497534990310669:   1%|          | 59/5025 [3:13:29<270:40:41, 196.22s/it][iter   59 | frames   120,000 / 10,050,000] mean_return=3.2085
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.2084619998931885:   1%|          | 60/5025 [3:16:53<273:41:23, 198.45s/it][iter   60 | frames   122,000 / 10,050,000] mean_return=2.9174
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9174411296844482:   1%|          | 61/5025 [3:20:17<276:00:46, 200.17s/it][iter   61 | frames   124,000 / 10,050,000] mean_return=2.8560
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8559892177581787:   1%|          | 62/5025 [3:23:45<279:10:49, 202.51s/it][iter   62 | frames   126,000 / 10,050,000] mean_return=2.4800
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.479952812194824:   1%|▏         | 63/5025 [3:27:14<281:54:03, 204.52s/it] [iter   63 | frames   128,000 / 10,050,000] mean_return=2.8031
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8031067848205566:   1%|▏         | 64/5025 [3:30:36<280:48:39, 203.77s/it][iter   64 | frames   130,000 / 10,050,000] mean_return=2.5520
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.5519611835479736:   1%|▏         | 65/5025 [3:33:53<278:02:17, 201.80s/it][iter   65 | frames   132,000 / 10,050,000] mean_return=3.0007
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0006654262542725:   1%|▏         | 66/5025 [3:37:12<276:42:18, 200.87s/it][iter   66 | frames   134,000 / 10,050,000] mean_return=2.8966
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.896566867828369:   1%|▏         | 67/5025 [3:40:27<274:20:15, 199.20s/it] [iter   67 | frames   136,000 / 10,050,000] mean_return=3.0825
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0824570655822754:   1%|▏         | 68/5025 [3:43:40<271:43:14, 197.34s/it][iter   68 | frames   138,000 / 10,050,000] mean_return=2.6867
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6866860389709473:   1%|▏         | 69/5025 [3:46:54<270:20:07, 196.37s/it][iter   69 | frames   140,000 / 10,050,000] mean_return=2.7342
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.734154462814331:   1%|▏         | 70/5025 [3:50:09<269:30:35, 195.81s/it] [iter   70 | frames   142,000 / 10,050,000] mean_return=2.8220
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8219785690307617:   1%|▏         | 71/5025 [3:53:21<267:46:41, 194.59s/it][iter   71 | frames   144,000 / 10,050,000] mean_return=2.5142
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.5142459869384766:   1%|▏         | 72/5025 [3:56:33<266:49:39, 193.94s/it][iter   72 | frames   146,000 / 10,050,000] mean_return=3.1427
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.142664909362793:   1%|▏         | 73/5025 [3:59:42<264:52:41, 192.56s/it] [iter   73 | frames   148,000 / 10,050,000] mean_return=3.1168
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1168336868286133:   1%|▏         | 74/5025 [4:02:54<264:11:44, 192.10s/it][iter   74 | frames   150,000 / 10,050,000] mean_return=2.6227
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.622720956802368:   1%|▏         | 75/5025 [4:06:09<265:37:00, 193.18s/it] [iter   75 | frames   152,000 / 10,050,000] mean_return=2.7823
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.782327651977539:   2%|▏         | 76/5025 [4:09:19<264:00:55, 192.05s/it][iter   76 | frames   154,000 / 10,050,000] mean_return=3.1384
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1384377479553223:   2%|▏         | 77/5025 [4:12:31<264:12:59, 192.24s/it][iter   77 | frames   156,000 / 10,050,000] mean_return=2.7537
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7537293434143066:   2%|▏         | 78/5025 [4:15:42<263:31:05, 191.77s/it][iter   78 | frames   158,000 / 10,050,000] mean_return=2.6393
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6392548084259033:   2%|▏         | 79/5025 [4:18:51<262:32:08, 191.09s/it][iter   79 | frames   160,000 / 10,050,000] mean_return=3.3389
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.3389155864715576:   2%|▏         | 80/5025 [4:22:02<262:17:36, 190.95s/it][iter   80 | frames   162,000 / 10,050,000] mean_return=2.9191
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.919069766998291:   2%|▏         | 81/5025 [4:25:16<263:19:00, 191.74s/it] [iter   81 | frames   164,000 / 10,050,000] mean_return=2.6775
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6775150299072266:   2%|▏         | 82/5025 [4:28:30<264:28:36, 192.62s/it][iter   82 | frames   166,000 / 10,050,000] mean_return=2.7551
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7550904750823975:   2%|▏         | 83/5025 [4:31:45<265:20:31, 193.29s/it][iter   83 | frames   168,000 / 10,050,000] mean_return=2.9075
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.907524347305298:   2%|▏         | 84/5025 [4:35:00<265:47:48, 193.66s/it] [iter   84 | frames   170,000 / 10,050,000] mean_return=3.0347
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.034722089767456:   2%|▏         | 85/5025 [4:38:17<267:02:31, 194.61s/it][iter   85 | frames   172,000 / 10,050,000] mean_return=2.3500
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.349966287612915:   2%|▏         | 86/5025 [4:41:33<267:34:41, 195.04s/it][iter   86 | frames   174,000 / 10,050,000] mean_return=2.7995
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7995007038116455:   2%|▏         | 87/5025 [4:44:49<268:17:35, 195.60s/it][iter   87 | frames   176,000 / 10,050,000] mean_return=3.2765
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.276472806930542:   2%|▏         | 88/5025 [4:48:13<271:39:29, 198.09s/it] [iter   88 | frames   178,000 / 10,050,000] mean_return=2.7473
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7472686767578125:   2%|▏         | 89/5025 [4:51:42<275:45:23, 201.12s/it][iter   89 | frames   180,000 / 10,050,000] mean_return=2.7343
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.734333038330078:   2%|▏         | 90/5025 [4:55:12<279:40:56, 204.02s/it] [iter   90 | frames   182,000 / 10,050,000] mean_return=2.8995
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.899503469467163:   2%|▏         | 91/5025 [4:58:37<279:56:45, 204.26s/it][iter   91 | frames   184,000 / 10,050,000] mean_return=2.7484
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7484121322631836:   2%|▏         | 92/5025 [5:02:14<285:04:46, 208.05s/it][iter   92 | frames   186,000 / 10,050,000] mean_return=2.9892
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9891722202301025:   2%|▏         | 93/5025 [5:05:45<286:03:26, 208.80s/it][iter   93 | frames   188,000 / 10,050,000] mean_return=3.0954
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0954396724700928:   2%|▏         | 94/5025 [5:09:08<283:49:05, 207.21s/it][iter   94 | frames   190,000 / 10,050,000] mean_return=3.1759
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.175936698913574:   2%|▏         | 95/5025 [5:12:29<281:02:24, 205.22s/it] [iter   95 | frames   192,000 / 10,050,000] mean_return=2.3482
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.3482208251953125:   2%|▏         | 96/5025 [5:15:43<276:39:09, 202.06s/it][iter   96 | frames   194,000 / 10,050,000] mean_return=2.8781
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8781204223632812:   2%|▏         | 97/5025 [5:19:03<275:44:20, 201.43s/it][iter   97 | frames   196,000 / 10,050,000] mean_return=3.4795
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.4794511795043945:   2%|▏         | 98/5025 [5:22:18<272:58:18, 199.45s/it][iter   98 | frames   198,000 / 10,050,000] mean_return=2.6919
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6918609142303467:   2%|▏         | 99/5025 [5:25:35<271:38:35, 198.52s/it][iter   99 | frames   200,000 / 10,050,000] mean_return=3.2661
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.2660603523254395:   2%|▏         | 100/5025 [5:28:50<270:14:57, 197.54s/it][iter  100 | frames   202,000 / 10,050,000] mean_return=2.4351
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.435088872909546:   2%|▏         | 101/5025 [5:32:00<267:07:30, 195.30s/it] [iter  101 | frames   204,000 / 10,050,000] mean_return=2.7747
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.774686336517334:   2%|▏         | 102/5025 [5:35:10<264:54:49, 193.72s/it][iter  102 | frames   206,000 / 10,050,000] mean_return=2.3555
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.355522871017456:   2%|▏         | 103/5025 [5:38:21<263:55:17, 193.03s/it][iter  103 | frames   208,000 / 10,050,000] mean_return=2.6787
+RequestQuit command received.
+Closing Application...
+DataHandler: unable to parse websocket frame.
+CloseHandler: 127.0.0.1:55140 disconnected
+[2026-06-06 18:43:09,111][absl][INFO] - Shutdown gracefully.
+[2026-06-06 18:43:09,112][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 18:43:09,120][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 33187 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-z2y_punz/
+[2026-06-06 18:43:09,121][absl][INFO] - Connecting to: ws://127.0.0.1:33187/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 33187 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-z2y_punz/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 18:43:10,123][absl][INFO] - Connecting to: ws://127.0.0.1:33187/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:33187
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 18:43:11,124][absl][INFO] - Connecting to: ws://127.0.0.1:33187/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:53462 accepted
+ReadyHandler: 127.0.0.1:53462 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6787121295928955:   2%|▏         | 104/5025 [5:41:33<263:28:55, 192.75s/it][iter  104 | frames   210,000 / 10,050,000] mean_return=2.2768
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.2768139839172363:   2%|▏         | 105/5025 [5:44:43<262:02:07, 191.73s/it][iter  105 | frames   212,000 / 10,050,000] mean_return=2.5154
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.515414237976074:   2%|▏         | 106/5025 [5:47:47<259:04:26, 189.60s/it] [iter  106 | frames   214,000 / 10,050,000] mean_return=2.7169
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.716853141784668:   2%|▏         | 107/5025 [5:50:57<258:52:54, 189.50s/it][iter  107 | frames   216,000 / 10,050,000] mean_return=3.2591
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.2590997219085693:   2%|▏         | 108/5025 [5:54:05<258:31:33, 189.28s/it][iter  108 | frames   218,000 / 10,050,000] mean_return=2.8869
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8869380950927734:   2%|▏         | 109/5025 [5:57:17<259:16:31, 189.87s/it][iter  109 | frames   220,000 / 10,050,000] mean_return=2.5940
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.5939857959747314:   2%|▏         | 110/5025 [6:00:33<261:52:36, 191.81s/it][iter  110 | frames   222,000 / 10,050,000] mean_return=3.4393
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.4393134117126465:   2%|▏         | 111/5025 [6:03:50<263:46:39, 193.24s/it][iter  111 | frames   224,000 / 10,050,000] mean_return=2.9764
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9764134883880615:   2%|▏         | 112/5025 [6:07:03<263:54:36, 193.38s/it][iter  112 | frames   226,000 / 10,050,000] mean_return=2.6898
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.689786911010742:   2%|▏         | 113/5025 [6:10:18<264:30:31, 193.86s/it] [iter  113 | frames   228,000 / 10,050,000] mean_return=2.5260
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.5259830951690674:   2%|▏         | 114/5025 [6:13:39<267:15:34, 195.91s/it][iter  114 | frames   230,000 / 10,050,000] mean_return=2.9638
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9638381004333496:   2%|▏         | 115/5025 [6:17:04<271:05:38, 198.77s/it][iter  115 | frames   232,000 / 10,050,000] mean_return=2.6867
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6867477893829346:   2%|▏         | 116/5025 [6:20:35<276:01:05, 202.42s/it][iter  116 | frames   234,000 / 10,050,000] mean_return=2.7036
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.703608274459839:   2%|▏         | 117/5025 [6:24:08<280:13:51, 205.55s/it] [iter  117 | frames   236,000 / 10,050,000] mean_return=2.8814
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.881420135498047:   2%|▏         | 118/5025 [6:27:43<284:01:06, 208.37s/it][iter  118 | frames   238,000 / 10,050,000] mean_return=3.2061
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.2061424255371094:   2%|▏         | 119/5025 [6:31:21<287:58:03, 211.31s/it][iter  119 | frames   240,000 / 10,050,000] mean_return=2.8256
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.825556755065918:   2%|▏         | 120/5025 [6:34:47<285:47:59, 209.76s/it] [iter  120 | frames   242,000 / 10,050,000] mean_return=2.7417
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.74167799949646:   2%|▏         | 121/5025 [6:38:07<281:35:35, 206.72s/it] [iter  121 | frames   244,000 / 10,050,000] mean_return=2.7912
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7912120819091797:   2%|▏         | 122/5025 [6:41:27<278:51:11, 204.75s/it][iter  122 | frames   246,000 / 10,050,000] mean_return=3.0385
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.038480043411255:   2%|▏         | 123/5025 [6:44:44<275:28:34, 202.31s/it] [iter  123 | frames   248,000 / 10,050,000] mean_return=2.8389
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8389244079589844:   2%|▏         | 124/5025 [6:48:04<274:42:05, 201.78s/it][iter  124 | frames   250,000 / 10,050,000] mean_return=3.4613
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.461322784423828:   2%|▏         | 125/5025 [6:51:21<272:40:59, 200.34s/it] [iter  125 | frames   252,000 / 10,050,000] mean_return=2.9750
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.974984884262085:   3%|▎         | 126/5025 [6:54:42<272:43:06, 200.41s/it][iter  126 | frames   254,000 / 10,050,000] mean_return=2.3944
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.3944239616394043:   3%|▎         | 127/5025 [6:58:00<271:47:27, 199.76s/it][iter  127 | frames   256,000 / 10,050,000] mean_return=2.9674
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.96740460395813:   3%|▎         | 128/5025 [7:01:12<268:20:43, 197.27s/it]  [iter  128 | frames   258,000 / 10,050,000] mean_return=2.7529
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7528679370880127:   3%|▎         | 129/5025 [7:04:25<266:53:33, 196.24s/it]RequestQuit command received.
+DataHandler: unable to parse websocket frame.
+Closing Application...
+CloseHandler: 127.0.0.1:48666 disconnected
+[2026-06-06 20:06:45,766][absl][INFO] - Shutdown gracefully.
+[2026-06-06 20:06:45,767][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 20:06:45,775][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 39157 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-g2ydmujy/
+[2026-06-06 20:06:45,777][absl][INFO] - Connecting to: ws://127.0.0.1:39157/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 39157 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-g2ydmujy/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 20:06:46,778][absl][INFO] - Connecting to: ws://127.0.0.1:39157/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:39157
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 20:06:47,779][absl][INFO] - Connecting to: ws://127.0.0.1:39157/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:55556 accepted
+ReadyHandler: 127.0.0.1:55556 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+RequestQuit command received.
+DataHandler: unable to parse websocket frame.
+Closing Application...
+CloseHandler: 127.0.0.1:45242 disconnected
+[2026-06-06 20:06:52,668][absl][INFO] - Shutdown gracefully.
+[2026-06-06 20:06:52,669][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 20:06:52,673][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 43915 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-74arr73o/
+[2026-06-06 20:06:52,675][absl][INFO] - Connecting to: ws://127.0.0.1:43915/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 43915 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-74arr73o/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 20:06:53,682][absl][INFO] - Connecting to: ws://127.0.0.1:43915/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:43915
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 20:06:54,684][absl][INFO] - Connecting to: ws://127.0.0.1:43915/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:39318 accepted
+ReadyHandler: 127.0.0.1:39318 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+DataHandler: unable to parse websocket frame.
+CloseHandler: 127.0.0.1:35856 disconnected
+[2026-06-06 20:06:59,238][absl][INFO] - Shutdown gracefully.
+[2026-06-06 20:06:59,239][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 20:06:59,242][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 40771 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-v1g04apu/
+[2026-06-06 20:06:59,245][absl][INFO] - Connecting to: ws://127.0.0.1:40771/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 40771 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-v1g04apu/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 20:07:00,246][absl][INFO] - Connecting to: ws://127.0.0.1:40771/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:40771
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 20:07:01,247][absl][INFO] - Connecting to: ws://127.0.0.1:40771/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:42322 accepted
+ReadyHandler: 127.0.0.1:42322 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+DataHandler: unable to parse websocket frame.
+CloseHandler: 127.0.0.1:41504 disconnected
+[2026-06-06 20:07:06,102][absl][INFO] - Shutdown gracefully.
+[2026-06-06 20:07:06,103][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 20:07:06,112][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 44251 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-oln3vvb2/
+[2026-06-06 20:07:06,114][absl][INFO] - Connecting to: ws://127.0.0.1:44251/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 44251 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-oln3vvb2/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 20:07:07,115][absl][INFO] - Connecting to: ws://127.0.0.1:44251/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:44251
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 20:07:08,117][absl][INFO] - Connecting to: ws://127.0.0.1:44251/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:54880 accepted
+ReadyHandler: 127.0.0.1:54880 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[iter  129 | frames   260,000 / 10,050,000] mean_return=2.6539
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.653883218765259:   3%|▎         | 130/5025 [7:08:10<278:24:14, 204.75s/it] [iter  130 | frames   262,000 / 10,050,000] mean_return=2.8815
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.881457805633545:   3%|▎         | 131/5025 [7:11:38<279:41:25, 205.74s/it][iter  131 | frames   264,000 / 10,050,000] mean_return=2.5354
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.535352945327759:   3%|▎         | 132/5025 [7:15:00<278:08:57, 204.65s/it][iter  132 | frames   266,000 / 10,050,000] mean_return=2.9308
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9307966232299805:   3%|▎         | 133/5025 [7:18:34<281:58:00, 207.50s/it][iter  133 | frames   268,000 / 10,050,000] mean_return=2.8906
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.890646457672119:   3%|▎         | 134/5025 [7:21:54<278:39:14, 205.10s/it] [iter  134 | frames   270,000 / 10,050,000] mean_return=2.7520
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7519774436950684:   3%|▎         | 135/5025 [7:25:06<273:23:01, 201.26s/it][iter  135 | frames   272,000 / 10,050,000] mean_return=2.7713
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.771315574645996:   3%|▎         | 136/5025 [7:28:18<269:19:17, 198.31s/it] [iter  136 | frames   274,000 / 10,050,000] mean_return=2.8152
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.815216541290283:   3%|▎         | 137/5025 [7:31:28<265:58:32, 195.89s/it][iter  137 | frames   276,000 / 10,050,000] mean_return=2.9604
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.960426092147827:   3%|▎         | 138/5025 [7:34:33<261:28:29, 192.62s/it][iter  138 | frames   278,000 / 10,050,000] mean_return=3.2410
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.2410056591033936:   3%|▎         | 139/5025 [7:37:44<261:00:52, 192.32s/it][iter  139 | frames   280,000 / 10,050,000] mean_return=2.7478
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7478151321411133:   3%|▎         | 140/5025 [7:40:56<260:30:04, 191.98s/it][iter  140 | frames   282,000 / 10,050,000] mean_return=3.1725
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1725339889526367:   3%|▎         | 141/5025 [7:44:06<259:39:02, 191.39s/it][iter  141 | frames   284,000 / 10,050,000] mean_return=2.7180
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.718036413192749:   3%|▎         | 142/5025 [7:47:17<259:32:43, 191.35s/it] [iter  142 | frames   286,000 / 10,050,000] mean_return=2.9585
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.958505392074585:   3%|▎         | 143/5025 [7:50:26<258:42:33, 190.77s/it][iter  143 | frames   288,000 / 10,050,000] mean_return=3.2152
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.2151596546173096:   3%|▎         | 144/5025 [7:53:42<260:37:48, 192.23s/it][iter  144 | frames   290,000 / 10,050,000] mean_return=2.8510
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.851034164428711:   3%|▎         | 145/5025 [7:56:57<261:30:52, 192.92s/it] [iter  145 | frames   292,000 / 10,050,000] mean_return=2.9679
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.967890739440918:   3%|▎         | 146/5025 [8:00:17<264:35:02, 195.22s/it][iter  146 | frames   294,000 / 10,050,000] mean_return=2.8264
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.826383352279663:   3%|▎         | 147/5025 [8:03:45<269:40:28, 199.02s/it][iter  147 | frames   296,000 / 10,050,000] mean_return=3.3297
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.3296914100646973:   3%|▎         | 148/5025 [8:07:10<272:08:54, 200.89s/it][iter  148 | frames   298,000 / 10,050,000] mean_return=2.6050
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6050100326538086:   3%|▎         | 149/5025 [8:10:37<274:34:50, 202.73s/it][iter  149 | frames   300,000 / 10,050,000] mean_return=2.9913
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9912843704223633:   3%|▎         | 150/5025 [8:13:57<273:14:05, 201.77s/it][iter  150 | frames   302,000 / 10,050,000] mean_return=3.1705
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1704845428466797:   3%|▎         | 151/5025 [8:17:27<276:47:13, 204.44s/it][iter  151 | frames   304,000 / 10,050,000] mean_return=2.8393
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8392741680145264:   3%|▎         | 152/5025 [8:20:55<277:56:09, 205.33s/it][iter  152 | frames   306,000 / 10,050,000] mean_return=2.9232
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.923197031021118:   3%|▎         | 153/5025 [8:24:14<275:14:11, 203.38s/it] [iter  153 | frames   308,000 / 10,050,000] mean_return=2.8965
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.89648175239563:   3%|▎         | 154/5025 [8:27:34<273:45:31, 202.33s/it] [iter  154 | frames   310,000 / 10,050,000] mean_return=2.7388
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.738765001296997:   3%|▎         | 155/5025 [8:30:45<269:11:31, 198.99s/it][iter  155 | frames   312,000 / 10,050,000] mean_return=3.1517
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1516664028167725:   3%|▎         | 156/5025 [8:34:02<268:29:18, 198.51s/it][iter  156 | frames   314,000 / 10,050,000] mean_return=2.9451
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.945119857788086:   3%|▎         | 157/5025 [8:37:21<268:43:32, 198.73s/it] [iter  157 | frames   316,000 / 10,050,000] mean_return=3.3717
+DataHandler: unable to parse websocket frame.
+RequestQuit command received.
+CloseHandler: 127.0.0.1:53462 disconnected
+Closing Application...
+ResponseThread: No connection, dropping the response.
+[2026-06-06 21:42:16,601][absl][INFO] - Shutdown gracefully.
+[2026-06-06 21:42:16,602][absl][INFO] - Shutdown with return code: -15
+[2026-06-06 21:42:16,610][absl][INFO] - Launching SC2: /home/s28404/StarCraftII/Versions/Base75689/SC2_x64 -listen 127.0.0.1 -port 34473 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-n5bbjmzb/
+[2026-06-06 21:42:16,612][absl][INFO] - Connecting to: ws://127.0.0.1:34473/sc2api, attempt: 0, running: True
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/s28404/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 34473 -dataDir /home/s28404/StarCraftII/ -tempDir /tmp/sc-n5bbjmzb/'
+Starting up...
+Startup Phase 1 complete
+[2026-06-06 21:42:17,613][absl][INFO] - Connecting to: ws://127.0.0.1:34473/sc2api, attempt: 1, running: True
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:34473
+Startup Phase 3 complete. Ready for commands.
+[2026-06-06 21:42:18,615][absl][INFO] - Connecting to: ws://127.0.0.1:34473/sc2api, attempt: 2, running: True
+ConnectHandler: Request from 127.0.0.1:47420 accepted
+ReadyHandler: 127.0.0.1:47420 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/s28404/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.371732473373413:   3%|▎         | 158/5025 [8:40:43<270:01:57, 199.74s/it][iter  158 | frames   318,000 / 10,050,000] mean_return=3.1938
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1937708854675293:   3%|▎         | 159/5025 [8:44:01<269:09:46, 199.13s/it][iter  159 | frames   320,000 / 10,050,000] mean_return=2.6894
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.6893725395202637:   3%|▎         | 160/5025 [8:47:12<265:53:33, 196.76s/it][iter  160 | frames   322,000 / 10,050,000] mean_return=3.6067
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.6067423820495605:   3%|▎         | 161/5025 [8:50:29<265:49:56, 196.75s/it][iter  161 | frames   324,000 / 10,050,000] mean_return=3.2484
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.248430013656616:   3%|▎         | 162/5025 [8:53:43<264:44:35, 195.99s/it] [iter  162 | frames   326,000 / 10,050,000] mean_return=2.5167
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.5167412757873535:   3%|▎         | 163/5025 [8:56:58<264:13:33, 195.64s/it][iter  163 | frames   328,000 / 10,050,000] mean_return=2.8559
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.855891466140747:   3%|▎         | 164/5025 [9:00:11<262:53:36, 194.70s/it] [iter  164 | frames   330,000 / 10,050,000] mean_return=2.6470
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.646974802017212:   3%|▎         | 165/5025 [9:03:16<258:59:43, 191.85s/it][iter  165 | frames   332,000 / 10,050,000] mean_return=2.6899
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.689920663833618:   3%|▎         | 166/5025 [9:06:26<258:21:00, 191.41s/it][iter  166 | frames   334,000 / 10,050,000] mean_return=2.7029
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7029333114624023:   3%|▎         | 167/5025 [9:09:35<257:20:59, 190.71s/it][iter  167 | frames   336,000 / 10,050,000] mean_return=2.7449
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7448620796203613:   3%|▎         | 168/5025 [9:12:48<257:56:29, 191.19s/it][iter  168 | frames   338,000 / 10,050,000] mean_return=2.4445
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.4444937705993652:   3%|▎         | 169/5025 [9:15:57<257:02:14, 190.55s/it][iter  169 | frames   340,000 / 10,050,000] mean_return=2.9015
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.901524782180786:   3%|▎         | 170/5025 [9:19:05<255:51:44, 189.72s/it] [iter  170 | frames   342,000 / 10,050,000] mean_return=2.7416
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.7415943145751953:   3%|▎         | 171/5025 [9:22:16<256:33:15, 190.28s/it][iter  171 | frames   344,000 / 10,050,000] mean_return=2.7487
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.748652458190918:   3%|▎         | 172/5025 [9:25:35<260:01:42, 192.89s/it] [iter  172 | frames   346,000 / 10,050,000] mean_return=2.5783
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.57832932472229:   3%|▎         | 173/5025 [9:28:58<263:53:53, 195.80s/it] [iter  173 | frames   348,000 / 10,050,000] mean_return=3.0764
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0763771533966064:   3%|▎         | 174/5025 [9:32:17<265:14:20, 196.84s/it][iter  174 | frames   350,000 / 10,050,000] mean_return=3.0954
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0953986644744873:   3%|▎         | 175/5025 [9:35:43<268:57:18, 199.64s/it][iter  175 | frames   352,000 / 10,050,000] mean_return=3.2288
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.228825807571411:   4%|▎         | 176/5025 [9:39:09<271:21:23, 201.46s/it] [iter  176 | frames   354,000 / 10,050,000] mean_return=3.1199
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.119924783706665:   4%|▎         | 177/5025 [9:42:38<274:25:02, 203.78s/it][iter  177 | frames   356,000 / 10,050,000] mean_return=2.5066
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.506643056869507:   4%|▎         | 178/5025 [9:46:00<273:40:31, 203.27s/it][iter  178 | frames   358,000 / 10,050,000] mean_return=3.1275
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.127535820007324:   4%|▎         | 179/5025 [9:49:18<271:38:54, 201.80s/it][iter  179 | frames   360,000 / 10,050,000] mean_return=2.8625
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.862474203109741:   4%|▎         | 180/5025 [9:52:35<269:18:12, 200.10s/it][iter  180 | frames   362,000 / 10,050,000] mean_return=2.9328
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.932807207107544:   4%|▎         | 181/5025 [9:55:47<266:11:30, 197.83s/it][iter  181 | frames   364,000 / 10,050,000] mean_return=3.2351
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.235136032104492:   4%|▎         | 182/5025 [9:59:06<266:31:50, 198.12s/it][iter  182 | frames   366,000 / 10,050,000] mean_return=3.1933
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.193290948867798:   4%|▎         | 183/5025 [10:02:19<264:34:23, 196.71s/it][iter  183 | frames   368,000 / 10,050,000] mean_return=2.9771
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.977091073989868:   4%|▎         | 184/5025 [10:05:32<262:50:09, 195.46s/it][iter  184 | frames   370,000 / 10,050,000] mean_return=2.8879
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8878719806671143:   4%|▎         | 185/5025 [10:08:47<262:28:22, 195.23s/it][iter  185 | frames   372,000 / 10,050,000] mean_return=2.9769
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.976919651031494:   4%|▎         | 186/5025 [10:11:55<259:41:49, 193.20s/it] [iter  186 | frames   374,000 / 10,050,000] mean_return=2.7638
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.763762950897217:   4%|▎         | 187/5025 [10:15:07<259:18:33, 192.95s/it][iter  187 | frames   376,000 / 10,050,000] mean_return=2.8875
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.887484073638916:   4%|▎         | 188/5025 [10:18:19<258:36:03, 192.47s/it][iter  188 | frames   378,000 / 10,050,000] mean_return=3.1450
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1449732780456543:   4%|▍         | 189/5025 [10:21:27<256:40:40, 191.08s/it][iter  189 | frames   380,000 / 10,050,000] mean_return=3.0261
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.0260705947875977:   4%|▍         | 190/5025 [10:24:41<257:47:39, 191.95s/it][iter  190 | frames   382,000 / 10,050,000] mean_return=2.8690
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.8689517974853516:   4%|▍         | 191/5025 [10:27:56<259:15:43, 193.08s/it][iter  191 | frames   384,000 / 10,050,000] mean_return=3.3497
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.349675416946411:   4%|▍         | 192/5025 [10:31:07<258:16:37, 192.39s/it] [iter  192 | frames   386,000 / 10,050,000] mean_return=3.1140
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 3.1140496730804443:   4%|▍         | 193/5025 [10:34:16<256:44:34, 191.28s/it][iter  193 | frames   388,000 / 10,050,000] mean_return=2.8871
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.887134075164795:   4%|▍         | 194/5025 [10:37:26<256:11:19, 190.91s/it] [iter  194 | frames   390,000 / 10,050,000] mean_return=2.9723
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.9722771644592285:   4%|▍         | 195/5025 [10:40:32<254:26:13, 189.64s/it][iter  195 | frames   392,000 / 10,050,000] mean_return=2.7790
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.778956651687622:   4%|▍         | 196/5025 [10:43:45<255:27:37, 190.44s/it] [iter  196 | frames   394,000 / 10,050,000] mean_return=2.5620
+[THESIS_LOGGER] on_evaluation_end called! Number of rollouts: 20
+mean return = 2.5620357990264893:   4%|▍         | 197/5025 [10:46:57<256:15:06, 191.07s/it][iter  197 | frames   396,000 / 10,050,000] mean_return=2.7597
