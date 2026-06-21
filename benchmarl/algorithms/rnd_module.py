@@ -39,25 +39,34 @@ class RNDModule(nn.Module):
         lr = self._param("rnd_lr", 1e-4)
 
         # Fixed random target - never trained
+        # [FIX] Use ReLU instead of LeakyReLU (Burda et al., 2018 uses ReLU)
         self.target = nn.Sequential(
             nn.Linear(obs_dim, hidden_dim),
-            nn.LeakyReLU(),
+            nn.ReLU(),
             nn.Linear(hidden_dim, embed_dim),
         )
         for p in self.target.parameters():
             p.requires_grad = False
 
         # Trainable predictor
+        # [FIX] Use ReLU instead of LeakyReLU (Burda et al., 2018 uses ReLU)
         self.predictor = nn.Sequential(
             nn.Linear(obs_dim, hidden_dim),
-            nn.LeakyReLU(),
+            nn.ReLU(),
             nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(),
+            nn.ReLU(),
             nn.Linear(hidden_dim, embed_dim),
         )
 
         self.optimizer = torch.optim.Adam(self.predictor.parameters(), lr=lr)
         self.rms = RunningMeanStd()
+
+        # [FIX] Observation normalization for RND (Burda et al., 2018)
+        # The paper requires separate whitening of observations fed to target/predictor:
+        #   obs_norm = clip((obs - running_mean) / running_std, -5, 5)
+        # This is NOT applied to the policy network — only to RND inputs.
+        self.obs_rms = RunningMeanStd()  # Running mean/std for observation normalization
+        self.obs_clip = 5.0              # Clip normalized observations to [-5, 5]
 
     def _param(self, name, default):
         if self.config is None:
@@ -82,20 +91,28 @@ class RNDModule(nn.Module):
         original_shape = obs.shape                        # [batch_size, n_agents, obs_dim]
         obs_flat = obs.reshape(-1, obs.shape[-1]).float() # [batch_size*n_agents, obs_dim]
 
+        # [FIX] Normalize observations for target/predictor (NOT for policy)
+        # Burda et al., 2018: whitening + clip [-5, 5] is critical for RND stability
+        obs_flat_np = obs_flat.detach().cpu().numpy()
+        self.obs_rms.update(obs_flat_np)
+        obs_mean = torch.from_numpy(self.obs_rms.mean.astype(np.float32)).to(obs.device)
+        obs_std = torch.from_numpy(np.sqrt(self.obs_rms.var + 1e-8).astype(np.float32)).to(obs.device)
+        obs_flat_normed = torch.clamp((obs_flat - obs_mean) / obs_std, -self.obs_clip, self.obs_clip)
+
         # Extract features from the target network (no updates)
         with torch.no_grad():
-            target_feat = self.target(obs_flat)           # [batch_size*n_agents, obs_dim] -> [batch_size*n_agents, embed_dim]
+            target_feat = self.target(obs_flat_normed)           # [batch_size*n_agents, embed_dim]
 
         if train:
             self.optimizer.zero_grad()
             # Extract features from the predictor (trained network)
-            pred_feat = self.predictor(obs_flat)          # [batch_size*n_agents, obs_dim] -> [batch_size*n_agents, embed_dim]
+            pred_feat = self.predictor(obs_flat_normed)          # [batch_size*n_agents, embed_dim]
             loss = nn.functional.mse_loss(pred_feat, target_feat)
             loss.backward()
             self.optimizer.step()
         else:
             with torch.no_grad():
-                pred_feat = self.predictor(obs_flat)
+                pred_feat = self.predictor(obs_flat_normed)
 
         # Calculate RND reward (squared feature difference)
         with torch.no_grad():
