@@ -70,6 +70,15 @@ class Logger:
         #############################
         # [7] End.
         #############################
+        
+        #############################
+        # Windows for tracking last 100 episodes (ext, int, total returns)
+        #############################
+        self.ext_return_window = []
+        self.int_return_window = []
+        self.total_return_window = []
+        self.window_size = 100
+        #############################
 
         if experiment_config.create_json:
             self.json_writer = JsonWriter(
@@ -153,6 +162,8 @@ class Logger:
 
         to_log = {}
         groups_episode_rewards = []
+        groups_extrinsic_rewards = []
+        groups_intrinsic_rewards = []
         gobal_done = self._get_global_done(batch)  # Does not have agent dim
         any_episode_ended = gobal_done.nonzero().numel() > 0
         if not any_episode_ended:
@@ -162,7 +173,7 @@ class Logger:
                 "The episodes will probably terminate in a future iteration."
             )
         for group in self.group_map.keys():
-            group_episode_rewards = self._log_individual_and_group_rewards(
+            group_episode_rewards, group_extrinsic_rewards, group_intrinsic_rewards = self._log_individual_and_group_rewards(
                 group,
                 batch,
                 gobal_done,
@@ -172,6 +183,8 @@ class Logger:
             )
             # group_episode_rewards has shape (n_episodes) as we took the mean over agents in the group
             groups_episode_rewards.append(group_episode_rewards)
+            groups_extrinsic_rewards.append(group_extrinsic_rewards)
+            groups_intrinsic_rewards.append(group_intrinsic_rewards)
 
             if "info" in batch.get(("next", group)).keys():
                 to_log.update(
@@ -191,9 +204,36 @@ class Logger:
             )
         to_log.update(task.log_info(batch))
         # global_episode_rewards has shape (n_episodes) as we took the mean over groups
-        global_episode_rewards = self._log_global_episode_reward(
-            groups_episode_rewards, to_log, prefix="collection"
+        global_episode_rewards, global_extrinsic_rewards, global_intrinsic_rewards = self._log_global_episode_reward(
+            groups_episode_rewards, to_log, prefix="collection",
+            extrinsic_rewards=groups_extrinsic_rewards,
+            intrinsic_rewards=groups_intrinsic_rewards
         )
+        
+        # Update windows for mean_*_return_100 metrics
+        if any_episode_ended and global_episode_rewards is not None:
+            total_return = global_episode_rewards.mean().item()
+            ext_return = global_extrinsic_rewards.mean().item() if global_extrinsic_rewards is not None else 0.0
+            int_return = global_intrinsic_rewards.mean().item() if global_intrinsic_rewards is not None else 0.0
+            
+            # Append all three to keep windows synchronized
+            self.total_return_window.append(total_return)
+            self.ext_return_window.append(ext_return)
+            self.int_return_window.append(int_return)
+            
+            # Limit window size to 100
+            if len(self.total_return_window) > self.window_size:
+                self.total_return_window.pop(0)
+                self.ext_return_window.pop(0)
+                self.int_return_window.pop(0)
+            
+            # Log mean over last 100 episodes
+            if self.total_return_window:
+                to_log["collection/reward/mean_total_return_100"] = float(np.mean(self.total_return_window))
+            if self.ext_return_window:
+                to_log["collection/reward/mean_ext_return_100"] = float(np.mean(self.ext_return_window))
+            if self.int_return_window:
+                to_log["collection/reward/mean_int_return_100"] = float(np.mean(self.int_return_window))
 
         self.log(to_log, step=step)
 
@@ -237,7 +277,7 @@ class Logger:
         # [9] End.
         #############################
 
-        return global_episode_rewards.mean().item()
+        return global_episode_rewards[0].mean().item()  # Return total return mean for backward compatibility
 
     def log_training(self, group: str, training_td: TensorDictBase, step: int):
         if not len(self.loggers):
@@ -277,22 +317,61 @@ class Logger:
 
         to_log = {}
         json_metrics = {}
+        groups_total_returns = []
+        groups_extrinsic_returns = []
+        groups_intrinsic_returns = []
+        
         for group in self.group_map.keys():
-            # returns has shape (n_episodes)
-            returns = torch.stack(
+            # Total returns (extrinsic + intrinsic)
+            total_returns = torch.stack(
                 [self._get_reward(group, td).sum(0).mean() for td in rollouts],
                 dim=0,
             )
             self._log_min_mean_max(
-                to_log, f"eval/{group}/reward/episode_reward", returns
+                to_log, f"eval/{group}/reward/episode_reward", total_returns
             )
-            json_metrics[group + "_return"] = returns
+            json_metrics[group + "_return"] = total_returns
+            groups_total_returns.append(total_returns)
+            
+            # Extrinsic returns
+            try:
+                extrinsic_returns = torch.stack(
+                    [self._get_extrinsic_reward(group, td).sum(0).mean() for td in rollouts],
+                    dim=0,
+                )
+                self._log_min_mean_max(
+                    to_log, f"eval/{group}/reward/extrinsic_episode_reward", extrinsic_returns
+                )
+                json_metrics[group + "_extrinsic_return"] = extrinsic_returns
+                groups_extrinsic_returns.append(extrinsic_returns)
+            except Exception:
+                groups_extrinsic_returns.append(None)
+            
+            # Intrinsic returns
+            try:
+                intrinsic_returns = torch.stack(
+                    [self._get_intrinsic_reward(group, td).sum(0).mean() for td in rollouts],
+                    dim=0,
+                )
+                self._log_min_mean_max(
+                    to_log, f"eval/{group}/reward/intrinsic_episode_reward", intrinsic_returns
+                )
+                json_metrics[group + "_intrinsic_return"] = intrinsic_returns
+                groups_intrinsic_returns.append(intrinsic_returns)
+            except Exception:
+                groups_intrinsic_returns.append(None)
 
-        mean_group_return = self._log_global_episode_reward(
-            list(json_metrics.values()), to_log, prefix="eval"
+        mean_group_total_return, mean_group_extrinsic_return, mean_group_intrinsic_return = self._log_global_episode_reward(
+            groups_total_returns, to_log, prefix="eval",
+            extrinsic_rewards=groups_extrinsic_returns,
+            intrinsic_rewards=groups_intrinsic_returns
         )
         # mean_group_return has shape (n_episodes) as we take the mean groups
-        json_metrics["return"] = mean_group_return
+        json_metrics["return"] = mean_group_total_return
+        if mean_group_extrinsic_return is not None:
+            json_metrics["extrinsic_return"] = mean_group_extrinsic_return
+        if mean_group_intrinsic_return is not None:
+            json_metrics["intrinsic_return"] = mean_group_intrinsic_return
 
         to_log["eval/reward/episode_len_mean"] = sum(
             td.batch_size[0] for td in rollouts
@@ -413,6 +492,28 @@ class Logger:
                 eval_return_mean = eval_return_std = eval_return_min = (
                     eval_return_max
                 ) = None
+            
+            # Extrinsic returns
+            ext_returns = json_metrics.get("extrinsic_return", None)
+            if ext_returns is not None:
+                if isinstance(ext_returns, torch.Tensor):
+                    ext_returns_np = ext_returns.detach().float().cpu().numpy()
+                else:
+                    ext_returns_np = np.asarray(ext_returns, dtype=np.float32)
+                eval_ext_return_mean = float(ext_returns_np.mean())
+            else:
+                eval_ext_return_mean = None
+            
+            # Intrinsic returns
+            int_returns = json_metrics.get("intrinsic_return", None)
+            if int_returns is not None:
+                if isinstance(int_returns, torch.Tensor):
+                    int_returns_np = int_returns.detach().float().cpu().numpy()
+                else:
+                    int_returns_np = np.asarray(int_returns, dtype=np.float32)
+                eval_int_return_mean = float(int_returns_np.mean())
+            else:
+                eval_int_return_mean = None
 
             csv_dir = Path("logs_thesis")
             csv_dir.mkdir(parents=True, exist_ok=True)
@@ -426,6 +527,8 @@ class Logger:
                 "eval_return_std": eval_return_std,
                 "eval_return_min": eval_return_min,
                 "eval_return_max": eval_return_max,
+                "eval_ext_return_mean": eval_ext_return_mean,
+                "eval_int_return_mean": eval_int_return_mean,
                 "algorithm": getattr(self, "algorithm_name", "unknown"),
                 "environment": getattr(self, "environment_name", "unknown"),
                 "task": getattr(self, "task_name", "unknown"),
@@ -647,6 +750,53 @@ class Logger:
             )
         return episode_reward.mean(-2) if remove_agent_dim else episode_reward
 
+    def _get_extrinsic_reward(
+        self, group: str, td: TensorDictBase, remove_agent_dim: bool = False
+    ):
+        """Get extrinsic reward, which is stored separately before intrinsic is added."""
+        reward = td.get(("next", group, "extrinsic_reward"), None)
+        if reward is None:
+            reward = td.get(("next", "extrinsic_reward"), None)
+        if reward is None:
+            # Fallback: if extrinsic_reward not stored, use regular reward (vanilla QMIX without intrinsic)
+            reward = self._get_reward(group, td, remove_agent_dim)
+        return reward.mean(-2) if remove_agent_dim else reward
+
+    def _get_intrinsic_reward(
+        self, group: str, td: TensorDictBase, remove_agent_dim: bool = False
+    ):
+        """Get intrinsic reward, which is stored separately in QMIX with intrinsic rewards."""
+        reward = td.get(("next", group, "intrinsic_reward"), None)
+        if reward is None:
+            reward = td.get(("next", "intrinsic_reward"), None)
+        if reward is None:
+            # No intrinsic reward for this algorithm variant
+            reward = torch.zeros_like(self._get_reward(group, td, remove_agent_dim))
+        return reward.mean(-2) if remove_agent_dim else reward
+
+    def _get_extrinsic_episode_reward(
+        self, group: str, td: TensorDictBase, remove_agent_dim: bool = False
+    ):
+        """Get extrinsic episode reward."""
+        episode_reward = td.get(("next", group, "extrinsic_episode_reward"), None)
+        if episode_reward is None:
+            # Use the collector's episode_reward (which correctly resets at done boundaries)
+            # instead of extrinsic_reward.cumsum(dim=0). During collection/eval no intrinsic
+            # has been added yet, so total reward = extrinsic reward.
+            episode_reward = self._get_episode_reward(group, td, remove_agent_dim=remove_agent_dim)
+        return episode_reward
+
+    def _get_intrinsic_episode_reward(
+        self, group: str, td: TensorDictBase, remove_agent_dim: bool = False
+    ):
+        """Get intrinsic episode reward."""
+        episode_reward = td.get(("next", group, "intrinsic_episode_reward"), None)
+        if episode_reward is None:
+            # Compute cumulative sum over time to match TorchRL's episode_reward shape [T, B, ...]
+            intrinsic_reward = self._get_intrinsic_reward(group, td, remove_agent_dim=False)
+            episode_reward = intrinsic_reward.cumsum(dim=0)
+        return episode_reward.mean(-2) if remove_agent_dim else episode_reward
+    
     def _log_individual_and_group_rewards(
         self,
         group: str,
@@ -657,8 +807,14 @@ class Logger:
         prefix: str = "collection",
         log_individual_agents: bool = True,
     ):
-        reward = self._get_reward(group, batch)  # Has agent dim
-        episode_reward = self._get_episode_reward(group, batch)  # Has agent dim
+        reward = self._get_reward(group, batch)  # Has agent dim (total reward)
+        episode_reward = self._get_episode_reward(group, batch)  # Has agent dim (total)
+        
+        # Get extrinsic and intrinsic rewards
+        extrinsic_episode_reward = self._get_extrinsic_episode_reward(group, batch, remove_agent_dim=False)
+        intrinsic_episode_reward = self._get_intrinsic_episode_reward(group, batch, remove_agent_dim=False)
+       
+        
         n_agents_in_group = episode_reward.shape[-2]
 
         # Add multiagent dim
@@ -684,31 +840,99 @@ class Logger:
                         f"{prefix}/{group}/reward/agent_{i}/episode_reward",
                         episode_reward[..., i, :][agent_global_done],
                     )
+                    # Log extrinsic and intrinsic for individual agents (POPRAWIONE NAZWY I USUNIĘTE .sum(0))
+                    if extrinsic_episode_reward is not None:
+                        self._log_min_mean_max(
+                            to_log,
+                            f"{prefix}/{group}/reward/agent_{i}/extrinsic_episode_reward",
+                            extrinsic_episode_reward[..., i, :][agent_global_done],
+                        )
+                    if intrinsic_episode_reward is not None:
+                        self._log_min_mean_max(
+                            to_log,
+                            f"{prefix}/{group}/reward/agent_{i}/intrinsic_episode_reward",
+                            intrinsic_episode_reward[..., i, :][agent_global_done],
+                        )
+    
 
-        # 2. Here we log rewards from group data taking the mean over agents
-        group_episode_reward = episode_reward.mean(-2)[global_done]
+        # 2. Here we log rewards from group data taking the sum over agents
+        group_episode_reward = episode_reward.sum(-2)[global_done]
+        
+        if extrinsic_episode_reward is not None:
+            group_extrinsic_episode_reward = extrinsic_episode_reward.sum(-2)[global_done]
+        else:
+            group_extrinsic_episode_reward = None
+            
+        if intrinsic_episode_reward is not None:
+            group_intrinsic_episode_reward = intrinsic_episode_reward.sum(-2)[global_done]
+        else:
+            group_intrinsic_episode_reward = None
+
+        # Total episode reward = extrinsic + intrinsic
+        if group_extrinsic_episode_reward is not None and group_intrinsic_episode_reward is not None:
+            group_episode_reward = group_extrinsic_episode_reward + group_intrinsic_episode_reward
+        
         if any_episode_ended:
             self._log_min_mean_max(
                 to_log, f"{prefix}/{group}/reward/episode_reward", group_episode_reward
             )
+            if group_extrinsic_episode_reward is not None:
+                self._log_min_mean_max(
+                    to_log, f"{prefix}/{group}/reward/extrinsic_episode_reward", group_extrinsic_episode_reward
+                )
+            if group_intrinsic_episode_reward is not None:
+                self._log_min_mean_max(
+                    to_log, f"{prefix}/{group}/reward/intrinsic_episode_reward", group_intrinsic_episode_reward
+                )
         self._log_min_mean_max(to_log, f"{prefix}/reward/reward", reward)
 
-        return group_episode_reward
+        return group_episode_reward, group_extrinsic_episode_reward, group_intrinsic_episode_reward
 
     def _log_global_episode_reward(
-        self, episode_rewards: List[Tensor], to_log: Dict[str, Tensor], prefix: str
+        self,
+        episode_rewards: List[Tensor],
+        to_log: Dict[str, Tensor],
+        prefix: str,
+        extrinsic_rewards: Optional[List[Tensor]] = None,
+        intrinsic_rewards: Optional[List[Tensor]] = None,
     ):
         # Each element in the list is the episode reward (with shape n_episodes) for the group at the global done,
         # so they will have same shape as done is shared
-        episode_rewards = torch.stack(episode_rewards, dim=0).mean(
+        
+        # Total rewards (extrinsic + intrinsic)
+        total_episode_rewards = torch.stack(episode_rewards, dim=0).mean(
             0
         )  # Mean over groups
-        if episode_rewards.numel() > 0:
+        
+        # Extrinsic rewards
+        global_extrinsic_rewards = None
+        if extrinsic_rewards is not None and any(r is not None for r in extrinsic_rewards):
+            valid_ext_rewards = [r for r in extrinsic_rewards if r is not None]
+            if valid_ext_rewards:
+                global_extrinsic_rewards = torch.stack(valid_ext_rewards, dim=0).mean(0)
+        
+        # Intrinsic rewards
+        global_intrinsic_rewards = None
+        if intrinsic_rewards is not None and any(r is not None for r in intrinsic_rewards):
+            valid_int_rewards = [r for r in intrinsic_rewards if r is not None]
+            if valid_int_rewards:
+                global_intrinsic_rewards = torch.stack(valid_int_rewards, dim=0).mean(0)
+        
+        # Log all reward types
+        if total_episode_rewards.numel() > 0:
             self._log_min_mean_max(
-                to_log, f"{prefix}/reward/episode_reward", episode_rewards
+                to_log, f"{prefix}/reward/episode_reward", total_episode_rewards
+            )
+        if global_extrinsic_rewards is not None and global_extrinsic_rewards.numel() > 0:
+            self._log_min_mean_max(
+                to_log, f"{prefix}/reward/extrinsic_episode_reward", global_extrinsic_rewards
+            )
+        if global_intrinsic_rewards is not None and global_intrinsic_rewards.numel() > 0:
+            self._log_min_mean_max(
+                to_log, f"{prefix}/reward/intrinsic_episode_reward", global_intrinsic_rewards
             )
 
-        return episode_rewards
+        return total_episode_rewards, global_extrinsic_rewards, global_intrinsic_rewards
 
     def _log_min_mean_max(self, to_log: Dict[str, Tensor], key: str, value: Tensor):
         to_log.update(

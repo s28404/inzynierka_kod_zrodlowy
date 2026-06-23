@@ -354,9 +354,19 @@ class Qmix(Algorithm):
             r_int = demir.get_shaping_reward(
                 batch, group=group, gamma=self.experiment_config.gamma
             )
+           
             r_int = _reduce_intrinsic_to_reward_shape(r_int)
             r_int_to_add = r_int_to_add + scale * r_int
 
+            # Po get_shaping_reward w DEMIR LOGIC:
+            demir.update_memory(
+                obs=batch.get((group, "observation")),
+                action=batch.get((group, "action")),
+                reward_ext=batch.get(("next", group, "reward")).mean(-2) if ("next", group, "reward") in batch.keys(True, True) else batch.get(("next", "reward")),
+                td_error=batch.get("td_error") if "td_error" in batch.keys(True, True) else torch.zeros_like(batch.get(("next", "reward"))),
+                next_obs=batch.get(("next", group, "observation")),
+            )
+            
         # --- RND LOGIC ---
         rnd_scale = self.int_rew_config.get("rnd_scale", 0.0)
         if rnd_scale > 0 and hasattr(self, "rnd_modules") and group in self.rnd_modules:
@@ -398,9 +408,25 @@ class Qmix(Algorithm):
                 r_int = _reduce_intrinsic_to_reward_shape(r_int)
                 r_int_to_add = r_int_to_add + ngu_scale * r_int
 
-        # Add intrinsic reward to total reward
+        # Store reward components for separate logging (ext, int, total)
+        extrinsic_reward = batch.get(reward_key)
+        batch.set("extrinsic_reward", extrinsic_reward.clone())
+        batch.set(("next", "extrinsic_reward"), extrinsic_reward.clone())
+
+        # Expand intrinsic reward to per-agent shape for the logger (team -> per-agent)
+        group_reward = batch.get(("next", group, "reward"))
         if torch.abs(r_int_to_add).max() > 0:
-            batch.set(reward_key, batch.get(reward_key) + r_int_to_add)
+            intr = r_int_to_add.clone()
+            while intr.ndim < group_reward.ndim:
+                intr = intr.unsqueeze(-1)
+            intr = intr.expand(group_reward.shape)
+            batch.set("intrinsic_reward", intr)
+            batch.set(("next", "intrinsic_reward"), intr)
+            batch.set(reward_key, extrinsic_reward + r_int_to_add)
+        else:
+            intr = torch.zeros_like(group_reward)
+            batch.set("intrinsic_reward", intr)
+            batch.set(("next", "intrinsic_reward"), intr)
         #############################
         # [3] End.
         #############################

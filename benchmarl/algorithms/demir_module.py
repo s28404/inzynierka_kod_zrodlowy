@@ -174,7 +174,7 @@ class DecentralizedEpisodicReward(nn.Module):
             else:
                 reward_ext = torch.zeros((), device="cpu")
 
-        warmup = getattr(self.config, "warmup", 1000)
+        warmup = getattr(self.config, "warmup", 0)
         if self.efm_index.ntotal < self.k or self._update_counter < warmup:
             return torch.zeros_like(reward_ext)
 

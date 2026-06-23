@@ -2,8 +2,8 @@ variant: r2d2
 env_id: BabyAI-KeyCorridorS3R1-v0  
 seed: 42
 
-total_steps: 5_000_000
-warmup_steps: 50_000
+total_steps: 2_000_000
+warmup_steps: 0
 train_every: 4
 grad_steps: 1
 batch_size: 64
@@ -32,7 +32,7 @@ prio_eta: 0.9
 
 intrinsic_scale: null  # BARDZO WAŻNE: Niech kod sam bierze 0.0 lub 0.1 ze słownika!
 
-log_interval: 2000
+log_interval: 6000
 eval_interval: 20000
 eval_episodes: 10     
 checkpoint_interval: 50000
