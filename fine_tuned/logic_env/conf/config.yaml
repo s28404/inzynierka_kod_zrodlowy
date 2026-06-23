@@ -49,7 +49,7 @@ experiment:
   on_policy_n_minibatch_iters: 45
   on_policy_minibatch_size: 400
 
-  off_policy_collected_frames_per_batch: 6000
+  off_policy_collected_frames_per_batch: 2000
   off_policy_n_envs_per_worker: 10
   off_policy_n_optimizer_steps: 100
   off_policy_train_batch_size: 128
