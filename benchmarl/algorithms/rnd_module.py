@@ -19,31 +19,6 @@ except ImportError:
     _wandb = None
 
 
-class VectorizedRunningMeanStd:
-    """Running mean/std for vectors (e.g., observation normalization)."""
-    def __init__(self, shape):
-        self.mean = np.zeros(shape, dtype=np.float64)
-        self.var = np.ones(shape, dtype=np.float64)
-        self.count = np.full(shape, 1e-4, dtype=np.float64)
-
-    def update(self, x: np.ndarray):
-        b_mean = np.mean(x, axis=0)
-        b_var = np.var(x, axis=0)
-        b_count = x.shape[0]
-        delta = b_mean - self.mean
-        tot = self.count + b_count
-        self.mean += delta * b_count / tot
-        self.var = (
-            self.var * self.count
-            + b_var * b_count
-            + delta**2 * self.count * b_count / tot
-        ) / tot
-        self.count = tot
-
-    def normalize(self, x: np.ndarray) -> np.ndarray:
-        return (x - self.mean) / (np.sqrt(self.var) + 1e-8)
-
-
 class RNDModule(nn.Module):
     """
     Random Network Distillation - decentralized per-agent intrinsic reward.
@@ -90,7 +65,7 @@ class RNDModule(nn.Module):
         # The paper requires separate whitening of observations fed to target/predictor:
         #   obs_norm = clip((obs - running_mean) / running_std, -5, 5)
         # This is NOT applied to the policy network — only to RND inputs.
-        self.obs_rms = VectorizedRunningMeanStd(obs_dim)  # Running mean/std for observation normalization
+        self.obs_rms = RunningMeanStd()  # Running mean/std for observation normalization
         self.obs_clip = 5.0              # Clip normalized observations to [-5, 5]
 
     def _param(self, name, default):

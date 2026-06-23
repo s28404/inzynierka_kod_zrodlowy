@@ -366,7 +366,6 @@ class IntrinsicRewardAdapter:
         self.gamma = gamma
         self.online_net = online_net
 
-
         if self.kind == "rnd":
             self.module = RNDModule(
                 obs_dim=obs_dim,
@@ -405,7 +404,7 @@ class IntrinsicRewardAdapter:
                     "sigma": 0.5,
                     "n_efm": 10000,
                     "n_edm": 5000,
-                    "warmup": 100,
+                    "warmup": 0,
                     "encoder_type": cfg.demir_encoder_type,
                 },
             )
@@ -704,7 +703,7 @@ def parse_args() -> R2D2Config:
         "--total-steps", type=int, default=cfg_value("total_steps", 300_000)
     )
     parser.add_argument(
-        "--warmup-steps", type=int, default=cfg_value("warmup_steps", 10_000)
+        "--warmup-steps", type=int, default=cfg_value("warmup_steps", 0)
     )
     parser.add_argument("--train-every", type=int, default=cfg_value("train_every", 4))
     parser.add_argument("--grad-steps", type=int, default=cfg_value("grad_steps", 1))
@@ -991,7 +990,7 @@ def main() -> None:
         episode_obs.append(next_obs.copy())
 
         episode_ext_return += float(reward_ext)
-        episode_int_return += float(reward_int)
+        episode_int_return += float(reward_int) * cfg.intrinsic_scale
         episode_total_return += float(reward_total)
 
         obs = next_obs
