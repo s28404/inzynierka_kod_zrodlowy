@@ -696,7 +696,7 @@ class Logger:
 
         for logger in self.loggers:
             if isinstance(logger, WandbLogger):
-                logger.experiment.log(dict_to_log, commit=False)
+                logger.experiment.log(dict_to_log, step=step, commit=False)
             else:
                 for key, value in dict_to_log.items():
                     logger.log_scalar(key.replace("/", "_"), value, step=step)
