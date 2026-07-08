@@ -1,21 +1,12 @@
-# Author: Kajetan Frąckowiak, s28404 (2026)
-# File written from scratch as part of an engineering thesis
-# Description: Script for recording episodes of trained agents
-#              to MP4 files (supports VMAS/MPE and SMACv2).
-
 """
 Loads a training checkpoint and records episodes to an MP4 video file.
 
-VMAS (MPE):  works headless (no monitor required)
-SMACv2:      requires DISPLAY (e.g. Xvfb) — see instructions below
+Author: Kajetan Frąckowiak
+Date: 2026
 
 Usage:
     python record_video.py outputs/.../checkpoint.pt
     python record_video.py outputs/.../checkpoint.pt --episodes 3 --out video.mp4 --fps 20
-
-For SMACv2 (without a monitor):
-    Xvfb :99 -screen 0 1024x768x24 &
-    DISPLAY=:99 python record_video.py ...
 """
 
 import argparse
@@ -24,7 +15,6 @@ from pathlib import Path
 
 import numpy as np
 
-# ── imageio / imageio-ffmpeg ────────────────────────────────────────────────
 try:
     import imageio
     _HAS_IMAGEIO = True
@@ -69,7 +59,7 @@ def record(
     if not experiment.task.has_render(env):
         raise RuntimeError(
             f"Environment {type(env).__name__} does not support rendering. "
-            "For SMACv2 make sure you have a DISPLAY set up (e.g. Xvfb)."
+            "Make sure you have a DISPLAY set up (e.g. Xvfb) if rendering requires one."
         )
 
     # ── Collect frames ──────────────────────────────────────────────────────
@@ -101,7 +91,6 @@ def record(
     if not all_frames:
         raise RuntimeError("No frames were collected. Check if rendering is working correctly.")
 
-    # ── Save as MP4 ─────────────────────────────────────────────────────────
     if out_path is None:
         ckpt_path = Path(checkpoint_file)
         # Use experiment directory for output

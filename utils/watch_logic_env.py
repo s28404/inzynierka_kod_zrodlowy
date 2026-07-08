@@ -1,3 +1,14 @@
+"""
+Launches an interactive visualisation of the logic_env environment with random actions,
+rendering each step to the terminal for manual inspection.
+
+Author: Kajetan Frąckowiak
+Date: 2026
+
+Usage:
+    python utils/watch_logic_env.py
+"""
+
 import time
 import os
 from benchmarl.environments.logic_env.factory import SynchronizedFactory
