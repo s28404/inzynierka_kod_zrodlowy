@@ -2,8 +2,8 @@ variant: r2d2
 env_id: BabyAI-KeyCorridorS3R1-v0  
 seed: 42
 
-total_steps: 5_000_000
-warmup_steps: 50_000
+total_steps: 2_000_000
+warmup_steps: 0
 train_every: 4
 grad_steps: 1
 batch_size: 64

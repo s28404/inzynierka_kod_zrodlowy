@@ -555,7 +555,7 @@ class Experiment(CallbackNotifier):
     def _build_wandb_run_name(self) -> str:
         """Builds a W&B run name according to the engineering thesis schema."""
         cfg = self.algorithm_config
-        env = self.environment_name  # "vmas" | "smacv2" | "logic_env"
+        env = self.environment_name  # "logic_env"
         task = self.task_name  # "simple_spread" | "corridor" etc.
         now = datetime.now().strftime("%y_%m_%d-%H_%M_%S")
 
@@ -736,7 +736,41 @@ class Experiment(CallbackNotifier):
                         done_keys=self.rollout_env.done_keys,
                     )
 
-            # Logging collection
+            # Callback
+            self._on_batch_collected(batch)
+            batch = batch.detach()
+
+            # Process groups — compute intrinsic rewards, copy keys for logging, add to buffer
+            training_start = time.time()
+            for group in self.train_group_map.keys():
+                group_batch = batch.exclude(*self._get_excluded_keys(group)).to(
+                    self.config.train_device
+                )
+                group_batch = self.algorithm.process_batch(group, group_batch)
+
+                # Copy intrinsic/extrinsic keys back to CPU batch for logging
+                if "intrinsic_reward" in group_batch.keys():
+                    batch.set(
+                        "intrinsic_reward",
+                        group_batch.get("intrinsic_reward").cpu(),
+                    )
+                    batch.set(
+                        ("next", "intrinsic_reward"),
+                        group_batch.get(("next", "intrinsic_reward")).cpu(),
+                    )
+                if "extrinsic_reward" in group_batch.keys():
+                    batch.set(
+                        ("next", "extrinsic_reward"),
+                        group_batch.get(("next", "extrinsic_reward")).cpu(),
+                    )
+
+                if not self.algorithm.has_rnn:
+                    group_batch = group_batch.reshape(-1)
+
+                group_buffer = self.replay_buffers[group]
+                group_buffer.extend(group_batch.to(group_buffer.storage.device))
+
+            # Logging collection (after process_batch — intrinsic rewards are now in batch)
             collection_time = time.time() - iteration_start
             current_frames = batch.numel()
             self.total_frames += current_frames
@@ -744,7 +778,7 @@ class Experiment(CallbackNotifier):
                 batch,
                 total_frames=self.total_frames,
                 task=self.task,
-                step=self.n_iters_performed,
+                step=self.total_frames,
             )
             pbar.set_description(f"mean return = {self.mean_return}", refresh=False)
             print(
@@ -754,23 +788,8 @@ class Experiment(CallbackNotifier):
                 flush=True,
             )
 
-            # Callback
-            self._on_batch_collected(batch)
-            batch = batch.detach()
-
-            # Loop over groups
-            training_start = time.time()
+            # Training loop
             for group in self.train_group_map.keys():
-                group_batch = batch.exclude(*self._get_excluded_keys(group)).to(
-                    self.config.train_device
-                )
-                group_batch = self.algorithm.process_batch(group, group_batch)
-                if not self.algorithm.has_rnn:
-                    group_batch = group_batch.reshape(-1)
-
-                group_buffer = self.replay_buffers[group]
-                group_buffer.extend(group_batch.to(group_buffer.storage.device))
-
                 training_tds = []
                 for _ in range(self.config.n_optimizer_steps(self.on_policy)):
                     for _ in range(
@@ -782,7 +801,7 @@ class Experiment(CallbackNotifier):
                         training_tds.append(self._optimizer_loop(group))
                 training_td = torch.stack(training_tds)
                 self.logger.log_training(
-                    group, training_td, step=self.n_iters_performed
+                    group, training_td, step=self.total_frames
                 )
 
                 # Callback
@@ -824,7 +843,7 @@ class Experiment(CallbackNotifier):
                     "counters/total_frames": self.total_frames,
                     "counters/iter": self.n_iters_performed,
                 },
-                step=self.n_iters_performed,
+                step=self.total_frames,
             )
             self.n_iters_performed += 1
             self.logger.commit()

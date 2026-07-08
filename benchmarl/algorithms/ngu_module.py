@@ -54,11 +54,11 @@ class NGUModule(nn.Module):
         lr = self._param("ngu_lr", 1e-4)
         self.rebuild_interval = self._param("ngu_rebuild_interval", 50)
 
-        # [FIX] NGU kernel parameters from Badia et al., 2020
+        #  NGU kernel parameters from Badia et al., 2020
         self.kernel_epsilon = self._param("ngu_kernel_epsilon", 0.0001)  # eps in K(x,y) = eps / (d^2/d_m^2 + eps)
         self.pseudo_counts = self._param("ngu_pseudo_counts", 0.001)      # c in denominator
 
-        # [FIX] Running average of squared distances of k-th nearest neighbor (d_m^2)
+        #  Running average of squared distances of k-th nearest neighbor (d_m^2)
         # This normalizes the kernel across different density regions.
         self._running_d_m_sq = 1.0  # Initialize to 1.0 to avoid division by zero
         self._d_m_update_rate = 0.01  # Exponential moving average rate
@@ -78,7 +78,7 @@ class NGUModule(nn.Module):
         )
 
         # RND for lifelong curiosity
-        # [FIX] Use ReLU instead of LeakyReLU (Badia et al., 2020 uses ReLU)
+        #  Use ReLU instead of LeakyReLU (Badia et al., 2020 uses ReLU)
         self.rnd_target = nn.Sequential(
             nn.Linear(obs_dim, hidden),
             nn.ReLU(),
@@ -87,7 +87,7 @@ class NGUModule(nn.Module):
         for p in self.rnd_target.parameters():
             p.requires_grad = False
             
-        # [FIX] Use ReLU instead of LeakyReLU (Badia et al., 2020 uses ReLU)
+        #  Use ReLU instead of LeakyReLU (Badia et al., 2020 uses ReLU)
         self.rnd_predictor = nn.Sequential(
             nn.Linear(obs_dim, hidden),
             nn.ReLU(),
@@ -114,7 +114,7 @@ class NGUModule(nn.Module):
         self.rnd_rms = RunningMeanStd()
         self.ep_rms = RunningMeanStd()
 
-        # [FIX] UVFA with multiple beta values (Badia et al., 2020, Sec. 2.3)
+        #  UVFA with multiple beta values (Badia et al., 2020, Sec. 2.3)
         # NGU trains N policies in parallel, each with a different beta (mixing coefficient)
         # that balances intrinsic vs extrinsic reward. The betas are logarithmically spaced
         # from beta_min to beta_max so that some policies explore heavily while others exploit.
@@ -148,7 +148,7 @@ class NGUModule(nn.Module):
         self.epi_count = 0
         self.faiss_index = faiss.IndexFlatL2(d) if faiss is not None else None
         self._update_counter = 0
-        # [FIX] Reset per-policy episodic memories for UVFA
+        #  Reset per-policy episodic memories for UVFA
         for i in range(self.n_policies):
             self.policy_epi_buffers[i] = np.zeros((self.n_episodic, d), dtype=np.float32)
             self.policy_epi_ptrs[i] = 0
@@ -201,7 +201,7 @@ class NGUModule(nn.Module):
             self.faiss_index.add(self.epi_buffer[:filled])
 
     def _episodic_reward_from_knn(self, query_embeddings: np.ndarray) -> np.ndarray:
-        # [FIX] Implements the full NGU kernel density estimation from Badia et al., 2020:
+        #  Implements the full NGU kernel density estimation from Badia et al., 2020:
         #   r_episodic = 1 / (sum_{f_i in N_k} K(f(x_t), f_i) + c)
         #   K(x, y) = eps / (d^2(x, y) / d_m^2 + eps)
         # where d_m^2 is the running average of squared distances of k-th nearest neighbors.
@@ -225,7 +225,7 @@ class NGUModule(nn.Module):
             distances = np.partition(sq_dist, kth=self.k - 1, axis=1)[:, : self.k]
 
         # distances.shape = [batch_size*n_agents, k]  — these are L2 squared distances from FAISS
-        # [FIX] Update running d_m^2: exponential moving average of the k-th NN squared distance
+        #  Update running d_m^2: exponential moving average of the k-th NN squared distance
         # The k-th nearest neighbor is the last column (distances are sorted by FAISS)
         kth_sq_dist = distances[:, -1]  # shape: [batch_size*n_agents]
         batch_d_m_sq = float(np.mean(kth_sq_dist))
@@ -234,13 +234,10 @@ class NGUModule(nn.Module):
             + self._d_m_update_rate * max(batch_d_m_sq, 1e-8)
         )
 
-        # [FIX] Compute kernel K(x, y) = eps / (d^2 / d_m^2 + eps) for each neighbor
-        # distances = d^2 (squared L2 from FAISS IndexFlatL2)
         d_m_sq = self._running_d_m_sq
         kernel_vals = self.kernel_epsilon / (distances / (d_m_sq + 1e-8) + self.kernel_epsilon)
         # kernel_vals.shape = [batch_size*n_agents, k]
 
-        # [FIX] r_episodic = 1 / (sum of kernel values + pseudo-counts c)
         r_episodic = 1.0 / (np.sum(kernel_vals, axis=1) + self.pseudo_counts)
 
         return r_episodic
@@ -367,7 +364,7 @@ class NGUModule(nn.Module):
         group: str,
     ) -> torch.Tensor:
         """
-        [FIX] UVFA variant: compute intrinsic rewards for all N beta policies.
+         UVFA variant: compute intrinsic rewards for all N beta policies.
         
         Returns intrinsic rewards shaped as [batch_size, n_agents, n_policies]
         where each slice along the last dim corresponds to a different beta policy.
@@ -421,7 +418,7 @@ class NGUModule(nn.Module):
         rnd_scaled = np.clip(rnd_r_np / rnd_std, 0.0, self.L - 1.0)
         alpha_base = np.clip(1.0 + rnd_scaled, 1.0, self.L)
 
-        # [FIX] Compute per-policy intrinsic rewards using UVFA betas
+        #  Compute per-policy intrinsic rewards using UVFA betas
         # r_int_i = r_episodic * alpha * beta_i
         # Each beta_i controls how much intrinsic reward policy i receives
         n_flat = r_ep.shape[0]  # batch_size * n_agents

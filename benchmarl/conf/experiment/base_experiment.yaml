@@ -94,7 +94,6 @@ off_policy_prb_beta: 0.4
 
 evaluation: True
 # Whether to render the evaluation (if rendering is available)
-# NOTE: Wyłączone dla Python 3.12 compatibility (pysc2 render bug)
 render: False
 # Frequency of evaluation in terms of collected frames (this should be a multiple of on/off_policy_collected_frames_per_batch)
 evaluation_interval: 120_000

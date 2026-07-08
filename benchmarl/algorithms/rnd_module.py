@@ -38,8 +38,7 @@ class RNDModule(nn.Module):
         hidden_dim = self._param("rnd_hidden_dim", 256)
         lr = self._param("rnd_lr", 1e-4)
 
-        # Fixed random target - never trained
-        # [FIX] Use ReLU instead of LeakyReLU (Burda et al., 2018 uses ReLU)
+   
         self.target = nn.Sequential(
             nn.Linear(obs_dim, hidden_dim),
             nn.ReLU(),
@@ -48,8 +47,7 @@ class RNDModule(nn.Module):
         for p in self.target.parameters():
             p.requires_grad = False
 
-        # Trainable predictor
-        # [FIX] Use ReLU instead of LeakyReLU (Burda et al., 2018 uses ReLU)
+
         self.predictor = nn.Sequential(
             nn.Linear(obs_dim, hidden_dim),
             nn.ReLU(),
@@ -61,10 +59,7 @@ class RNDModule(nn.Module):
         self.optimizer = torch.optim.Adam(self.predictor.parameters(), lr=lr)
         self.rms = RunningMeanStd()
 
-        # [FIX] Observation normalization for RND (Burda et al., 2018)
-        # The paper requires separate whitening of observations fed to target/predictor:
-        #   obs_norm = clip((obs - running_mean) / running_std, -5, 5)
-        # This is NOT applied to the policy network — only to RND inputs.
+ 
         self.obs_rms = RunningMeanStd()  # Running mean/std for observation normalization
         self.obs_clip = 5.0              # Clip normalized observations to [-5, 5]
 
@@ -91,8 +86,7 @@ class RNDModule(nn.Module):
         original_shape = obs.shape                        # [batch_size, n_agents, obs_dim]
         obs_flat = obs.reshape(-1, obs.shape[-1]).float() # [batch_size*n_agents, obs_dim]
 
-        # [FIX] Normalize observations for target/predictor (NOT for policy)
-        # Burda et al., 2018: whitening + clip [-5, 5] is critical for RND stability
+       
         obs_flat_np = obs_flat.detach().cpu().numpy()
         self.obs_rms.update(obs_flat_np)
         obs_mean = torch.from_numpy(self.obs_rms.mean.astype(np.float32)).to(obs.device)

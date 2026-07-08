@@ -12,13 +12,10 @@
 
 from .common import _get_task_config_class, Task, TaskClass
 
-from .smacv2.common import Smacv2Class, Smacv2Task
 from .logic_env.common import LogicEnvClass, LogicEnvTask
 
 # The enum classes for the environments available.
-# [1] # Start. Added own algorithm LogicEnv config registries
-tasks = [Smacv2Task, LogicEnvTask]
-# [1] End.
+tasks = [LogicEnvTask]
 
 # This is a registry mapping "envname/task_name" to the EnvNameTask.TASK_NAME enum
 # It is used by automatically load task enums from yaml files.

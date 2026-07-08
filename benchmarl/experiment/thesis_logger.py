@@ -150,11 +150,7 @@ class ThesisJSONLoggerCallback(Callback):
         # Environment-specific metrics
         env_name = self.data_registry["metadata"].get("environment", "").lower()
 
-        if "smac" in env_name:
-            # SMACv2 metrics
-            current_metrics["eval_win_rate"] = eval_clean.get("eval/win_rate", None)
-
-        elif any(x in env_name for x in ["factory", "logic", "synchronized"]):
+        if any(x in env_name for x in ["factory", "logic", "synchronized"]):
             # Custom Reward Machine metrics for logic environments
             current_metrics["eval_success_rate"] = eval_clean.get("eval/success_rate", None)
             current_metrics["eval_bottleneck_reached_rate"] = eval_clean.get(
@@ -206,16 +202,7 @@ class ThesisJSONLoggerCallback(Callback):
         except Exception as e:
             print(f"[THESIS_LOGGER] Error calculating reward: {e}")
 
-        # Extract battle_won for SMACv2
-        try:
-            battle_won = []
-            for td in rollouts:
-                if ("next", "info", "battle_won") in td.keys(True, True):
-                    bw = td.get(("next", "info", "battle_won"))
-                    if bw.numel() > 0:
-                        battle_won.append(bw.mean().item())
-            if battle_won:
-                eval_stats["eval/win_rate"] = float(np.mean(battle_won))
+
         except Exception:
             pass
 
